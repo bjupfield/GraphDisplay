@@ -1,0 +1,13 @@
+.TitleDiv   {
+    border-width: 5px;
+    border-style: solid;
+    border-color: purple;
+    height: 10px;
+    width: 99%;
+    color: #717171;
+    background: linear-gradient(to right, #f69d3c, #3f87a6, #f69d3c), linear-gradient(#f69d3c, #3f87a6, #f69d3c);
+}
+body {
+    margin: 0%;
+    background-color: #0f0f0f;
+}
