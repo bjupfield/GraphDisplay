@@ -1,13 +1,42 @@
 .TitleDiv   {
-    border-width: 5px;
+    border-bottom: 5px;
+    border-top: 5px;
+    border-left: 0px;
+    border-right: 0px;
     border-style: solid;
-    border-color: purple;
-    height: 10px;
-    width: 99%;
+    border-color: #5e4c4c;
+    height: 10%;
+    min-height: 40px;
+    font-size: 30px;
+    
     color: #717171;
-    background: linear-gradient(to right, #f69d3c, #3f87a6, #f69d3c), linear-gradient(#f69d3c, #3f87a6, #f69d3c);
+    text-align: center;
+    background: #5e4c4c;
+}
+.paragraphBubble {
+    background-color: #5e7063;
+    color: rgba(255, 192, 203, 0.719);
+    margin-left: 15px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    width: 30%;
+    min-width: 450px;
+    border-radius: 10px;
+    text-align: left 20px;
+    padding-left: 20px;
+    padding-top: 10px;
+    padding-right: 20px;
+    padding-bottom: 10px;
+}
+.MyImage{
+    margin-left: 5%;
 }
 body {
     margin: 0%;
     background-color: #0f0f0f;
 }
+/*These are some of youtubes colors*/
+/* #717171  #0f0f0f */
+
+/* Gradient Example */
+/* linear-gradient(to right, #f69d3c, #3f87a6, #f69d3c), linear-gradient(#f69d3c, #3f87a6, #f69d3c); */

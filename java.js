@@ -1,7 +1,6 @@
 const MyImage = document.querySelector(".MyImage")
 const myHtml = document.querySelector("html")
 MyImage.src = "s.jpg"
-//MyImage.heigh
 MyImage.height = 250;
 MyImage.width = 250;
 MyImage.onclick = b;
