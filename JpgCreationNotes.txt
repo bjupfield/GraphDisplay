@@ -1,0 +1,8 @@
+good but brief overview
+https://github.com/corkami/formats/blob/master/image/jpeg.md
+
+video discussing arithmetic coding for jpg, timestamp 10:20, for real explanation
+https://www.youtube.com/watch?v=35f43OSIKXk
+
+actual good intro:
+https://www.ccoderun.ca/programming/2017-01-31_jpeg/
