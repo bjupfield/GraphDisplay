@@ -13,7 +13,7 @@ int main()
 {
     std::cout << "Hello World!\n";
     ifstream image;
-    image.open("C:/Users/bjupf/Desktop/GraphDisplayHtml/b.jpg", ios::in | ios::binary | ios::ate);
+    image.open("C:/Users/bjupf/Desktop/GraphDisplayHtml/s.jpg", ios::in | ios::binary | ios::ate);
     if(!image.is_open())
     {
         cout << "Failed To Open!\n" << endl;
@@ -45,7 +45,7 @@ int main()
     
     image.close();
     std::fstream outFile;
-    outFile.open("C:/Users/bjupf/Desktop/GraphDisplayHtml/createdText.txt", ios::out | ios::trunc);
+    outFile.open("C:/Users/bjupf/Desktop/GraphDisplayHtml/newCreatedText.txt", ios::out | ios::trunc);
     if (!outFile.is_open())
     {
         cout << "Not Open" << endl;

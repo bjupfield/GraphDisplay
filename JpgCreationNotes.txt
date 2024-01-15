@@ -6,3 +6,11 @@ https://www.youtube.com/watch?v=35f43OSIKXk
 
 actual good intro:
 https://www.ccoderun.ca/programming/2017-01-31_jpeg/
+
+quantizition table:
+https://www.quora.com/What-are-the-design-steps-for-jpeg-quantization-table
+http://forum.doom9.org/showthread.php?t=54147&highlight=matrix
+
+jpeg symbols:
+https://help.accusoft.com/ImageGear/v19.8/Windows/DLL/IGDLL-10-05.html
+https://www.w3.org/Graphics/JPEG/itu-t81.pdf
