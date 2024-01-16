@@ -16,3 +16,7 @@ https://www.geeksforgeeks.org/discrete-cosine-transform-algorithm-program/#
 jpeg symbols:
 https://help.accusoft.com/ImageGear/v19.8/Windows/DLL/IGDLL-10-05.html
 https://www.w3.org/Graphics/JPEG/itu-t81.pdf
+
+okay I get it there is no DCT Tables, the alogirithim is just the same across all jpegs,
+they all use DCT-II, which then is quantizised by the quanitization tables and is than
+huffmaned with huffman tables
