@@ -10,6 +10,8 @@ https://www.ccoderun.ca/programming/2017-01-31_jpeg/
 quantizition table:
 https://www.quora.com/What-are-the-design-steps-for-jpeg-quantization-table
 http://forum.doom9.org/showthread.php?t=54147&highlight=matrix
+https://num.math.uni-goettingen.de/plonka/pdfs/bommer02.pdf
+https://www.geeksforgeeks.org/discrete-cosine-transform-algorithm-program/#
 
 jpeg symbols:
 https://help.accusoft.com/ImageGear/v19.8/Windows/DLL/IGDLL-10-05.html
