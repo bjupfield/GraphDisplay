@@ -20,3 +20,19 @@ https://www.w3.org/Graphics/JPEG/itu-t81.pdf
 okay I get it there is no DCT Tables, the alogirithim is just the same across all jpegs,
 they all use DCT-II, which then is quantizised by the quanitization tables and is than
 huffmaned with huffman tables
+
+ITU defined formulas for RGB to YCbCr Conversion:
+
+E'B = normalized blue = rgb blue (of scale of 256) / 255
+E'R = normalized red = rgb red (of scale of 256) / 255
+E'G = normalized green = rgb green (of scale of 256) / 255
+
+E'Y = 0.299 E'R + 0.587 E'G + 0.114 E'B
+E'Cr = (E'R - E'Y)/1.402 = (0.701E'R - 0.587E'G - 0.114E'B)/1.402
+E'Cb = (E'B - E'Y)/1.772 = (-.299E'R - 0.587E'G + .886E'B)/1.772
+
+Y = Min( Max( 0, Round( 255 * E' Y ) ), 255 )
+CB = Min( Max( 0, Round( 255 * E' CB + 128 ) ), 255 )
+CR = Min( Max( 0, Round( 255 * E' CR + 128 ) ), 255 )
+
+Do notice how these equation first normalize then expand, the normalization is thus not necessary.

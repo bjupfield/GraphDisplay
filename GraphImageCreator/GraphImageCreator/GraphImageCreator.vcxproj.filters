@@ -18,5 +18,11 @@
     <ClCompile Include="GraphImageCreator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RGBtoYCrCb.hpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RGBtoYCrCb.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

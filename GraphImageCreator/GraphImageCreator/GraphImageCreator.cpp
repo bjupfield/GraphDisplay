@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include "RGBtoYCrCb.hpp"
 
 using namespace std;
 template <typename T>
@@ -70,6 +71,10 @@ int main()
         ++bytes;
     }
     outFile.close();
+
+    cout << "LUMINANCE VALUE IS: " << luminance(200, 0, 20) << endl;
+    cout << "Cr VALUE IS: " << chrominanceRed(30, 0, 0) << endl;
+    cout << "Cb VALUE IS: " << chrominanceBlue(200, 0, 20) << endl;
 
     delete[] myimageArray;
     exit(2);
