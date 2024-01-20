@@ -1,2 +1,3 @@
-﻿  RGBtoYCrCb.cpp
+﻿  GraphPresets.cpp
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphPresets.cpp(18,19): warning C4244: 'initializing': conversion from 'std::streamoff' to 'int', possible loss of data
   GraphImageCreator.vcxproj -> C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\x64\Debug\GraphImageCreator.exe

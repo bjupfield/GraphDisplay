@@ -24,5 +24,13 @@
     <ClCompile Include="RGBtoYCrCb.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="GraphPresets.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GraphPresets.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

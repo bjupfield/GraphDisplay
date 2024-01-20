@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iomanip>
 #include "RGBtoYCrCb.hpp"
+#include "GraphPresets.hpp"
 
 using namespace std;
 template <typename T>
@@ -13,70 +14,70 @@ void copyBufferArray(T* source, T* destination, int startIndex, int num);
 int main()
 {
     std::cout << "Hello World!\n";
-    ifstream image;
-    image.open("C:/Users/bjupf/Desktop/GraphDisplayHtml/s.jpg", ios::in | ios::binary | ios::ate);
-    if(!image.is_open())
-    {
-        cout << "Failed To Open!\n" << endl;
-        exit(0);
-    }
+    //ifstream image;
+    //image.open("C:/Users/bjupf/Desktop/GraphDisplayHtml/s.jpg", ios::in | ios::binary | ios::ate);
+    //if(!image.is_open())
+    //{
+    //    cout << "Failed To Open!\n" << endl;
+    //    exit(0);
+    //}
 
-    int imageSize = image.tellg();
-    image.seekg(0, ios::beg);
+    //int imageSize = image.tellg();
+    //image.seekg(0, ios::beg);
+    //
+    //int rowSize = 40;
+    //uint8_t* myimageArray = new uint8_t[imageSize];
+    //uint8_t* bufferArray = new uint8_t[rowSize];
+
+
+    //for (int i = 0; i < imageSize / rowSize; i++) 
+    //{
+    //    image.read(reinterpret_cast<char*>(bufferArray), sizeof(uint8_t) * rowSize);
+    //    copyBufferArray(bufferArray, myimageArray, i * rowSize, rowSize);
+    //    cout << i << " row: ";
+    //    for (int j = 0; j < rowSize; j++) 
+    //    {
+    //        cout << std::hex << static_cast<int>(myimageArray[i * rowSize + j]) << " ";
+    //    }
+    //    cout << std::dec << endl;
+    //}
+
+    //cout << "File Size: " << imageSize << " bytes!!" << endl;
+    //delete[] bufferArray;
+    //
+    //image.close();
+    //std::fstream outFile;
+    //outFile.open("C:/Users/bjupf/Desktop/GraphDisplayHtml/newCreatedText.txt", ios::out | ios::trunc);
+    //if (!outFile.is_open())
+    //{
+    //    cout << "Not Open" << endl;
+    //}
+    //int bytes = 0;
+    //while(bytes < imageSize)
+    //{
+    //    if (static_cast<int>(myimageArray[bytes]) == 255) 
+    //    {
+    //        if(static_cast<int>(myimageArray[bytes + 1]) != 0)
+    //        {
+    //            if (bytes != 0) 
+    //            {
+    //                outFile << std::dec << endl;
+    //            }
+    //            outFile << std::dec << "New Section: ";
+    //        }
+    //    }
+
+    //    outFile << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(myimageArray[bytes]) << " ";
+
+    //    ++bytes;
+    //}
+    //outFile.close();
     
-    int rowSize = 40;
-    uint8_t* myimageArray = new uint8_t[imageSize];
-    uint8_t* bufferArray = new uint8_t[rowSize];
+    char fileName[] = "C:/Users/bjupf/Desktop/GraphDisplayHtml/ImageTxtFiles/blank.txt";
 
+    graphPresets b = graphPresets(1, new char*[1]{fileName}, new int[4]{1, 1, 1, 1});
 
-    for (int i = 0; i < imageSize / rowSize; i++) 
-    {
-        image.read(reinterpret_cast<char*>(bufferArray), sizeof(uint8_t) * rowSize);
-        copyBufferArray(bufferArray, myimageArray, i * rowSize, rowSize);
-        cout << i << " row: ";
-        for (int j = 0; j < rowSize; j++) 
-        {
-            cout << std::hex << static_cast<int>(myimageArray[i * rowSize + j]) << " ";
-        }
-        cout << std::dec << endl;
-    }
-
-    cout << "File Size: " << imageSize << " bytes!!" << endl;
-    delete[] bufferArray;
-    
-    image.close();
-    std::fstream outFile;
-    outFile.open("C:/Users/bjupf/Desktop/GraphDisplayHtml/newCreatedText.txt", ios::out | ios::trunc);
-    if (!outFile.is_open())
-    {
-        cout << "Not Open" << endl;
-    }
-    int bytes = 0;
-    while(bytes < imageSize)
-    {
-        if (static_cast<int>(myimageArray[bytes]) == 255) 
-        {
-            if(static_cast<int>(myimageArray[bytes + 1]) != 0)
-            {
-                if (bytes != 0) 
-                {
-                    outFile << std::dec << endl;
-                }
-                outFile << std::dec << "New Section: ";
-            }
-        }
-
-        outFile << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(myimageArray[bytes]) << " ";
-
-        ++bytes;
-    }
-    outFile.close();
-
-    cout << "LUMINANCE VALUE IS: " << luminance(200, 0, 20) << endl;
-    cout << "Cr VALUE IS: " << chrominanceRed(30, 0, 0) << endl;
-    cout << "Cb VALUE IS: " << chrominanceBlue(200, 0, 20) << endl;
-
-    delete[] myimageArray;
+   // delete[] myimageArray;
     exit(2);
 }
 template <typename T>

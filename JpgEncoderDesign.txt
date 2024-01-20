@@ -1,0 +1,9 @@
+Okay the problem is how do I give information to my jpg creator?
+how do I make this information dynamic so that it can create pathfinding-graphs?
+the dumbest solution would be something like this...
+"picture objects" which are just arrays with the rgb values in them
+"graph object" which is just an array with details on the size of the graph and the picture objects that are on each point
+so we create a graph object of say size 3x2 and the array holds picture objects labels, like [l1, l2, l2, l2, l1, l2]
+where that array would mean that the first pixel is a picture object of label 1 and the next 3 are label 2 and so on, obviously
+standard 1-d to 2-d array shenanigans
+we would than send this graph object to the jpg encoder which would pull the data from the labels by searching for the picture objects
