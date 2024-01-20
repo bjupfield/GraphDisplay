@@ -10,10 +10,19 @@ struct Pixel
 
 class graphPresets {
 private:
-	int* imageSize;
-	Pixel** image;
+	int imageLength;
+	int imageHeight;
+	Pixel* image;
 public:
-	graphPresets(int fileAmount, char** fileNames, int* map);
+	graphPresets(int fileAmount, char** fileNames);
+};
+static class accessImage {
+private:
+	static char** pathNames;
+	static graphPresets* images;
+public:
+	static graphPresets recieveOrCreate(char* fileName);
+	static void currentImages();
 };
 
 #endif

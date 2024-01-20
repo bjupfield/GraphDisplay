@@ -75,7 +75,9 @@ int main()
     
     char fileName[] = "C:/Users/bjupf/Desktop/GraphDisplayHtml/ImageTxtFiles/blank.txt";
 
-    graphPresets b = graphPresets(1, new char*[1]{fileName}, new int[4]{1, 1, 1, 1});
+    accessImage::recieveOrCreate(fileName);
+
+    //graphPresets b = accessImage::recieveOrCreate(fileName);
 
    // delete[] myimageArray;
     exit(2);
