@@ -75,7 +75,19 @@ int main()
     
     char fileName[] = "C:/Users/bjupf/Desktop/GraphDisplayHtml/ImageTxtFiles/blank.txt";
 
-    accessImage::recieveOrCreate(fileName);
+    std::cout << "Enter File Path" << std::endl;
+
+    char buffer500[] = "";
+
+    cin >> buffer500;
+    if(buffer500 != "")
+    {
+        accessImage::recieveOrCreate(buffer500);
+    }
+    else 
+    {
+        accessImage::recieveOrCreate(fileName);
+    }
 
     //graphPresets b = accessImage::recieveOrCreate(fileName);
 

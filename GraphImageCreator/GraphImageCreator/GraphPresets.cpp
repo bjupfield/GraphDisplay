@@ -136,3 +136,9 @@ graphPresets accessImage::recieveOrCreate(char* fileName) {
 void accessImage::currentImages() {
 	std::cout << "iS THIS WHAT IT IS" << std::endl;
 }
+graphMap::graphMap(int Height, int Length, char** filePaths) 
+{
+	this->mapHeight = Height;
+	this->mapLength = Length;
+
+}
