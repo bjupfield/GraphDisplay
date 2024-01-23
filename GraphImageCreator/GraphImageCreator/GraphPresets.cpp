@@ -86,7 +86,7 @@ graphPresets::graphPresets(int fileAmount, char** fileNames) {
 						count++;
 					}
 					image[j + i * imageLength] = curPixel;
-					std::cout << "CurPixel || RED: " << curPixel.red << " || GREEN: " << curPixel.green << " || BLUE: " << curPixel.blue << std::endl;
+					//std::cout << "CurPixel || RED: " << curPixel.red << " || GREEN: " << curPixel.green << " || BLUE: " << curPixel.blue << std::endl;
 				}
 			}
 		}
@@ -97,28 +97,42 @@ graphPresets::graphPresets(int fileAmount, char** fileNames) {
 		openFile.close();
 	}
 }
+int graphPresets::retrieveHeight()
+{
+	return this->imageHeight;
+}
 char ** accessImage::pathNames = nullptr;
 graphPresets* accessImage::images = nullptr;
 graphPresets accessImage::recieveOrCreate(char* fileName) {
-	int pathNameSize = sizeof(pathNames);
+	int pathNameSize = sizeof(pathNames) / sizeof(char*);
 	std::cout << "PathNamesSize: " << pathNameSize << std::endl;
 	if (pathNames != nullptr) {
 		bool found = false;
 		int i;
-		for (i = 0; i < pathNameSize; i++)
-		{
-			if (fileName == pathNames[i]) found = true;
+		if (found == false) {
+			for (i = 0; i < pathNameSize; i++)
+			{
+				if (fileName == pathNames[i]) found = true;
+			}
 		}
 		if (found == false) {
 			pathNames = (char**)realloc(pathNames, sizeof(char*) + sizeof(pathNames));
 			pathNames[i] = fileName;
+			std::cout << "Position: " << i << std::endl;
+			std::cout << "PathName: " << pathNames[i] << std::endl;
+			std::cout << "PathName: " << pathNames[0] << std::endl;
+			pathNameSize = sizeof(pathNames) / sizeof(char*);
+			std::cout << "new Size: " << pathNameSize << std::endl;
 			if (sizeof(images) > 0) {
 				images = (graphPresets*)realloc(images, sizeof(images) + sizeof(graphPresets));
 				images[i] = graphPresets(1, new char* [1] {fileName});
+				std::cout << "HMMM" << std::endl;
+				std::cout << "New GraphPreset Size: " << images[i].retrieveHeight() << std::endl;
 			}
 			else {
 				std::cout << "iS THIS WHAT IT IS" << std::endl;
 			}
+			
 			return images[i];
 		}
 		else {
@@ -136,7 +150,40 @@ graphPresets accessImage::recieveOrCreate(char* fileName) {
 void accessImage::currentImages() {
 	std::cout << "iS THIS WHAT IT IS" << std::endl;
 }
-graphMap::graphMap(int Height, int Length, char** filePaths) 
+uint8_t accessImage::retrieveLabel(char* fileName)
+{
+	bool found = false;
+	int i;
+	if(pathNames != nullptr)
+	{
+		int pathNameSize = sizeof(pathNames) / sizeof(char*);
+		if (found == false) 
+		{
+			std::cout << "PathNamesSize: " << pathNameSize << std::endl;
+			for (i = 0; i < pathNameSize; i++)
+			{
+				std::cout << "fileNamme: " << fileName << std::endl;
+				std::cout << "pathName[i]: " << pathNames[i] << std::endl;
+				if (strcmp(fileName, pathNames[i]) == 0) 
+				{ 
+					found = true; 
+				}
+			}
+		}
+	}
+	if(found)
+	{
+		return i;
+	}
+	else
+	{
+		accessImage::recieveOrCreate(fileName);
+		std::cout << "Int I: " << i << std::endl;
+		std::cout << "HERE!?!?!!?" << std::endl;
+		return accessImage::retrieveLabel(fileName);
+	}
+}
+graphMap::graphMap(int Height, int Length, uint8_t map)
 {
 	this->mapHeight = Height;
 	this->mapLength = Length;

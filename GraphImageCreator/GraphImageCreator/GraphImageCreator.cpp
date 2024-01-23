@@ -73,7 +73,9 @@ int main()
     //}
     //outFile.close();
     
-    char fileName[] = "C:/Users/bjupf/Desktop/GraphDisplayHtml/ImageTxtFiles/blank.txt";
+    char fileName[] = "C:/Users/bjupf/Desktop/GraphDisplayHtml/ImageTxtFiles/Arrow.txt";
+    // C:/Users/bjupf/Desktop/GraphDisplayHtml/ImageTxtFiles/blank.txt
+    // C:/Users/bjupf/Desktop/GraphDisplayHtml/ImageTxtFiles/Arrow.txt
 
     std::cout << "Enter File Path" << std::endl;
 
@@ -89,6 +91,7 @@ int main()
         accessImage::recieveOrCreate(fileName);
     }
 
+    cout << "This is the 'Label': " << accessImage::retrieveLabel(fileName) << endl;
     //graphPresets b = accessImage::recieveOrCreate(fileName);
 
    // delete[] myimageArray;
