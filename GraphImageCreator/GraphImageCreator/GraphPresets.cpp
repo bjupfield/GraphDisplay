@@ -109,6 +109,10 @@ int graphPresets::retrieveHeight()
 {
 	return this->imageHeight;
 }
+int graphPresets::retrieveLength()
+{
+	return this->imageLength;
+}
 char ** accessImage::pathNames = nullptr;
 graphPresets* accessImage::images = nullptr;
 int accessImage::pathNamesSize = 0;
@@ -181,9 +185,48 @@ int accessImage::retrieveLabel(char* fileName)
 		return accessImage::retrieveLabel(fileName);
 	}
 }
-graphMap::graphMap(int Height, int Length, uint8_t map)
+graphPresets accessImage::graphPresetLabelled(int label)
+{
+	return images[label];
+}
+graphMap::graphMap(int Length, int Height)
 {
 	this->mapHeight = Height;
 	this->mapLength = Length;
-
+}
+int graphMap::pathToLabel(char* fileName)
+{
+	return accessImage::retrieveLabel(fileName);
+}
+void graphMap::labelMap(int* map)
+{
+	this->mapMap = map;
+}
+int* graphMap::retrieveMap()
+{
+	return this->mapMap;
+}
+int* graphMap::retrieveDimensions()
+{
+	int graphPixelLength = -1;
+	for(int i = 0; i < this->mapHeight; i++)
+	{
+		int curPxielLt = 0;
+		for(int j = 0; j < this->mapLength; j++)
+		{
+			curPxielLt += accessImage::graphPresetLabelled(this->mapMap[j + (i * this->mapLength)]).retrieveLength();
+		}
+		if (curPxielLt > graphPixelLength) graphPixelLength = curPxielLt;
+	}
+	int graphPixelHeight = -1;
+	for (int i = 0; i < this->mapLength; i++)
+	{
+		int curPxielHt = 0;
+		for (int j = 0; j < this->mapHeight; j++)
+		{
+			curPxielHt += accessImage::graphPresetLabelled(this->mapMap[j + i * this->mapHeight]).retrieveHeight();
+		}
+		if (curPxielHt > graphPixelHeight) graphPixelHeight = curPxielHt;
+	}
+	return new int[2] { graphPixelLength, graphPixelHeight };
 }

@@ -16,6 +16,7 @@ private:
 public:
 	graphPresets(int fileAmount, char** fileNames);
 	int retrieveHeight();
+	int retrieveLength();
 };
 static class accessImage {
 private:
@@ -28,19 +29,29 @@ public:
 	static int retrieveLabel(char* fileName);
 	//label is just the int that the pathname is stored in in the array
 	static void currentImages();
+	static graphPresets graphPresetLabelled(int label);
 };
 class graphMap {
 private:
 	int mapHeight;
 	int mapLength;
-	uint8_t* mapMap;
+	int* mapMap;
 	/*
 	lol, maplabel and pathnameslabels are linked arrays which refer to each other, uint8_t maplabel defines the short term references held in mapmap
 	mapMap holds the actual map, which can be any ratio due to mapHeight and mapLength
 	*/
 public:
-	graphMap(int Height, int Length, uint8_t map /*1-D Array representing Two Dimensional Space*/);
-	//dont know what to do here, creating the map needs a label, but labels need to be created in the function hmmm
+	//initializer
+	graphMap(int Height, int Length);
+	//used to retrieve labels from static class
+	int pathToLabel(char* fileName);
+	//
+	void labelMap(int* map);
+	//assigns graph array
+	int* retrieveMap();
+	//retrieves graph array
+	int* retrieveDimensions();
+	//retrieves image dimensions, in a size 2 int array	
 };
 
 #endif

@@ -73,9 +73,11 @@ int main()
     //}
     //outFile.close();
     
-    char fileName[] = "C:/Users/bjupf/Desktop/GraphDisplayHtml/ImageTxtFiles/Arrow.txt";
+    char fileName[] = "C:/Users/bjupf/JpgEncoder/ImageTxtFiles/Arrow.txt";
     // C:/Users/bjupf/Desktop/GraphDisplayHtml/ImageTxtFiles/blank.txt
     // C:/Users/bjupf/Desktop/GraphDisplayHtml/ImageTxtFiles/Arrow.txt
+    //C:/Users/bjupf/JpgEncoder/ImageTxtFiles/blank.txt
+    //C:/Users/bjupf/JpgEncoder/ImageTxtFiles/Arrow.txt
 
     std::cout << "Enter File Path" << std::endl;
 
@@ -95,6 +97,16 @@ int main()
     cout << "This is the 'Label': " << accessImage::retrieveLabel(buffer500) << endl;
     cout << "This is the 'Label': " << accessImage::retrieveLabel(fileName) << endl;
     cout << "This is the 'Label': " << accessImage::retrieveLabel(fileName) << endl;
+
+    graphMap myPath = graphMap(3, 2);
+    cout << "Graph Map Label: " << myPath.pathToLabel(buffer500) << endl;
+    cout << "Graph Map Label: " << myPath.pathToLabel(fileName) << endl;
+    myPath.labelMap(new int[6] {1, 1, 0, 1, 1, 0});
+    cout << "Graph MapMap: " << myPath.retrieveMap() << endl;
+    int* dimensions = myPath.retrieveDimensions();
+    cout << "Map Length: " << dimensions[0] << endl;
+    cout << "Map Height: " << dimensions[1] << endl;
+    
     //graphPresets b = accessImage::recieveOrCreate(fileName);
 
    // delete[] myimageArray;
