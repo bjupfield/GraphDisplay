@@ -1,8 +1,5 @@
-﻿  GraphPresets.cpp
-C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(29,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
-  (compiling source file 'GraphPresets.cpp')
+﻿  GraphImageCreator.cpp
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(31,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
+  (compiling source file 'GraphImageCreator.cpp')
   
-C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphPresets.cpp(16,19): warning C4244: 'initializing': conversion from 'std::streamoff' to 'int', possible loss of data
-C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphPresets.cpp(149): warning C4715: 'accessImage::recieveOrCreate': not all control paths return a value
-x64\Debug\RGBtoYCrCb.obj : warning LNK4042: object specified more than once; extras ignored
   GraphImageCreator.vcxproj -> C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\x64\Debug\GraphImageCreator.exe

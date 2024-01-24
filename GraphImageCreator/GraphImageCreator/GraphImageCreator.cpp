@@ -92,6 +92,9 @@ int main()
     }
 
     cout << "This is the 'Label': " << accessImage::retrieveLabel(fileName) << endl;
+    cout << "This is the 'Label': " << accessImage::retrieveLabel(buffer500) << endl;
+    cout << "This is the 'Label': " << accessImage::retrieveLabel(fileName) << endl;
+    cout << "This is the 'Label': " << accessImage::retrieveLabel(fileName) << endl;
     //graphPresets b = accessImage::recieveOrCreate(fileName);
 
    // delete[] myimageArray;

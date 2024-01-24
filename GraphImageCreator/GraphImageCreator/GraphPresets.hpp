@@ -20,10 +20,12 @@ public:
 static class accessImage {
 private:
 	static char** pathNames;
+	static int pathNamesSize;
 	static graphPresets* images;
+	static int imagesSize;
 public:
 	static graphPresets recieveOrCreate(char* fileName);
-	static uint8_t retrieveLabel(char* fileName);
+	static int retrieveLabel(char* fileName);
 	//label is just the int that the pathname is stored in in the array
 	static void currentImages();
 };
