@@ -79,35 +79,60 @@ int main()
     //C:/Users/bjupf/JpgEncoder/ImageTxtFiles/blank.txt
     //C:/Users/bjupf/JpgEncoder/ImageTxtFiles/Arrow.txt
 
-    std::cout << "Enter File Path" << std::endl;
+    //std::cout << "Enter File Path" << std::endl;
 
-    char buffer500[] = "";
+    //char buffer500[] = "";
 
-    cin >> buffer500;
-    if(buffer500 != "")
-    {
-        accessImage::recieveOrCreate(buffer500);
-    }
-    else 
-    {
-        accessImage::recieveOrCreate(fileName);
-    }
+    //cin >> buffer500;
+    //if(buffer500 != "")
+    //{
+    //    accessImage::recieveOrCreate(buffer500);
+    //}
+    //else 
+    //{
+    //    accessImage::recieveOrCreate(fileName);
+    //}
 
-    cout << "This is the 'Label': " << accessImage::retrieveLabel(fileName) << endl;
-    cout << "This is the 'Label': " << accessImage::retrieveLabel(buffer500) << endl;
-    cout << "This is the 'Label': " << accessImage::retrieveLabel(fileName) << endl;
-    cout << "This is the 'Label': " << accessImage::retrieveLabel(fileName) << endl;
+    //cout << "This is the 'Label': " << accessImage::retrieveLabel(fileName) << endl;
+    //cout << "This is the 'Label': " << accessImage::retrieveLabel(buffer500) << endl;
+    //cout << "This is the 'Label': " << accessImage::retrieveLabel(fileName) << endl;
+    //cout << "This is the 'Label': " << accessImage::retrieveLabel(fileName) << endl;
 
-    graphMap myPath = graphMap(3, 2);
-    cout << "Graph Map Label: " << myPath.pathToLabel(buffer500) << endl;
-    cout << "Graph Map Label: " << myPath.pathToLabel(fileName) << endl;
-    myPath.labelMap(new int[6] {1, 1, 0, 1, 1, 0});
-    cout << "Graph MapMap: " << myPath.retrieveMap() << endl;
-    int* dimensions = myPath.retrieveDimensions();
-    cout << "Map Length: " << dimensions[0] << endl;
-    cout << "Map Height: " << dimensions[1] << endl;
+    //graphMap myPath = graphMap(3, 2);
+    //cout << "Graph Map Label: " << myPath.pathToLabel(buffer500) << endl;
+    //cout << "Graph Map Label: " << myPath.pathToLabel(fileName) << endl;
+    //myPath.labelMap(new int[6] {1, 1, 0, 1, 1, 0});
+    //cout << "Graph MapMap: " << myPath.retrieveMap() << endl;
+    //int* dimensions = myPath.retrieveDimensions();
+    //cout << "Map Length: " << dimensions[0] << endl;
+    //cout << "Map Height: " << dimensions[1] << endl;
     
     //graphPresets b = accessImage::recieveOrCreate(fileName);
+    
+
+
+    ofstream myJpg;
+    myJpg.open("C:/Users/bjupf/JpgEncoder/mybad.jpg");
+
+    if(myJpg.is_open())
+    {
+        //header and appo file write, standard information does not change
+        myJpg << (uint8_t)255;
+        myJpg << (uint8_t)216;
+        myJpg << (uint8_t)255;
+        myJpg << (uint8_t)224;
+        myJpg << (uint8_t)0;
+        myJpg << (uint8_t)16;
+        myJpg << (uint8_t)74;
+        myJpg << (uint8_t)70;
+        myJpg << (uint8_t)73;
+        myJpg << (uint8_t)70;
+        myJpg << (uint8_t)0;
+        const uint8_t* affoHeader = new uint8_t[9]{ (uint8_t)255, (uint8_t)224, (uint8_t)0, (uint8_t)16, (uint8_t)74, (uint8_t)70, (uint8_t)73, (uint8_t)70, (uint8_t)0};
+        myJpg << affoHeader;
+        myJpg.close();
+    }
+
 
    // delete[] myimageArray;
     exit(2);
