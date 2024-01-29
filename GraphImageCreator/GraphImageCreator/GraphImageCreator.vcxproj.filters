@@ -27,9 +27,15 @@
     <ClCompile Include="GraphPresets.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="JPGer.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphPresets.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="JPGer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

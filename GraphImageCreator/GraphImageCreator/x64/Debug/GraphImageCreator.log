@@ -1,5 +1,6 @@
 ﻿  GraphImageCreator.cpp
-C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(33,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(33,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
   (compiling source file 'GraphImageCreator.cpp')
   
-  GraphImageCreator.vcxproj -> C:\Users\bjupf\JpgEncoder\GraphImageCreator\x64\Debug\GraphImageCreator.exe
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphImageCreator.cpp(28,23): warning C4244: 'initializing': conversion from 'std::streamoff' to 'int', possible loss of data
+  GraphImageCreator.vcxproj -> C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\x64\Debug\GraphImageCreator.exe

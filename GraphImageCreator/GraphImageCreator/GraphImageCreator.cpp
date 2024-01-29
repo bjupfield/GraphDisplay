@@ -4,8 +4,10 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <random>
 #include "RGBtoYCrCb.hpp"
 #include "GraphPresets.hpp"
+#include "JPGer.hpp"
 
 using namespace std;
 template <typename T>
@@ -14,66 +16,73 @@ void copyBufferArray(T* source, T* destination, int startIndex, int num);
 int main()
 {
     std::cout << "Hello World!\n";
-    //ifstream image;
-    //image.open("C:/Users/bjupf/Desktop/GraphDisplayHtml/s.jpg", ios::in | ios::binary | ios::ate);
-    //if(!image.is_open())
-    //{
-    //    cout << "Failed To Open!\n" << endl;
-    //    exit(0);
-    //}
+    ifstream image;
+    image.open("C:/Users/bjupf/Desktop/GraphDisplayHtml/yahDig.jpg", ios::in | ios::binary | ios::ate);
+    if(!image.is_open())
+    {
+        cout << "Failed To Open!\n" << endl;
+    }
+    else
+    {
 
-    //int imageSize = image.tellg();
-    //image.seekg(0, ios::beg);
-    //
-    //int rowSize = 40;
-    //uint8_t* myimageArray = new uint8_t[imageSize];
-    //uint8_t* bufferArray = new uint8_t[rowSize];
+        int imageSize = image.tellg();
+        image.seekg(0, ios::beg);
+
+        int rowSize = 2;
+        uint8_t* myimageArray = new uint8_t[imageSize];
+        uint8_t* bufferArray = new uint8_t[rowSize];
 
 
-    //for (int i = 0; i < imageSize / rowSize; i++) 
-    //{
-    //    image.read(reinterpret_cast<char*>(bufferArray), sizeof(uint8_t) * rowSize);
-    //    copyBufferArray(bufferArray, myimageArray, i * rowSize, rowSize);
-    //    cout << i << " row: ";
-    //    for (int j = 0; j < rowSize; j++) 
-    //    {
-    //        cout << std::hex << static_cast<int>(myimageArray[i * rowSize + j]) << " ";
-    //    }
-    //    cout << std::dec << endl;
-    //}
+        for (int i = 0; i < imageSize / rowSize; i++)
+        {
+            image.read(reinterpret_cast<char*>(bufferArray), sizeof(uint8_t) * rowSize);
+            copyBufferArray(bufferArray, myimageArray, i * rowSize, rowSize);
+            cout << i << " row: ";
+            for (int j = 0; j < rowSize; j++)
+            {
+                cout << std::hex << static_cast<int>(myimageArray[i * rowSize + j]) << " ";
+            }
+            cout << std::dec << endl;
+        }
 
-    //cout << "File Size: " << imageSize << " bytes!!" << endl;
-    //delete[] bufferArray;
-    //
-    //image.close();
-    //std::fstream outFile;
-    //outFile.open("C:/Users/bjupf/Desktop/GraphDisplayHtml/newCreatedText.txt", ios::out | ios::trunc);
-    //if (!outFile.is_open())
-    //{
-    //    cout << "Not Open" << endl;
-    //}
-    //int bytes = 0;
-    //while(bytes < imageSize)
-    //{
-    //    if (static_cast<int>(myimageArray[bytes]) == 255) 
-    //    {
-    //        if(static_cast<int>(myimageArray[bytes + 1]) != 0)
-    //        {
-    //            if (bytes != 0) 
-    //            {
-    //                outFile << std::dec << endl;
-    //            }
-    //            outFile << std::dec << "New Section: ";
-    //        }
-    //    }
+        cout << "File Size: " << imageSize << " bytes!!" << endl;
+        delete[] bufferArray;
 
-    //    outFile << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(myimageArray[bytes]) << " ";
+        image.close();
+        std::fstream outFile;
+        outFile.open("C:/Users/bjupf/Desktop/GraphDisplayHtml/newestCreatedText.txt", ios::out | ios::trunc);
+        if (!outFile.is_open())
+        {
+            cout << "Not Open" << endl;
+        }
+        int bytes = 0;
+        while (bytes < imageSize)
+        {
+            cout << "HEY WHAT THE FUCK: " << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(myimageArray[bytes]) << endl;
+            if (static_cast<int>(myimageArray[bytes]) == 255)
+            {
+                if (static_cast<int>(myimageArray[bytes + 1]) != 0)
+                {
+                    if (bytes != 0)
+                    {
+                        outFile << std::dec << endl;
+                    }
+                    outFile << std::dec << "New Section: ";
+                }
+            }
 
-    //    ++bytes;
-    //}
-    //outFile.close();
+            outFile << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(myimageArray[bytes]) << " ";
+
+            ++bytes;
+        }
+        outFile.close();
+
+    }
     
-    char fileName[] = "C:/Users/bjupf/JpgEncoder/ImageTxtFiles/Arrow.txt";
+    char fileName[] = "C:/Users/bjupf/Desktop/GraphDisplayHtml/ImageTxtFiles/blank.txt";
+    char fileName2[] = "C:/Users/bjupf/Desktop/GraphDisplayHtml/ImageTxtFiles/Arrow.txt";
+    //../../ImageTxtFiles/Arrow.txt
+    //../../ImageTxtFiles/blank.txt
     // C:/Users/bjupf/Desktop/GraphDisplayHtml/ImageTxtFiles/blank.txt
     // C:/Users/bjupf/Desktop/GraphDisplayHtml/ImageTxtFiles/Arrow.txt
     //C:/Users/bjupf/JpgEncoder/ImageTxtFiles/blank.txt
@@ -110,29 +119,32 @@ int main()
     //graphPresets b = accessImage::recieveOrCreate(fileName);
     
 
+    //seed random graphmap
+    random_device rd;
+    mt19937 rng(rd());
+    uniform_int_distribution<int> distribution(1, 2);
+    graphMap myGraph = graphMap(4, 6);
+    int label1 = myGraph.pathToLabel(fileName);
+    int label2 = myGraph.pathToLabel(fileName2);
 
-    ofstream myJpg;
-    myJpg.open("C:/Users/bjupf/JpgEncoder/mybad.jpg");
+    int *map = new int[4 * 6];
 
-    if(myJpg.is_open())
+    for(int i = 0; i < 4* 6; i++)
     {
-        //header and appo file write, standard information does not change
-        myJpg << (uint8_t)255;
-        myJpg << (uint8_t)216;
-        myJpg << (uint8_t)255;
-        myJpg << (uint8_t)224;
-        myJpg << (uint8_t)0;
-        myJpg << (uint8_t)16;
-        myJpg << (uint8_t)74;
-        myJpg << (uint8_t)70;
-        myJpg << (uint8_t)73;
-        myJpg << (uint8_t)70;
-        myJpg << (uint8_t)0;
-        const uint8_t* affoHeader = new uint8_t[9]{ (uint8_t)255, (uint8_t)224, (uint8_t)0, (uint8_t)16, (uint8_t)74, (uint8_t)70, (uint8_t)73, (uint8_t)70, (uint8_t)0};
-        myJpg << affoHeader;
-        myJpg.close();
+        if (distribution(rng) == 1) 
+        {
+            map[i] = label1;
+        }
+        else
+        {
+            map[i] = label2;
+        }
     }
+    myGraph.labelMap(map);
 
+    //send randomseeded graphmap to jpger
+    
+    graphMaptoJPG(myGraph);
 
    // delete[] myimageArray;
     exit(2);

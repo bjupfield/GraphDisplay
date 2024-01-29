@@ -41,17 +41,16 @@ private:
 	mapMap holds the actual map, which can be any ratio due to mapHeight and mapLength
 	*/
 public:
-	//initializer
+	//initializer,  only assign height and length, assign map later with labels after retrieving the labels with pathtolabel
 	graphMap(int Height, int Length);
 	//used to retrieve labels from static class
 	int pathToLabel(char* fileName);
-	//
-	void labelMap(int* map);
 	//assigns graph array
-	int* retrieveMap();
+	void labelMap(int* map);
 	//retrieves graph array
-	int* retrieveDimensions();
+	int* retrieveMap();
 	//retrieves image dimensions, in a size 2 int array	
+	int* retrieveDimensions();
 };
 
 #endif
