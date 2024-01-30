@@ -228,5 +228,5 @@ int* graphMap::retrieveDimensions()
 		}
 		if (curPxielHt > graphPixelHeight) graphPixelHeight = curPxielHt;
 	}
-	return new int[2] { graphPixelLength, graphPixelHeight };
+	return new int[2] { graphPixelHeight, graphPixelLength };
 }

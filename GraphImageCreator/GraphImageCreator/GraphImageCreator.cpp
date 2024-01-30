@@ -58,7 +58,7 @@ int main()
         int bytes = 0;
         while (bytes < imageSize)
         {
-            cout << "HEY WHAT THE FUCK: " << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(myimageArray[bytes]) << endl;
+            //cout << "HEY WHAT THE FUCK: " << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(myimageArray[bytes]) << endl;
             if (static_cast<int>(myimageArray[bytes]) == 255)
             {
                 if (static_cast<int>(myimageArray[bytes + 1]) != 0)
