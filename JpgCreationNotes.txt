@@ -70,3 +70,29 @@ and the fourth a ac table of index 1
 this playlist goes over the huffman table stuff really well:
 https://www.youtube.com/watch?v=TlrNCT15NM4&list=PLpsTn9TA_Q8VMDyOPrDKmSJYt1DLgDZU4&index=3
 timestamp:9:33
+
+the formal definition of the forward discrete cosine transform (FDCT)(the discrete cosine transfor that converst to compressed data):
+Svu = 1/4*Cu*Cv*(x=0)∑(7)(Sys*cos(((2x+1)uπ)/16)cos(((2y+1)vπ)/16))
+where:
+Cu = 1/sqrt(2)
+when u = 0
+Cv = 1/sqrt(2)
+when v = 0
+Cu = 1
+otherwise
+Cv = 1
+otherwise
+u = new array y position (discrete-cosine array)
+v = new array x position (discrete-cosine array)
+Syx obviously refers to the non-discrete-cosine arrays position, x being column position and y being row position
+Svu refers to the new arrays position, so u will be the column positon and v the row positon
+notice how the cos values are actually static..., now I understand the bit shifting done
+in the libjpeg
+HOWEVER Notice that the Svu is not Syx, so this means that the new array iterates for every position
+over the entire array, such that for the dc coeffient s(0)(0) it iterates over the entire array to find the dc coeffiecient
+so the total number of iterations for a mcu of this is 64 * 64, as the array iterates over the entire array for each position
+and the standard is 8x8
+pg. 27
+https://www.w3.org/Graphics/JPEG/itu-t81.pdf
+or
+ITU-T T.81 | ISO/IEC 10918-1
