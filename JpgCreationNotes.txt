@@ -36,3 +36,37 @@ CB = Min( Max( 0, Round( 255 * E' CB + 128 ) ), 255 )
 CR = Min( Max( 0, Round( 255 * E' CR + 128 ) ), 255 )
 
 Do notice how these equation first normalize then expand, the normalization is thus not necessary.
+
+
+if the byte ff appears through huffman coding follow it by 00 in the
+image stream, the 00 will be ignored and the ff will be counted as image
+data
+
+also just in case you forget the huffman table used are labeled in the start of scan component,
+I dont know why the quantization tbales and the huffman tables used are stored in different locations...
+guess it allows for multiple huffman tables for different image scans...
+the huffman tables used is defined in a a way such that the 1st 4 bits
+of the byte define the dc table to use and the last 4 bits of the byte define
+the ac table to use
+
+huffman tables are comprised of two types
+ac and dc
+dc refers to the first number in the mcu, the number with the greatest importance
+and ac refers to all others, with them having the greatest likelyhood to be zero
+this information is not in the lovely ccoderun website, but
+the huffman table type and table number is stored in the byte after the length
+in the huffman table
+this byte is called the huffman table in the ccoderun website.
+it has the same storage method as the sos component, where the first 4 bits
+of the byte refer ti which type it is, and the second 4 bits refer to the table index
+it is. this means there can be a total of 8 huffman tables.
+you can see this byte in the files, where after the huffman table lenght
+the huffman tables have the bytes (looking at the byte after the length for four huffman tables)
+00, 10, 01, 11
+these bytes mean that the first huffman table was a dc table of index 0,
+the second table was a ac table of index 0, the third a dc table of index 1,
+and the fourth a ac table of index 1
+
+this playlist goes over the huffman table stuff really well:
+https://www.youtube.com/watch?v=TlrNCT15NM4&list=PLpsTn9TA_Q8VMDyOPrDKmSJYt1DLgDZU4&index=3
+timestamp:9:33
