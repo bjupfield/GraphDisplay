@@ -96,3 +96,16 @@ pg. 27
 https://www.w3.org/Graphics/JPEG/itu-t81.pdf
 or
 ITU-T T.81 | ISO/IEC 10918-1
+
+
+okay this is all the standard implementation of the dct algorthim, but as you noticed in libjpg, they do not use this algorithim
+instead they use an algorithim that is equivalent and faster, the AAN algorithim
+here are a collection of links that explian the algorithim and use it:
+https://unix4lyfe.org/dct-1d/
+https://codereview.stackexchange.com/questions/265527/faster-aan-algorithm-for-calculating-discrete-cosine-transform
+https://unix4lyfe.org/dct/
+http://board.flatassembler.net/topic.php?p=204231
+https://thanglong.ece.jhu.edu/Tran/Pub/binDCT-VLSI.pdf
+https://github.com/prtsh/aan_dct
+https://github.com/phreda4/r4/blob/master/r4/Lib/loadjpg.txt
+also the AANExample.c file has a version of it implemented
