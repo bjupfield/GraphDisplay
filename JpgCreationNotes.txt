@@ -109,3 +109,10 @@ https://thanglong.ece.jhu.edu/Tran/Pub/binDCT-VLSI.pdf
 https://github.com/prtsh/aan_dct
 https://github.com/phreda4/r4/blob/master/r4/Lib/loadjpg.txt
 also the AANExample.c file has a version of it implemented
+
+weird diagram notes:
+
+white dots: no operation
+black dots: addition operation of connecting nodes
+arrows: makes line that the arrows is on negative
+boxes: multiplication of constant

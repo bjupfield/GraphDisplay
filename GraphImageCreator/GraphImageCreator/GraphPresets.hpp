@@ -17,6 +17,7 @@ public:
 	graphPresets(int fileAmount, char** fileNames);
 	int retrieveHeight();
 	int retrieveLength();
+	Pixel retrievePixel(int pos);
 };
 static class accessImage {
 private:
@@ -30,6 +31,7 @@ public:
 	//label is just the int that the pathname is stored in in the array
 	static void currentImages();
 	static graphPresets graphPresetLabelled(int label);
+	static Pixel retrievePixel(int label, int pos);
 };
 class graphMap {
 private:
@@ -51,6 +53,8 @@ public:
 	int* retrieveMap();
 	//retrieves image dimensions, in a size 2 int array	
 	int* retrieveDimensions();
+	//retrievs pixel, based on single dimesnion cooridinate
+	Pixel retrievePixel(int pos);
 };
 
 #endif

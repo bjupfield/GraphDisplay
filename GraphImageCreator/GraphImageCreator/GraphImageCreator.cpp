@@ -8,6 +8,7 @@
 #include "RGBtoYCrCb.hpp"
 #include "GraphPresets.hpp"
 #include "JPGer.hpp"
+#include "Mcuer.hpp"
 
 using namespace std;
 template <typename T>
@@ -144,7 +145,9 @@ int main()
 
     //send randomseeded graphmap to jpger
     
-    graphMaptoJPG(myGraph);
+    MCUS mine = graphPresetToMcus(myGraph);
+    printMcus(mine);
+
 
    // delete[] myimageArray;
     exit(2);

@@ -153,6 +153,10 @@ graphPresets accessImage::recieveOrCreate(char* fileName) {
 		imagesSize = 1;
 	}
 }
+Pixel graphPresets::retrievePixel(int pos)
+{
+	return image[pos];
+}
 void accessImage::currentImages() {
 	std::cout << "iS THIS WHAT IT IS" << std::endl;
 }
@@ -189,6 +193,10 @@ graphPresets accessImage::graphPresetLabelled(int label)
 {
 	return images[label];
 }
+Pixel accessImage::retrievePixel(int label, int pos) 
+{
+	return images[label].retrievePixel(pos);
+}
 graphMap::graphMap(int Length, int Height)
 {
 	this->mapHeight = Height;
@@ -209,24 +217,35 @@ int* graphMap::retrieveMap()
 int* graphMap::retrieveDimensions()
 {
 	int graphPixelLength = -1;
+	int graphPixelHeight = -1;
 	for(int i = 0; i < this->mapHeight; i++)
 	{
-		int curPxielLt = 0;
 		for(int j = 0; j < this->mapLength; j++)
 		{
-			curPxielLt += accessImage::graphPresetLabelled(this->mapMap[j + (i * this->mapLength)]).retrieveLength();
+			int length = accessImage::graphPresetLabelled(this->mapMap[j + (i * this->mapLength)]).retrieveLength();
+			int height = accessImage::graphPresetLabelled(this->mapMap[j + (i * this->mapLength)]).retrieveHeight();
+			if (length > graphPixelLength) graphPixelLength = length;
+			if (height > graphPixelHeight) graphPixelHeight = height;
 		}
-		if (curPxielLt > graphPixelLength) graphPixelLength = curPxielLt;
 	}
-	int graphPixelHeight = -1;
-	for (int i = 0; i < this->mapLength; i++)
-	{
-		int curPxielHt = 0;
-		for (int j = 0; j < this->mapHeight; j++)
-		{
-			curPxielHt += accessImage::graphPresetLabelled(this->mapMap[j + i * this->mapHeight]).retrieveHeight();
-		}
-		if (curPxielHt > graphPixelHeight) graphPixelHeight = curPxielHt;
-	}
-	return new int[2] { graphPixelHeight, graphPixelLength };
+	return new int[2] { graphPixelHeight * this->mapHeight, graphPixelLength * this->mapLength };
+}
+Pixel graphMap::retrievePixel(int pos)
+{
+	Pixel n = { 0, 0, 0 };
+	int* heightLength = this->retrieveDimensions();
+	int heightMod = heightLength[1] * (heightLength[0] / mapHeight);
+
+	//find which graph preset image inside the graphmap the pixel is in
+	int heightPos = pos / heightMod;
+	int lengthPos = ((pos % heightMod) % heightLength[1]) / (heightLength[1] / this->mapLength);
+
+	//find where the pixel is inside this image
+	int YPixelPosInImage = ((pos % heightMod) / heightLength[1]);
+	int XPixelPosInImage = ((pos % heightMod) % heightLength[1]) % (heightLength[1] / this->mapLength);
+
+	//retrieve pixel form graphpreset
+	n = accessImage::retrievePixel(this->mapMap[heightPos * mapLength + lengthPos], (YPixelPosInImage * (heightLength[1] / mapLength)) + XPixelPosInImage);
+
+	return n;
 }
