@@ -108,6 +108,7 @@ http://board.flatassembler.net/topic.php?p=204231
 https://thanglong.ece.jhu.edu/Tran/Pub/binDCT-VLSI.pdf
 https://github.com/prtsh/aan_dct
 https://github.com/phreda4/r4/blob/master/r4/Lib/loadjpg.txt
+https://drdobbs.com/parallel/algorithm-alley/184410889
 also the AANExample.c file has a version of it implemented
 
 weird diagram notes:

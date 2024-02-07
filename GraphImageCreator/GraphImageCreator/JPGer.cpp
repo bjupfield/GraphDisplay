@@ -32,7 +32,7 @@ static const uint8_t chromaTable[64] =
     256, 256, 512, 1024, 2048, 4096, 7168, 8192
 };//strange possibly unreadable values
 
-	void graphMaptoJPG(graphMap map)
+void graphMaptoJPG(graphMap map)
 	{
 		
         
@@ -87,3 +87,11 @@ static const uint8_t chromaTable[64] =
         }
 
 	}
+//this is a forward dct that only uses integer multiplication and addition
+//it is completely based on the two code snippets provided by
+//Emil Mikulic
+//and https://drdobbs.com/parallel/algorithm-alley/184410889
+void dct_II_uint_8t_int_8x8(uint8_t *mcu)
+{
+
+}
