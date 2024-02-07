@@ -128,3 +128,6 @@ bit shifting by the power of 10, which is multiplying by a 1024, 2^10.
 they then rectify this by bit-subtracting by 10, or whatever number is needed due to rounding at the end
 very clever
 also these guys store the dct as a double, which, I don't know about that
+also notice the right side of the dct are multipliers of the values, not the end values themselves
+
+

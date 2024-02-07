@@ -90,8 +90,159 @@ void graphMaptoJPG(graphMap map)
 //this is a forward dct that only uses integer multiplication and addition
 //it is completely based on the two code snippets provided by
 //Emil Mikulic
+//Pratyush Kumar Ranjan
+//both AAN implementation found in library
 //and https://drdobbs.com/parallel/algorithm-alley/184410889
-void dct_II_uint_8t_int_8x8(uint8_t *mcu)
-{
+//multipliers
+int m1 = 1448; /*.707 (sqrt(2)/2) this is what the multiplier is naturally, instead we use 1448 which is sqrt(2)/2 << 11 or sqrt(2)/2 * 2^11*/;
+int m2;
+int m3 = 1448;//^.707 same as above
+int m4;
+int m5;
 
+
+
+void dct_II_uint_8t_int_8x8(int* target_mcu, uint8_t *source_mcu)
+{
+    //row DCT
+    for (int i = 0; i < 8; i++)
+    {
+
+        //initialization
+        int f0, f1, f2, f3, f4, f5, f6, f7;
+        f0 = source_mcu[i * 8];
+        f1 = source_mcu[1 + i * 8];
+        f2 = source_mcu[2 + i * 8];
+        f3 = source_mcu[3 + i * 8];
+        f4 = source_mcu[4 + i * 8];
+        f5 = source_mcu[5 + i * 8];
+        f6 = source_mcu[6 + i * 8];
+        f7 = source_mcu[7 + i * 8];
+        
+        //iterations before multipliers
+        f0 -= f7;
+        f1 -= f6;
+        f2 -= f5;
+        f3 -= f4;
+        f4 += f3;
+        f5 += f2;
+        f6 += f1;
+        f7 += f0;
+        int x8 = f7;//cant do next step without storing varible
+
+        //top four
+        int x1;
+        int a1, a2;
+        int b1, b4, b2, b3;
+        x1 = a1 + a2;
+        a1 = b1 + b4;
+        a2 = b2 + b3;
+        b1 = f0 + f7;
+        b4 = f3 + f4;
+        b2 = f1 + f6;
+        b3 = f2 + f5;
+
+        int x2;
+        x2 = a1 - a2;
+
+        int x3;
+        int a3, a4;
+        x3 = a3 + a4;
+        a3 = b2 - b3;
+        a4 = b1 - b4;
+
+        int x4;
+        x4 = a4;
+
+        //bottom four
+        f3 = -f3 - f2;
+        f2 += f1;
+        f1 += f0;
+        
+        int x5;
+        int a5;
+        int b5, b6;
+        x5 = a5;
+        a5 = -b5 - b6;
+        b5 = f3 - f4;
+        b6 = f2 - f5;
+
+        int x6;
+        int a6;
+        int b7;
+        x6 = a6;
+        a6 = b6 + b7;
+        b7 = f1 - f6;
+
+        int x7;
+        int a7;
+        int b8;
+        x7 = a7;
+        a7 = b7 + b8;
+        b8 = f0 - f7;
+
+        int x8;
+        int a8;
+        x8 = a8;
+        a8 = b8;
+
+        //post multiplication
+        
+        //top four
+        int F0;
+        int d1;
+        int c1;
+        F0 = d1 >> 3;
+        d1 = c1;
+        c1 = x1;
+
+        int F4;
+        int d2;
+        int c2;
+        F4 = d2 >> 4;
+        d2 = c2;
+        c2 = x2;
+
+        int F2;
+        int d3;
+        int c3, c4;
+        F2 = d3 >> 4;
+        d3 = c3 + c4;
+        c3 = x3 * m1;
+        c4 = x4;
+
+        int F6;
+        int d4;
+        F6 = d4 >> 4;
+        d4 = c4 - c3;
+
+        //bottom four
+
+        int F5;
+        int d8, d5;
+        int c5, c8, c6;
+        int x9;
+        F5 = (d8 + d5) >> 4;
+        d5 = c5;
+        d8 = c8 - c6;
+        c5 = -(x5 * m2) - (x9 * m5);
+        c8 = x8;
+        c6 = x6 * m3;
+        x9 = x5 + x7;
+
+        int F1;
+        int d7, d6;
+        int c7;
+        F1 = (d7 + d6) >> 4;
+        d6 = c6 + c8;
+        d7 = c7;
+        c7 = (x7 * m4) - (x9 * m5);
+
+        int F7;
+        F7 = (d5 - d7) >> 4;
+
+        int F3;
+        F3 = (d8 - d5) >> 4;
+
+    }
 }
