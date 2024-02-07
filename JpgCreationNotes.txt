@@ -111,9 +111,20 @@ https://github.com/phreda4/r4/blob/master/r4/Lib/loadjpg.txt
 https://drdobbs.com/parallel/algorithm-alley/184410889
 also the AANExample.c file has a version of it implemented
 
-weird diagram notes:
+weird diagram can be found at:
+http://board.flatassembler.net/topic.php?p=204231
 
+weird diagram notes:
 white dots: no operation
 black dots: addition operation of connecting nodes
 arrows: makes line that the arrows is on negative
 boxes: multiplication of constant
+
+okay to understand how the bitshifting works on rounding and unrounding the constants,
+you do need to recognize that the flowcharts output side is not aligned with the input side...
+f(4) is not on the same line of F(4).
+but the aanexample algo has a technique that prevents the use of floating point numbers by
+bit shifting by the power of 10, which is multiplying by a 1024, 2^10.
+they then rectify this by bit-subtracting by 10, or whatever number is needed due to rounding at the end
+very clever
+also these guys store the dct as a double, which, I don't know about that
