@@ -130,4 +130,7 @@ very clever
 also these guys store the dct as a double, which, I don't know about that
 also notice the right side of the dct are multipliers of the values, not the end values themselves
 
-
+Okay so IM TRYING TO FIND HOW THE FUCKING CB AND CR VALUES ARE STORED IN THE MCUS AND I CANT
+FIGURE OUT HOW They ARE stored?? ARE THEY STORED RIGHT AFTER THE MCUS Y VALUES OR ARE THEY
+COLLECTIVELY STORED AFTER 4 Y VALUE MCUS COMPONENTS? Downsampling is handled before the DCT so...
+also the book has this information around pg 118

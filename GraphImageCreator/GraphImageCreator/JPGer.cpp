@@ -8,7 +8,7 @@ using namespace std;
 //at 
 //https://legacy.imagemagick.org/discourse-server/viewtopic.php?t=20333
 
-static const uint8_t lumTable[64] =
+static const int lumTable[64] =
 {
     16, 12, 12, 15, 22, 33, 55, 75,
     12, 12, 14, 18, 25, 48, 68, 81,
@@ -20,7 +20,7 @@ static const uint8_t lumTable[64] =
     75, 81, 83, 90, 109, 115, 126, 126
 };
 
-static const uint8_t chromaTable[64] =
+static const int chromaTable[64] =
 {
     17, 18, 24, 47, 99, 128, 192, 256,
     18, 21, 26, 66, 99, 128, 192, 256,
@@ -241,4 +241,9 @@ int* dct_II_uint_8t_int_8x8(uint8_t *source_mcu)
     }
 
     return mcu;
+}
+//this is applied after the DCT
+void quantizer_8x8_int(int* mcu)
+{
+
 }
