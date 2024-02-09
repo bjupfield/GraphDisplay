@@ -30,7 +30,7 @@ static const uint8_t chromaTable[64] =
     128, 128, 192, 256, 512, 1024, 3072, 4096,
     192, 192, 256, 512, 1024, 3072, 6144, 7168,
     256, 256, 512, 1024, 2048, 4096, 7168, 8192
-};//strange possibly unreadable values
+};//strange unreadable values
 
 void graphMaptoJPG(graphMap map)
 	{
@@ -94,16 +94,17 @@ void graphMaptoJPG(graphMap map)
 //both AAN implementation found in library
 //and https://drdobbs.com/parallel/algorithm-alley/184410889
 //multipliers
-int m1 = 1448; /*.707 (sqrt(2)/2) this is what the multiplier is naturally, instead we use 1448 which is sqrt(2)/2 << 11 or sqrt(2)/2 * 2^11*/;
-int m2;
-int m3 = 1448;//^.707 same as above
-int m4;
-int m5;
+int m1 = 724; /*.707 (sqrt(2)/2) this is what the multiplier is naturally, instead we use 1448 which is sqrt(2)/2 << 10 or sqrt(2)/2 * 2^10*/;
+int m2 = 554; /*honeslty dont know what this one is equal to but its starts at .541 we expand it to 554 by >> 10 or .541 * 2^10*/
+//m3 = m1
+int m4 = 669; /*same multiply by 2^9 to get 669 from 1.307*/
+int m5 = 392;/*.383 sin(pi/8), mulltiplied by 2^10 to get 392*/
 
 
 
-void dct_II_uint_8t_int_8x8(int* target_mcu, uint8_t *source_mcu)
+int* dct_II_uint_8t_int_8x8(uint8_t *source_mcu)
 {
+    int* mcu = new int[64];
     //row DCT
     for (int i = 0; i < 8; i++)
     {
@@ -119,130 +120,125 @@ void dct_II_uint_8t_int_8x8(int* target_mcu, uint8_t *source_mcu)
         f6 = source_mcu[6 + i * 8];
         f7 = source_mcu[7 + i * 8];
         
-        //iterations before multipliers
-        f0 -= f7;
-        f1 -= f6;
-        f2 -= f5;
-        f3 -= f4;
-        f4 += f3;
-        f5 += f2;
-        f6 += f1;
-        f7 += f0;
-        int x8 = f7;//cant do next step without storing varible
 
-        //top four
-        int x1;
-        int a1, a2;
-        int b1, b4, b2, b3;
-        x1 = a1 + a2;
-        a1 = b1 + b4;
-        a2 = b2 + b3;
-        b1 = f0 + f7;
-        b4 = f3 + f4;
-        b2 = f1 + f6;
-        b3 = f2 + f5;
-
-        int x2;
-        x2 = a1 - a2;
-
-        int x3;
-        int a3, a4;
-        x3 = a3 + a4;
-        a3 = b2 - b3;
-        a4 = b1 - b4;
-
-        int x4;
-        x4 = a4;
-
-        //bottom four
-        f3 = -f3 - f2;
-        f2 += f1;
-        f1 += f0;
+        //first stage
+        f0 += f7;
+        f1 += f6;
+        f2 += f5;
+        f3 += f4;
         
-        int x5;
-        int a5;
-        int b5, b6;
-        x5 = a5;
-        a5 = -b5 - b6;
-        b5 = f3 - f4;
-        b6 = f2 - f5;
+        f7 = f0 - (f7 << 1);
+        f6 = f1 - (f6 << 1);
+        f5 = f2 - (f5 << 1);
+        f4 = -f3 + (f4 << 1);
 
-        int x6;
-        int a6;
-        int b7;
-        x6 = a6;
-        a6 = b6 + b7;
-        b7 = f1 - f6;
+        //second stage
+        f3 = f0 - f3;
+        f2 = f1 - f2;
+        f1 = -f3 + (f0 << 1) + f2 - (f1 << 1);
+        f2 += f3;
+        f0 = -f1 - (f3 << 1) - (f0 << 2);
 
-        int x7;
-        int a7;
-        int b8;
-        x7 = a7;
-        a7 = b7 + b8;
-        b8 = f0 - f7;
+        f4 -= f5;
+        f5 -= f6;
+        f6 -= f7;
 
-        int x8;
-        int a8;
-        x8 = a8;
-        a8 = b8;
+        //third stage - multiplication
 
-        //post multiplication
-        
-        //top four
-        int F0;
-        int d1;
-        int c1;
-        F0 = d1 >> 3;
-        d1 = c1;
-        c1 = x1;
+        f2 = ((m1 * f2) >> 10) + f3;
+        f3 = (f3 << 1) - f2;
 
-        int F4;
-        int d2;
-        int c2;
-        F4 = d2 >> 4;
-        d2 = c2;
-        c2 = x2;
+        int special = ((f4 + f6) * m5) >> 10;
 
-        int F2;
-        int d3;
-        int c3, c4;
-        F2 = d3 >> 4;
-        d3 = c3 + c4;
-        c3 = x3 * m1;
-        c4 = x4;
+        f5 = f7 + ((f5 * m1) >> 10);
+        f6 = ((f6 * m4) >> 9) - special;
+        f4 = ((f4 * m2) >> 10) + special;
+        f7 = -f5 + (f7 << 1);
 
-        int F6;
-        int d4;
-        F6 = d4 >> 4;
-        d4 = c4 - c3;
+        f5 += f6;
+        f6 = f5 - (f6 << 1);
+        f7 += f4;
+        f4 = f7 - (f4 << 1);
 
-        //bottom four
+        //fourth stage insert into array and bit shift multipliers and ending multipliers from aan algo away
+        //notice the wonky index numbers, this is matching the chart provided at http://board.flatassembler.net/topic.php?p=204231
 
-        int F5;
-        int d8, d5;
-        int c5, c8, c6;
-        int x9;
-        F5 = (d8 + d5) >> 4;
-        d5 = c5;
-        d8 = c8 - c6;
-        c5 = -(x5 * m2) - (x9 * m5);
-        c8 = x8;
-        c6 = x6 * m3;
-        x9 = x5 + x7;
-
-        int F1;
-        int d7, d6;
-        int c7;
-        F1 = (d7 + d6) >> 4;
-        d6 = c6 + c8;
-        d7 = c7;
-        c7 = (x7 * m4) - (x9 * m5);
-
-        int F7;
-        F7 = (d5 - d7) >> 4;
-
-        int F3;
-        F3 = (d8 - d5) >> 4;
-
+        mcu[i * 8] = f0 >> 3;
+        mcu[i * 8 + 4] = f1 >> 4;
+        mcu[i * 8 + 2] = f2 >> 4;
+        mcu[i * 8 + 6] = f3 >> 4;
+        mcu[i * 8 + 5] = f4 >> 4;
+        mcu[i * 8 + 1] = f5 >> 4;
+        mcu[i * 8 + 7] = f6 >> 4;
+        mcu[i * 8 + 3] = f7 >> 4;
     }
+
+    //column DCT only change is in source and output
+    for (int i = 0; i < 8; i++)
+    {
+
+        //initialization
+        int f0, f1, f2, f3, f4, f5, f6, f7;
+        f0 = source_mcu[i];
+        f1 = source_mcu[8 + i];
+        f2 = source_mcu[16 + i];
+        f3 = source_mcu[24 + i];
+        f4 = source_mcu[32 + i];
+        f5 = source_mcu[40 + i];
+        f6 = source_mcu[48 + i];
+        f7 = source_mcu[56 + i];
+
+
+        //first stage
+        f0 += f7;
+        f1 += f6;
+        f2 += f5;
+        f3 += f4;
+
+        f7 = f0 - (f7 << 1);
+        f6 = f1 - (f6 << 1);
+        f5 = f2 - (f5 << 1);
+        f4 = -f3 + (f4 << 1);
+
+        //second stage
+        f3 = f0 - f3;
+        f2 = f1 - f2;
+        f1 = -f3 + (f0 << 1) + f2 - (f1 << 1);
+        f2 += f3;
+        f0 = -f1 - (f3 << 1) - (f0 << 2);
+
+        f4 -= f5;
+        f5 -= f6;
+        f6 -= f7;
+
+        //third stage - multiplication
+
+        f2 = ((m1 * f2) >> 10) + f3;
+        f3 = (f3 << 1) - f2;
+
+        int special = ((f4 + f6) * m5) >> 10;
+
+        f5 = f7 + ((f5 * m1) >> 10);
+        f6 = ((f6 * m4) >> 9) - special;
+        f4 = ((f4 * m2) >> 10) + special;
+        f7 = -f5 + (f7 << 1);
+
+        f5 += f6;
+        f6 = f5 - (f6 << 1);
+        f7 += f4;
+        f4 = f7 - (f4 << 1);
+
+        //fourth stage insert into array and bit shift multipliers
+
+        mcu[i] = f0 >> 3;
+        mcu[i + 32] = f1 >> 4;
+        mcu[i + 16] = f2 >> 4;
+        mcu[i + 48] = f3 >> 4;
+        mcu[i + 40] = f4 >> 4;
+        mcu[i + 8] = f5 >> 4;
+        mcu[i + 56] = f6 >> 4;
+        mcu[i + 24] = f7 >> 4;
+    }
+
+    return mcu;
 }
