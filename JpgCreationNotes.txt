@@ -134,3 +134,14 @@ Okay so IM TRYING TO FIND HOW THE FUCKING CB AND CR VALUES ARE STORED IN THE MCU
 FIGURE OUT HOW They ARE stored?? ARE THEY STORED RIGHT AFTER THE MCUS Y VALUES OR ARE THEY
 COLLECTIVELY STORED AFTER 4 Y VALUE MCUS COMPONENTS? Downsampling is handled before the DCT so...
 also the book has this information around pg 118
+
+okay this might seem obvious but as shown above it kinda confused me? How does JPG determine which
+color component it is on during the scan of the Image data? How does it know how long the segments
+for the Y Cb and Cr components are? Well this is obvious it is done by the already defined sampling factor.
+In the Start of Frame segment the component sampling section is also used to define the order of the components.
+This defines which component comes first, but it also defines the lenght of the segments in the Image Data,
+as the sampling factor determines how long each segment will be, either 64 or 16 signs long.
+Based of this I still need to find out how to do a DCT on the 4x4 segments
+
+okay I found the standard FDCT-II which is used for 4x4 dct, saved to SPIE09_odd_sized_transforms.pdf
+its on pg 4, and its pretty simple as you can see
