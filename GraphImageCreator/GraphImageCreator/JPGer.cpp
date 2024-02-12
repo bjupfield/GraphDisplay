@@ -94,11 +94,11 @@ void graphMaptoJPG(graphMap map)
 //both AAN implementation found in library
 //and https://drdobbs.com/parallel/algorithm-alley/184410889
 //multipliers
-int m1 = 724; /*.707 (sqrt(2)/2) this is what the multiplier is naturally, instead we use 1448 which is sqrt(2)/2 << 10 or sqrt(2)/2 * 2^10*/;
-int m2 = 554; /*honeslty dont know what this one is equal to but its starts at .541 we expand it to 554 by >> 10 or .541 * 2^10*/
+const int m1 = 724; /*.707 (sqrt(2)/2) this is what the multiplier is naturally, instead we use 1448 which is sqrt(2)/2 << 10 or sqrt(2)/2 * 2^10*/;
+const int m2 = 554; /*honeslty dont know what this one is equal to but its starts at .541 we expand it to 554 by >> 10 or .541 * 2^10*/
 //m3 = m1
-int m4 = 669; /*same multiply by 2^9 to get 669 from 1.307*/
-int m5 = 392;/*.383 sin(pi/8), mulltiplied by 2^10 to get 392*/
+const int m4 = 669; /*same multiply by 2^9 to get 669 from 1.307*/
+const int m5 = 392;/*.383 sin(pi/8), mulltiplied by 2^10 to get 392*/
 
 
 
@@ -242,8 +242,157 @@ int* dct_II_uint_8t_int_8x8(uint8_t *source_mcu)
 
     return mcu;
 }
-//this is applied after the DCT
-void quantizer_8x8_int(int* mcu)
+const int m6 = 392;//cos(3pi/8) * 2^10
+const int m7 = 946;//sin(3pi/8) * 2^10
+const int m8 = 1448;//sqrt(2) * 2^10
+int *dct_II_uint_8t_int_4x4(uint8_t* source_mcu)
 {
+    int* mcu = new int[16];
 
+    //row DCT
+    for (int i = 0; i < 4; i++)
+    {
+        int f0, f1, f2, f3;
+
+        //insert stage
+
+        f0 = source_mcu[i * 4];
+        f1 = source_mcu[i * 4 + 1];
+        f2 = source_mcu[i * 4 + 2];
+        f3 = source_mcu[i * 4 + 3];
+
+        //addition pre multipliers
+
+        f0 += f3;
+        f1 += f2;
+        f3 = f0 - (f3 << 1);
+        f2 = f1 - (f2 << 1);
+        
+        //top row addition
+        
+        f0 += f1;
+        f1 = f0 - (f1 << 1);
+
+        //bottom row multipliers
+        int f5 = f2;
+        f2 = (f2 * m6) + (f3 * m7);
+        f3 = (f3 * m6) - (f2 * m7);
+
+        //insert and normalization and bit shift
+        //again notice how insert is not at regular intervals,
+        //refer to document
+        mcu[i * 4] = f0 >> 1;
+        mcu[i * 4 + 2] = f1 >> 1;
+        mcu[i * 4 + 1] = f2 / m8;
+        mcu[i * 4 + 3] = f3 / m8;
+
+    }
+
+    //column DCT
+    for (int i = 0; i < 4; i++)
+    {
+        int f0, f1, f2, f3;
+
+        //insert stage
+
+        f0 = source_mcu[i];
+        f1 = source_mcu[i + 4];
+        f2 = source_mcu[i + 8];
+        f3 = source_mcu[i + 12];
+
+        //addition pre multipliers
+
+        f0 += f3;
+        f1 += f2;
+        f3 = f0 - (f3 << 1);
+        f2 = f1 - (f2 << 1);
+
+        //top row addition
+
+        f0 += f1;
+        f1 = f0 - (f1 << 1);
+
+        //bottom row multipliers
+        int f5 = f2;
+        f2 = (f2 * m6) + (f3 * m7);
+        f3 = (f3 * m6) - (f2 * m7);
+
+        //insert and normalization and bit shift
+        //again notice how insert is not at regular intervals,
+        //refer to document
+        mcu[i] = f0 >> 1;
+        mcu[i + 8] = f1 >> 1;
+        mcu[i + 4] = f2 / m8;
+        mcu[i + 12] = f3 / m8;
+
+    }
+
+}
+//this is applied after the DCT
+void quantizer_8x8_int(int *mcu, const int *table)
+{
+    for (int i = 0; i < 64; i++)
+    {
+        mcu[i] = mcu[i] / table[i];
+    }
+}
+void quantizer_4x4_int(int* mcu, const int* table)
+{
+    for (int i = 0; i < 16; i++)
+    {
+        mcu[i] = mcu[i] / table[i];
+    }
+}
+intMcus::intMcus(MCU uintMcu, dimensions dim)
+{
+    //y loop
+    if (dim.Y == 8)
+    {
+        this->Y = dct_II_uint_8t_int_8x8(uintMcu.Y);
+        quantizer_8x8_int(Y, lumTable);
+    }
+    else if (dim.Y == 4)
+    {
+        this->Y = dct_II_uint_8t_int_8x8(uintMcu.Y);
+        quantizer_4x4_int(Y, lumTable);
+    }
+    //cb loop
+    if(dim.Cb == 8)
+    {
+        this->Cb = dct_II_uint_8t_int_8x8(uintMcu.Cb);
+        quantizer_8x8_int(Cb, chromaTable);
+    }
+    else if (dim.Cb == 4)
+    {
+        this->Cb = dct_II_uint_8t_int_4x4(uintMcu.Cb);
+        quantizer_4x4_int(Cb, chromaTable);
+    }
+    //cr loop
+    if(dim.Cr == 8)
+    {
+        this->Cr == dct_II_uint_8t_int_8x8(uintMcu.Cr);
+        quantizer_8x8_int(Cr, chromaTable);
+    }
+    else if(dim.Cr == 4)
+    {
+        this->Cr == dct_II_uint_8t_int_4x4(uintMcu.Cr);
+        quantizer_4x4_int(Cr, chromaTable);
+    }
+}
+mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
+{
+    this->dim = origin.retrieveDim();
+    this->mcuHeight = origin.retrieveHeight();
+    this->mcuLength = origin.retrieveLength();
+
+    this->mcus = new intMcus[mcuHeight * mcuLength];
+
+    for (int i = 0; i < mcuLength; i++) 
+    {
+        for (int j = 0; j < mcuHeight; j++)
+        {
+            int pos = i + j * mcuLength;
+            mcus[pos] = intMcus(origin.mcuList[pos], origin.retrieveDim());
+        }
+    }
 }

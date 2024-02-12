@@ -28,6 +28,8 @@ private:
 public:
 	MCU* mcuList;
 	int retrieveCount();
+	int retrieveLength();
+	int retrieveHeight();
 	dimensions retrieveDim();
 	MCUS(int height, int length, int YDim, int CbDim, int CrDim);
 };

@@ -82,12 +82,20 @@ MCUS::MCUS(int height, int length, int YDim, int CbDim, int CrDim)
 
 	for(int i = 0; i < height * length; i++)
 	{
-		mcuList[i] = MCU(8, 4, 4);
+		mcuList[i] = MCU(YDim, CbDim, CrDim);
 	}
 }
 int MCUS::retrieveCount()
 {
 	return mcuHeight * mcuLength;
+}
+int MCUS::retrieveLength()
+{
+	return mcuLength;
+}
+int MCUS::retrieveHeight()
+{
+	return mcuHeight;
 }
 dimensions MCUS::retrieveDim()
 {
