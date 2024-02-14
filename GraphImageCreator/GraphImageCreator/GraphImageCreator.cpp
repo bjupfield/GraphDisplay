@@ -18,7 +18,7 @@ int main()
 {
     std::cout << "Hello World!\n";
     ifstream image;
-    image.open("C:/Users/bjupf/Desktop/GraphDisplayHtml/yahDig.jpg", ios::in | ios::binary | ios::ate);
+    image.open("../../yahDig.jpg", ios::in | ios::binary | ios::ate);
     if(!image.is_open())
     {
         cout << "Failed To Open!\n" << endl;
@@ -51,7 +51,7 @@ int main()
 
         image.close();
         std::fstream outFile;
-        outFile.open("C:/Users/bjupf/Desktop/GraphDisplayHtml/newestCreatedText.txt", ios::out | ios::trunc);
+        outFile.open("../../newestCreatedText.txt", ios::out | ios::trunc);
         if (!outFile.is_open())
         {
             cout << "Not Open" << endl;
@@ -80,8 +80,8 @@ int main()
 
     }
     
-    char fileName[] = "C:/Users/bjupf/Desktop/GraphDisplayHtml/ImageTxtFiles/blank.txt";
-    char fileName2[] = "C:/Users/bjupf/Desktop/GraphDisplayHtml/ImageTxtFiles/Arrow.txt";
+    char fileName[] = "../../ImageTxtFiles/blank.txt";
+    char fileName2[] = "../../ImageTxtFiles/Arrow.txt";
     //../../ImageTxtFiles/Arrow.txt
     //../../ImageTxtFiles/blank.txt
     // C:/Users/bjupf/Desktop/GraphDisplayHtml/ImageTxtFiles/blank.txt
@@ -147,7 +147,8 @@ int main()
     
     MCUS mine = graphPresetToMcus(myGraph);
     printMcus(mine);
-
+    mcuHuffmanContainer mine2 = mcuHuffmanContainer(mine);
+    testIntMcus(mine2, 2);
 
    // delete[] myimageArray;
     exit(2);

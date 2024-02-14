@@ -327,14 +327,388 @@ int *dct_II_uint_8t_int_4x4(uint8_t* source_mcu)
 
     }
 
+    return mcu;
 }
 //this is applied after the DCT
 void quantizer_8x8_int(int *mcu, const int *table)
 {
+    for (int i = 0; i < 8; i++)
+    {
+        for (int j = 0; j < 8; j++)
+        {
+            std::cout << mcu[j + i * 8] << " ";
+        }
+        std::cout << std::endl;
+    }
     for (int i = 0; i < 64; i++)
     {
         mcu[i] = mcu[i] / table[i];
     }
+}
+typedef struct {
+    int row0;
+    int row1;
+    int row2;
+    int row3;
+    int row4;
+    int row5;
+    int row6;
+    int row7;
+} dct_stage;
+
+void dct_aan(int*, int*);
+void dct_aan(int* input, int* output) {
+
+    int iter;
+    int temp_buff;
+
+    dct_stage stage1;
+    dct_stage stage2;
+    dct_stage stage3;
+    dct_stage stage4;
+    dct_stage stage5;
+
+    //stage 1
+    stage1.row0 = input[0] + input[6];
+    stage1.row1 = input[1] + input[5];
+    stage1.row2 = input[2] + input[4];
+    stage1.row3 = input[3];
+    stage1.row4 = input[2] - input[4];
+    stage1.row5 = input[1] - input[5];
+    stage1.row6 = input[0] - input[6];
+    stage1.row7 = input[7];
+
+
+    //stage 2
+    stage2.row0 = stage1.row0 + stage1.row3;
+    stage2.row1 = stage1.row1 + stage1.row2;
+    stage2.row2 = stage1.row1 - stage1.row2;
+    stage2.row3 = stage1.row0 - stage1.row3;
+    stage2.row4 = stage1.row4 + stage1.row5;
+    stage2.row5 = stage1.row5 + stage1.row6;
+    stage2.row6 = stage1.row6 + stage1.row7;
+    stage2.row7 = stage1.row7;
+
+    //stage 3
+    stage3.row0 = stage2.row0 + stage2.row1;
+    stage3.row1 = stage2.row0 - stage2.row1;
+    stage3.row2 = stage2.row2 + stage2.row3;
+    stage3.row3 = stage2.row3;
+    stage3.row4 = stage2.row4;
+    stage3.row5 = stage2.row5;
+    stage3.row6 = stage2.row6;
+    stage3.row7 = stage2.row7;
+
+    //stage 4 
+    // a1 = 0.707 0.10110101
+    // a2 = 0.541 0.10001010
+    // a3 = 0.707 0.10110101
+    // a4 = 1.307 1.01001111
+    // a5 = 0.383 0.01100010
+    stage4.row0 = stage3.row0;
+    stage4.row1 = stage3.row1;
+    stage4.row2 = (stage3.row2 >> 1) + (stage3.row2 >> 3) + (stage3.row2 >> 4) + ((stage3.row2 + 32) >> 6) + ((stage3.row2 + 128) >> 8);
+    stage4.row3 = stage3.row3;
+
+    temp_buff = stage3.row4 + stage3.row6;
+    temp_buff = (temp_buff >> 2) + (temp_buff >> 3) + ((temp_buff + 64) >> 7);
+    stage4.row4 = (stage3.row4 >> 1) + ((stage3.row4 + 16) >> 5) + ((stage3.row4 + 64) >> 7) - temp_buff;
+    stage4.row5 = (stage3.row5 >> 1) + (stage3.row5 >> 3) + (stage3.row5 >> 4) + ((stage3.row5 + 32) >> 6) + ((stage3.row5 + 128) >> 8);
+    stage4.row6 = stage3.row6 + (stage3.row6 >> 2) + (stage3.row6 >> 5) + (stage3.row6 >> 6) + (stage3.row6 >> 7) + (stage3.row6 >> 8) - temp_buff;
+    stage4.row7 = stage3.row7;
+
+    //stage 5
+    stage5.row0 = stage4.row0;
+    stage5.row1 = stage4.row1;
+    stage5.row2 = stage4.row3 + stage4.row2;
+    stage5.row3 = stage4.row3 - stage4.row2;
+    stage5.row4 = stage4.row4;
+    stage5.row5 = stage4.row5 + stage4.row7;
+    stage5.row6 = stage4.row6;
+    stage5.row7 = stage4.row7 - stage4.row5;
+
+    //stage 6 Output
+    output[0] = stage5.row0;
+    output[4] = stage5.row1;
+    output[2] = stage5.row2;
+    output[6] = stage5.row3;
+    output[5] = stage5.row4 + stage5.row7;
+    output[1] = stage5.row5 + stage5.row6;
+    output[7] = stage5.row5 - stage5.row6;
+    output[3] = stage5.row4 + stage5.row7;
+
+}
+int* test_8x8_int_DCT(uint8_t *source_mcu)
+{
+    int* mcu = new int[64];
+
+    for(int i = 0; i < 8; i++)
+    {
+        int* row = new int[8];
+        row[0] = source_mcu[i * 8];
+        row[1] = source_mcu[i * 8 + 1];
+        row[2] = source_mcu[i * 8 + 2];
+        row[3] = source_mcu[i * 8 + 3];
+        row[4] = source_mcu[i * 8 + 4];
+        row[5] = source_mcu[i * 8 + 5];
+        row[6] = source_mcu[i * 8 + 6];
+        row[7] = source_mcu[i * 8 + 7];
+
+        int* rowStore = new int[8];
+        dct_aan(row, rowStore);
+
+        mcu[i * 8] = rowStore[0];
+        mcu[i * 8 + 1] = rowStore[1];
+        mcu[i * 8 + 2] = rowStore[2];
+        mcu[i * 8 + 3] = rowStore[3];
+        mcu[i * 8 + 4] = rowStore[4];
+        mcu[i * 8 + 5] = rowStore[5];
+        mcu[i * 8 + 6] = rowStore[6];
+        mcu[i * 8 + 7] = rowStore[7];
+    }
+    for (int i = 0; i < 8; i++)
+    {
+        int* column = new int[8];
+        column[0] = source_mcu[i];
+        column[1] = source_mcu[i + 8];
+        column[2] = source_mcu[i + 16];
+        column[3] = source_mcu[i + 24];
+        column[4] = source_mcu[i + 32];
+        column[5] = source_mcu[i + 40];
+        column[6] = source_mcu[i + 48];
+        column[7] = source_mcu[i + 56];
+
+        int* rowStore = new int[8];
+        dct_aan(column, rowStore);
+
+        mcu[i] = rowStore[0];
+        mcu[i + 8] = rowStore[1];
+        mcu[i + 16] = rowStore[2];
+        mcu[i + 24] = rowStore[3];
+        mcu[i + 32] = rowStore[4];
+        mcu[i + 40] = rowStore[5];
+        mcu[i + 48] = rowStore[6];
+        mcu[i + 56] = rowStore[7];
+
+    }
+
+    return mcu;
+}
+int* test2_dct(uint8_t* source_mcu)
+{
+    int* mcu = new int[64];
+    //row DCT
+    for (int i = 0; i < 8; i++)
+    {
+
+        //initialization
+        int f0, f1, f2, f3, f4, f5, f6, f7;
+        f0 = source_mcu[i * 8];
+        f1 = source_mcu[1 + i * 8];
+        f2 = source_mcu[2 + i * 8];
+        f3 = source_mcu[3 + i * 8];
+        f4 = source_mcu[4 + i * 8];
+        f5 = source_mcu[5 + i * 8];
+        f6 = source_mcu[6 + i * 8];
+        f7 = source_mcu[7 + i * 8];
+
+        //second stage
+        int s0, s1, s2, s3, s4, s5, s6, s7;
+
+        s0 = f0 + f7;
+        s1 = f1 + f6;
+        s2 = f2 + f5;
+        s3 = f3 + f4;
+        s4 = f3 - f4;
+        s5 = f2 - f5;
+        s6 = f1 - f6;
+        s7 = f0 - f7;
+        
+        //third stage
+        int t0, t1, t2, t3, t4, t5, t6, t7;
+
+        t0 = s0 + s3;
+        t1 = s1 + s2;
+        t2 = s1 - s2;
+        t3 = s0 - s3;
+
+        t4 = -s4 - s5;
+        t5 = s5 + s6;
+        t6 = s6 + s7;
+        t7 = s7;
+
+        //fourth stage
+        int q0, q1, q2, q3, q4, q5, q6, q7;
+
+        q0 = t0 + t1;
+        q1 = t0 - t1;
+        q2 = t2 + t3;
+        q3 = t3;
+
+        q4 = t4;
+        q5 = t5;
+        q6 = t6;
+        q7 = t7;
+
+        //mulitplication stage, fifth stage
+        float special;
+        float r0, r1, r2, r3, r4, r5, r6, r7;
+
+        special = (float)(q4 + q6) * 0.383f;
+
+        r0 = (float)q0;
+        r1 = (float)q1;
+        r2 = (float)q2 * 0.707f;
+        r3 = (float)q3;
+
+        r4 = -(float)q4 * 0.541f - special;
+        r5 = (float)q5 * 0.707f;
+        r6 = (float)q6 * 1.307f - special;
+        r7 = (float)q7;
+
+        //sixth stage;
+        float x0, x1, x2, x3, x4, x5, x6, x7;
+
+        x0 = r0;
+        x1 = r1;
+        x2 = r2 + r3;
+        x3 = r3 - r2;
+
+        x4 = r4;
+        x5 = r5 + r7;
+        x6 = r6;
+        x7 = r7 - r5;
+
+        //seventh final stage
+        float v0, v1, v2, v3, v4, v5, v6, v7;
+
+        v0 = x0;
+        v1 = x1;
+        v2 = x2;
+        v3 = x3;
+        
+        v4 = x4 + x7;
+        v5 = x5 + x6;
+        v6 = x5 - x6;
+        v7 = x7 - x4;
+
+        //insert and bit shift
+        mcu[i * 8] = (int)v0 >> 3;
+        mcu[i * 8 + 4] = (int)v1 >> 4;
+        mcu[i * 8 + 2] = (int)v2 >> 4;
+        mcu[i * 8 + 6] = (int)v3 >> 4;
+        mcu[i * 8 + 5] = (int)v4 >> 4;
+        mcu[i * 8 + 1] = (int)v5 >> 4;
+        mcu[i * 8 + 7] = (int)v6 >> 4;
+        mcu[i * 8 + 3] = (int)v7 >> 4;
+    }
+    //column DCT
+    for (int i = 0; i < 8; i++)
+    {
+
+        //initialization
+        int f0, f1, f2, f3, f4, f5, f6, f7;
+        f0 = source_mcu[i];
+        f1 = source_mcu[i + 8];
+        f2 = source_mcu[i + 16];
+        f3 = source_mcu[i + 24];
+        f4 = source_mcu[i + 32];
+        f5 = source_mcu[i + 40];
+        f6 = source_mcu[6 + 48];
+        f7 = source_mcu[7 + 56];
+
+        //second stage
+        int s0, s1, s2, s3, s4, s5, s6, s7;
+
+        s0 = f0 + f7;
+        s1 = f1 + f6;
+        s2 = f2 + f5;
+        s3 = f3 + f4;
+        s4 = f3 - f4;
+        s5 = f2 - f5;
+        s6 = f1 - f6;
+        s7 = f0 - f7;
+
+        //third stage
+        int t0, t1, t2, t3, t4, t5, t6, t7;
+
+        t0 = s0 + s3;
+        t1 = s1 + s2;
+        t2 = s1 - s2;
+        t3 = s0 - s3;
+
+        t4 = -s4 - s5;
+        t5 = s5 + s6;
+        t6 = s6 + s7;
+        t7 = s7;
+
+        //fourth stage
+        int q0, q1, q2, q3, q4, q5, q6, q7;
+
+        q0 = t0 + t1;
+        q1 = t0 - t1;
+        q2 = t2 + t3;
+        q3 = t3;
+
+        q4 = t4;
+        q5 = t5;
+        q6 = t6;
+        q7 = t7;
+
+        //mulitplication stage, fifth stage
+        float special;
+        float r0, r1, r2, r3, r4, r5, r6, r7;
+
+        special = (float)(q4 + q6) * 0.383f;
+
+        r0 = (float)q0;
+        r1 = (float)q1;
+        r2 = (float)q2 * 0.707f;
+        r3 = (float)q3;
+
+        r4 = -(float)q4 * 0.541f - special;
+        r5 = (float)q5 * 0.707f;
+        r6 = (float)q6 * 1.307f - special;
+        r7 = (float)q7;
+
+        //sixth stage;
+        float x0, x1, x2, x3, x4, x5, x6, x7;
+
+        x0 = r0;
+        x1 = r1;
+        x2 = r2 + r3;
+        x3 = r3 - r2;
+
+        x4 = r4;
+        x5 = r5 + r7;
+        x6 = r6;
+        x7 = r7 - r5;
+
+        //seventh final stage
+        float v0, v1, v2, v3, v4, v5, v6, v7;
+
+        v0 = x0;
+        v1 = x1;
+        v2 = x2;
+        v3 = x3;
+
+        v4 = x4 + x7;
+        v5 = x5 + x6;
+        v6 = x5 - x6;
+        v7 = x7 - x4;
+
+        //insert and bit shift
+        mcu[i] = (int)v0 >> 3;
+        mcu[i + 32] = (int)v1 >> 4;
+        mcu[i + 16] = (int)v2 >> 4;
+        mcu[i + 48] = (int)v3 >> 4;
+        mcu[i + 40] = (int)v4 >> 4;
+        mcu[i + 8] = (int)v5 >> 4;
+        mcu[i + 56] = (int)v6 >> 4;
+        mcu[i + 24] = (int)v7 >> 4;
+    }
+    
+    return mcu;
 }
 void quantizer_4x4_int(int* mcu, const int* table)
 {
@@ -348,7 +722,10 @@ intMcus::intMcus(MCU uintMcu, dimensions dim)
     //y loop
     if (dim.Y == 8)
     {
-        this->Y = dct_II_uint_8t_int_8x8(uintMcu.Y);
+        //this->Y = dct_II_uint_8t_int_8x8(uintMcu.Y);
+        //testing
+        this->Y = test_8x8_int_DCT(uintMcu.Y);
+        //this->Y = test2_dct(uintMcu.Y);
         quantizer_8x8_int(Y, lumTable);
     }
     else if (dim.Y == 4)
@@ -356,6 +733,7 @@ intMcus::intMcus(MCU uintMcu, dimensions dim)
         this->Y = dct_II_uint_8t_int_8x8(uintMcu.Y);
         quantizer_4x4_int(Y, lumTable);
     }
+    std::cout << "The Y dimension is: " << dim.Y << std::endl;
     //cb loop
     if(dim.Cb == 8)
     {
@@ -367,17 +745,19 @@ intMcus::intMcus(MCU uintMcu, dimensions dim)
         this->Cb = dct_II_uint_8t_int_4x4(uintMcu.Cb);
         quantizer_4x4_int(Cb, chromaTable);
     }
+    std::cout << "The Cb dimension is: " << dim.Cb << std::endl;
     //cr loop
     if(dim.Cr == 8)
     {
-        this->Cr == dct_II_uint_8t_int_8x8(uintMcu.Cr);
+        this->Cr = dct_II_uint_8t_int_8x8(uintMcu.Cr);
         quantizer_8x8_int(Cr, chromaTable);
     }
     else if(dim.Cr == 4)
     {
-        this->Cr == dct_II_uint_8t_int_4x4(uintMcu.Cr);
+        this->Cr = dct_II_uint_8t_int_4x4(uintMcu.Cr);
         quantizer_4x4_int(Cr, chromaTable);
     }
+    std::cout << "The Cr dimension is: " << dim.Cr << std::endl;
 }
 mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
 {
@@ -394,5 +774,16 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
             int pos = i + j * mcuLength;
             mcus[pos] = intMcus(origin.mcuList[pos], origin.retrieveDim());
         }
+    }
+}
+void testIntMcus(mcuHuffmanContainer mine, int num)
+{
+    for(int i = 0; i < mine.dim.Y; i++)
+    {
+        for(int j = 0; j < mine.dim.Y; j++)
+        {
+            std::cout << mine.mcus[num].Y[j + i * mine.dim.Y] << " ";
+        }
+        std::cout << std::endl;
     }
 }
