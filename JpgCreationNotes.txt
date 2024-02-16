@@ -145,3 +145,56 @@ Based of this I still need to find out how to do a DCT on the 4x4 segments
 
 okay I found the standard FDCT-II which is used for 4x4 dct, saved to SPIE09_odd_sized_transforms.pdf
 its on pg 4, and its pretty simple as you can see
+
+
+//okay below here is going to be my detailed notes on Jpg huffman tables and coding
+
+huffman codes cannot have value start with the value of another huffman code, obvious reasons,
+The 16 byte info in the jpg huffman table defines the amount of huffman codes of each length there are
+^ Part 1 21:24
+The Huffman Codes are stored in an odd way. The Part 1 describes it a 25:00 but it stores it in the algorithim
+of bit shifiting the the code to the left by 1 every bit size addition, and adding one for every new code
+so the first code will be a code of 0 * the size of the code, the second if its on the same byte size will be
+the second will be 0 * size of code with the last zero being changed to 1
+
+okay part 2 finally has something useful
+timestamp 21:00 shows howsymbols are related to the huffman code... suprise suprise the symbols
+are stored in a single array taht corresponds to the which code is being used by in the huffman code
+array. although the huffman code arrays is only 16 bytes long, because it stores more information the codes
+will correspond to the table in this way
+-> we apply this by now knowing how to convert the symbols to the code,
+iterate through all the mcus find the frequency of all values, 
+then we organize the frequencies from most frequent to least frequent
+then we count how many values there are
+then based on the number of values we create our huffman table
+by the method in the part 1 section above, we organize the values into the least possible length
+huffman table, which is to group the least frequency values with the least, add the frequencies of the least together,
+and regressively group them
+ex:
+Fr|valu
+10|2
+6|3
+2|1
+2|5
+1|7
+1|8
+
+we would group the values 8 and 7 together, the new frequency of this pair would be 2,
+than we would group the next tow lowest frequencies together. However now we have three with the 
+value of 2 so what do we do? we group the pair with an arbitraly choosen value. So we would group
+the pair of 8 and 7 with the value 5. Now we have a group comrpised of pair 8 and 7, and 5 with a frequency value of 4.
+We than group the lowest frequency values together. Which are the 1 and the above group. Now we have a new group of frequency 6,
+we than group this group with value 3, and then we have a group of frequency 12, which we group with value 2, which concludes the table.
+The groups i think are something like the coefficient outputs are the position in this group that the grouping algo has created.
+
+okay I think we can calculate the coefficient values with how bit shifting from the left the coefficient for the value
+whenver its grouped.
+so like the value 7 in the example above would start out as 1 or 0, just arbitrarily, but than when its grouped with
+8 it would be bit shifted from the left by 1 resulting in 01 or 00, then when that group is grouped with the value 5 it would
+be bit shifted again by 1 resulting in that group of the values 8 and 7, and 5 coefficients being 001 and 000, and 01
+wait that doesnt work... hmmmm
+okay to solve this we need to look at how the huffman coefficients are generated for jpg
+part 1 timestamp 25:00 covers this
+
+
+okay I also stopped watching the thing at 21:33
