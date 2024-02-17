@@ -33,6 +33,9 @@
     <ClCompile Include="Mcuer.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="DumbFuncsNClasses.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphPresets.hpp">
@@ -42,6 +45,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Mcuer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DumbFuncsNClasses.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

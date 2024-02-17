@@ -9,10 +9,9 @@
 #include "GraphPresets.hpp"
 #include "JPGer.hpp"
 #include "Mcuer.hpp"
+#include "DumbFuncsNClasses.hpp"
 
 using namespace std;
-template <typename T>
-void copyBufferArray(T* source, T* destination, int startIndex, int num);
 
 int main()
 {
@@ -37,7 +36,7 @@ int main()
         for (int i = 0; i < imageSize / rowSize; i++)
         {
             image.read(reinterpret_cast<char*>(bufferArray), sizeof(uint8_t) * rowSize);
-            copyBufferArray(bufferArray, myimageArray, i * rowSize, rowSize);
+            copyArray(bufferArray, myimageArray, i * rowSize, rowSize);
             cout << i << " row: ";
             for (int j = 0; j < rowSize; j++)
             {
@@ -152,14 +151,6 @@ int main()
 
    // delete[] myimageArray;
     exit(2);
-}
-template <typename T>
-void copyBufferArray(T* source, T* destination, int startIndex, int num) 
-{
-    for (int b = startIndex; b < startIndex + num; b++) 
-    {
-        destination[b] = source[b - startIndex];
-    }
 }
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
 // Debug program: F5 or Debug > Start Debugging menu

@@ -2,9 +2,8 @@
 #include <stdint.h>
 #include "Mcuer.hpp"
 #include "GraphPresets.hpp"
+#include "DumbFuncsNClasses.hpp"
 
-template <typename T>
-void copyBufferArray(T* source, T* destination, int startIndex, int num);
 uint8_t* extractYCbCr(Pixel* pixel, int size);
 
 MCUS graphPresetToMcus(graphMap Map) {
@@ -33,7 +32,7 @@ MCUS graphPresetToMcus(graphMap Map) {
 			uint8_t* Cbvalue = new uint8_t[16];
 			uint8_t* Crvalue = new uint8_t[16];
 
-			copyBufferArray(undivided, Yvalue, 0, 64);
+			copyArray(undivided, Yvalue, 0, 64);
 			for(int k = 0; k < 16; k++)
 			{
 				Cbvalue[k] = (uint8_t)(((int)undivided[64 + k * 4] + (int)undivided[64 + k * 4 + 1] + (int)undivided[64 + k * 4 + 16] + (int)undivided[64 + k * 4 + 16 +1]) / 4);
@@ -130,11 +129,3 @@ uint8_t* extractYCbCr(Pixel* pixel, int size) {
 	}
 	return myYCbCrArray;
 };
-template <typename T>
-void copyBufferArray(T* source, T* destination, int startIndex, int num)
-{
-	for (int b = startIndex; b < startIndex + num; b++)
-	{
-		destination[b] = source[b - startIndex];
-	}
-}
