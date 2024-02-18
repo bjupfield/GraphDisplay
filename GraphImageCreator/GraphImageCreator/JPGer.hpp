@@ -2,6 +2,7 @@
 #define JPGER_HPP
 #include "GraphPresets.hpp"
 #include "Mcuer.hpp"
+#include "DumbFuncsNClasses.hpp"
 
 void graphMaptoJPG(graphMap map);
 

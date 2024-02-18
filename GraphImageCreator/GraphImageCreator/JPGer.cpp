@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "JPGer.hpp"
+#include "DumbFuncsNClasses.hpp"
 
 using namespace std;
 
@@ -31,6 +32,17 @@ static const int chromaTable[64] =
     192, 192, 256, 512, 1024, 3072, 6144, 7168,
     256, 256, 512, 1024, 2048, 4096, 7168, 8192
 };//strange unreadable values
+static const int chromaTable_2[16] =
+{
+    17, 18, 24, 47,
+    18, 21, 26, 66,
+    24, 26, 56, 99,
+    47, 66, 99, 128,
+};
+
+void yFrequency(int yDim, int* yTable, fakeDictionary<int, int> Dc, fakeDictionary<int, int> &Ac);
+void cFrequency(int cDim, int* cbTable, int* crTable, fakeDictionary<int, int> Dc, fakeDictionary<int, int> &Ac);
+
 
 void graphMaptoJPG(graphMap map)
 	{
@@ -332,14 +344,6 @@ int *dct_II_uint_8t_int_4x4(uint8_t* source_mcu)
 //this is applied after the DCT
 void quantizer_8x8_int(int *mcu, const int *table)
 {
-    for (int i = 0; i < 8; i++)
-    {
-        for (int j = 0; j < 8; j++)
-        {
-            std::cout << mcu[j + i * 8] << " ";
-        }
-        std::cout << std::endl;
-    }
     for (int i = 0; i < 64; i++)
     {
         mcu[i] = mcu[i] / table[i];
@@ -733,7 +737,6 @@ intMcus::intMcus(MCU uintMcu, dimensions dim)
         this->Y = dct_II_uint_8t_int_8x8(uintMcu.Y);
         quantizer_4x4_int(Y, lumTable);
     }
-    std::cout << "The Y dimension is: " << dim.Y << std::endl;
     //cb loop
     if(dim.Cb == 8)
     {
@@ -743,9 +746,8 @@ intMcus::intMcus(MCU uintMcu, dimensions dim)
     else if (dim.Cb == 4)
     {
         this->Cb = dct_II_uint_8t_int_4x4(uintMcu.Cb);
-        quantizer_4x4_int(Cb, chromaTable);
+        quantizer_4x4_int(Cb, chromaTable_2);
     }
-    std::cout << "The Cb dimension is: " << dim.Cb << std::endl;
     //cr loop
     if(dim.Cr == 8)
     {
@@ -755,9 +757,8 @@ intMcus::intMcus(MCU uintMcu, dimensions dim)
     else if(dim.Cr == 4)
     {
         this->Cr = dct_II_uint_8t_int_4x4(uintMcu.Cr);
-        quantizer_4x4_int(Cr, chromaTable);
+        quantizer_4x4_int(Cr, chromaTable_2);
     }
-    std::cout << "The Cr dimension is: " << dim.Cr << std::endl;
 }
 mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
 {
@@ -767,14 +768,44 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
 
     this->mcus = new intMcus[mcuHeight * mcuLength];
 
+    fakeDictionary<int,int> freqYDc = fakeDictionary<int,int>();
+    fakeDictionary<int,int> freqYAc = fakeDictionary<int,int>();
+    fakeDictionary<int,int> freqCDc = fakeDictionary<int,int>();
+    fakeDictionary<int,int> freqCAc = fakeDictionary<int,int>();
+
     for (int i = 0; i < mcuLength; i++) 
     {
         for (int j = 0; j < mcuHeight; j++)
         {
             int pos = i + j * mcuLength;
             mcus[pos] = intMcus(origin.mcuList[pos], origin.retrieveDim());
+            yFrequency(this->dim.Y, mcus[pos].Y, freqYDc, freqYAc);
+            cFrequency(this->dim.Cb, mcus[pos].Cb, mcus[pos].Cr, freqCDc, freqCAc);
         }
     }
+    
+    for (int n = 0; n < 20; n++)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                std::cout << this->mcus[n].Cr[j + i * 4] << ", ";
+            }
+            std::cout << std::endl;
+        }
+    }
+
+
+    int* keys = freqCAc.retrieveAllKeys();
+    std::cout << "HELLLLLLLLLLLLOOOOOOOO" << std::endl;
+    std::cout << "count: " << freqCAc.returnCount() << std::endl;
+    for (int i = 0; i < freqCAc.returnCount(); i++)
+    {
+        std::cout << "Value: " << keys[i] << " || Frequency: " << freqCAc.retrieveTerm(keys[i]) << std::endl;
+    }
+    delete keys;
+
 }
 void testIntMcus(mcuHuffmanContainer mine, int num)
 {
@@ -786,4 +817,37 @@ void testIntMcus(mcuHuffmanContainer mine, int num)
         }
         std::cout << std::endl;
     }
+}
+void yFrequency(int yDim, int* yTable, fakeDictionary<int,int> Dc, fakeDictionary<int,int> &Ac)
+{
+    //dc
+
+    
+    
+    //ac
+
+    for (int i = 1; i < yDim * yDim; i++)
+    {
+        if (Ac.addPair(yTable[i], 1) == -1) 
+        {
+            Ac.changeTerm(yTable[i], Ac.retrieveTerm(yTable[i]) + 1);
+        }
+    }
+    std::cout << Ac.returnCount() << std::endl;
+
+}
+void cFrequency(int cDim, int* cbTable, int*crTable, fakeDictionary<int, int> Dc, fakeDictionary<int, int> &Ac)
+{
+    //dc
+
+
+
+    //ac
+
+    for (int i = 1; i < cDim * cDim; i++)
+    {
+        if (Ac.addPair(cbTable[i], 1) == -1)Ac.changeTerm(cbTable[i], Ac.retrieveTerm(cbTable[i]) + 1);
+        if (Ac.addPair(crTable[i], 1) == -1)Ac.changeTerm(crTable[i], Ac.retrieveTerm(crTable[i]) + 1);
+    }
+
 }

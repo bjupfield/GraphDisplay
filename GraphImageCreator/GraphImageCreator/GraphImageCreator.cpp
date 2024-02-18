@@ -147,7 +147,7 @@ int main()
     MCUS mine = graphPresetToMcus(myGraph);
     printMcus(mine);
     mcuHuffmanContainer mine2 = mcuHuffmanContainer(mine);
-    testIntMcus(mine2, 2);
+    //testIntMcus(mine2, 2);
 
    // delete[] myimageArray;
     exit(2);

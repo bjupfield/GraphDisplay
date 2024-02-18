@@ -1,6 +1,5 @@
 #ifndef DUMBFUNCSNCLASSES_HPP
 #define DUMBFUNCSNCLASSES_HPP
-#include <cstdlib>
 
 template <typename Key, typename Term>
 class fakeDictionary
@@ -11,40 +10,42 @@ private:
 	int count;
 	int pos;
 public:
+	//fakeDictionary() : keys(nullptr), terms(nullptr), count(0), pos(0) {}
 	fakeDictionary();
 	int addPair(Key key, Term term);
 	int changeTerm(Key key, Term term);
 	int removePair(Key key, Term term);
 	Term retrieveTerm(Key key);
 	Key* retrieveKeys(Term term);
+	Key* retrieveAllKeys();
+	int returnCount();
 }
 ;
 template <typename T>
-int searchArray(T exist, T* in)
+int searchArray(T exist, T* in, int length)
 {
-	int pos = 0;
-	for (T& item : in)
+	for (int i = 0; i < length; i++)
 	{
-		if (exist == item) {
-			return pos;
+		if (exist == in[i]) {
+			return i;
 		}
-		++pos;
 	}
 	return -1;
 }
 
+#include <cstdlib>
 //lol first int will be size of array heheheheheheheheeheheh evil evil
 template <typename T>
-int* searchArrayAll(T exist, T* in)
+int* searchArrayAll(T exist, T* in, int length)
 {
-	int* evilCommited = malloc(sizeof(int));
+	int* evilCommited = (int*)malloc(sizeof(int));
 	evilCommited[0] = 0;
 	int pos = 0;
-	for (T& item : in)
+	for (int i = 0; i < length; i++)
 	{
-		if (exist == item) {
+		if (exist == in[i]) {
 			evilCommited[0] += 1;
-			evilCommited = realloc(evilCommited, sizeof(int) * evilCommited[0]);
+			evilCommited = (int*)realloc(evilCommited, sizeof(int) * evilCommited[0]);
 			evilCommited[evilCommited[0]] = pos;
 		}
 		++pos;
@@ -60,6 +61,7 @@ void copyArray(T* source, T* destination, int startIndex, int num)
 		destination[b] = source[b - startIndex];
 	}
 }
+
 
 
 #endif
