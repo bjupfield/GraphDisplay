@@ -12,7 +12,12 @@ public:
 	int* Cb;
 	int* Cr;
 	intMcus() : Y(nullptr), Cb(nullptr), Cr(nullptr) {}
-	intMcus(MCU uintMcu, dimensions dim);
+	intMcus(MCU uintMcu, dimensions dim, int previousCoefficient);
+};
+class huffmanTable {
+public:
+	uint8_t amount[16];
+	uint8_t sortedValue[255];
 };
 class mcuHuffmanContainer {
 private:

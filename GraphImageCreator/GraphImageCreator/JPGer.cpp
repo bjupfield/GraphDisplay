@@ -40,8 +40,9 @@ static const int chromaTable_2[16] =
     47, 66, 99, 128,
 };
 
-void yFrequency(int yDim, int* yTable, fakeDictionary<int, int> Dc, fakeDictionary<int, int> &Ac);
-void cFrequency(int cDim, int* cbTable, int* crTable, fakeDictionary<int, int> Dc, fakeDictionary<int, int> &Ac);
+void yFrequency(int yDim, int* yTable, fakeDictionary<int, int> &Dc, fakeDictionary<int, int> &Ac);
+void cFrequency(int cDim, int* cbTable, int* crTable, fakeDictionary<int, int> &Dc, fakeDictionary<int, int> &Ac);
+int intSorter(int a, int b);
 
 
 void graphMaptoJPG(graphMap map)
@@ -114,7 +115,7 @@ const int m5 = 392;/*.383 sin(pi/8), mulltiplied by 2^10 to get 392*/
 
 
 
-int* dct_II_uint_8t_int_8x8(uint8_t *source_mcu)
+int* dct_II_uint_8t_int_8x8(uint8_t *source_mcu, int previousCoefficient)
 {
     int* mcu = new int[64];
     //row DCT
@@ -252,12 +253,13 @@ int* dct_II_uint_8t_int_8x8(uint8_t *source_mcu)
         mcu[i + 24] = f7 >> 4;
     }
 
+    mcu[0] = mcu[0] - previousCoefficient;
     return mcu;
 }
 const int m6 = 392;//cos(3pi/8) * 2^10
 const int m7 = 946;//sin(3pi/8) * 2^10
 const int m8 = 1448;//sqrt(2) * 2^10
-int *dct_II_uint_8t_int_4x4(uint8_t* source_mcu)
+int *dct_II_uint_8t_int_4x4(uint8_t* source_mcu, int previousCoefficient)
 {
     int* mcu = new int[16];
 
@@ -288,7 +290,7 @@ int *dct_II_uint_8t_int_4x4(uint8_t* source_mcu)
         //bottom row multipliers
         int f5 = f2;
         f2 = (f2 * m6) + (f3 * m7);
-        f3 = (f3 * m6) - (f2 * m7);
+        f3 = (f3 * m6) - (f5 * m7);
 
         //insert and normalization and bit shift
         //again notice how insert is not at regular intervals,
@@ -327,7 +329,7 @@ int *dct_II_uint_8t_int_4x4(uint8_t* source_mcu)
         //bottom row multipliers
         int f5 = f2;
         f2 = (f2 * m6) + (f3 * m7);
-        f3 = (f3 * m6) - (f2 * m7);
+        f3 = (f3 * m6) - (f5 * m7);
 
         //insert and normalization and bit shift
         //again notice how insert is not at regular intervals,
@@ -339,12 +341,20 @@ int *dct_II_uint_8t_int_4x4(uint8_t* source_mcu)
 
     }
 
+    mcu[0] = mcu[0] - previousCoefficient;
     return mcu;
 }
 //this is applied after the DCT
 void quantizer_8x8_int(int *mcu, const int *table)
 {
     for (int i = 0; i < 64; i++)
+    {
+        mcu[i] = mcu[i] / table[i];
+    }
+}
+void quantizer_4x4_int(int* mcu, const int* table)
+{
+    for (int i = 0; i < 16; i++)
     {
         mcu[i] = mcu[i] / table[i];
     }
@@ -442,7 +452,7 @@ void dct_aan(int* input, int* output) {
     output[3] = stage5.row4 + stage5.row7;
 
 }
-int* test_8x8_int_DCT(uint8_t *source_mcu)
+int* test_8x8_int_DCT(uint8_t *source_mcu, int previousCoefficient)
 {
     int* mcu = new int[64];
 
@@ -496,9 +506,10 @@ int* test_8x8_int_DCT(uint8_t *source_mcu)
 
     }
 
+    mcu[0] = mcu[0] - previousCoefficient;
     return mcu;
 }
-int* test2_dct(uint8_t* source_mcu)
+int* test2_dct(uint8_t* source_mcu, int previousCoefficient)
 {
     int* mcu = new int[64];
     //row DCT
@@ -712,51 +723,136 @@ int* test2_dct(uint8_t* source_mcu)
         mcu[i + 24] = (int)v7 >> 4;
     }
     
+    mcu[0] = mcu[0] - previousCoefficient;
     return mcu;
 }
-void quantizer_4x4_int(int* mcu, const int* table)
+int* dct_II_uint_8t_int_4x4_TEST(uint8_t* source_mcu, int previousCoefficient)
 {
-    for (int i = 0; i < 16; i++)
+    int* mcu = new int[16];
+
+    //row DCT
+    for (int i = 0; i < 4; i++)
     {
-        mcu[i] = mcu[i] / table[i];
+        int f0, f1, f2, f3;
+
+        //insert stage
+
+        f0 = source_mcu[i * 4];
+        f1 = source_mcu[i * 4 + 1];
+        f2 = source_mcu[i * 4 + 2];
+        f3 = source_mcu[i * 4 + 3];
+
+        //first stage
+
+        int x0, x1, x2, x3;
+
+        x0 = f0 + f3;
+        x1 = f1 + f2;
+        x2 = f1 - f2;;
+        x3 = f0 - f3;;
+
+        //second stage
+
+        int s0, s1, s2, s3;
+
+        s0 = x0 + x1;
+        s1 = x0 - x1;
+        s2 = (x2 * m6) + (x3 * m7);
+        s3 = (x3 * m6) + (x2 * m7);
+
+        //bit shift and divide
+
+        mcu[i * 4] = s0 >> 1;
+        mcu[i * 4 + 2] = s1 >> 1;
+        mcu[i * 4 + 1] = s2 / m8;
+        mcu[i * 4 + 3] = s3 / m8;
+
     }
+
+    //column DCT
+    for (int i = 0; i < 4; i++)
+    {
+        int f0, f1, f2, f3;
+
+        //insert stage
+
+        f0 = source_mcu[i];
+        f1 = source_mcu[i + 4];
+        f2 = source_mcu[i + 8];
+        f3 = source_mcu[i + 12];
+
+        //addition pre multipliers
+
+        //first stage
+
+        int x0, x1, x2, x3;
+
+        x0 = f0 + f3;
+        x1 = f1 + f2;
+        x2 = f1 - f2;;
+        x3 = f0 - f3;;
+
+        //second stage
+
+        int s0, s1, s2, s3;
+
+        s0 = x0 + x1;
+        s1 = x0 - x1;
+        s2 = (x2 * m6) + (x3 * m7);
+        s3 = (x3 * m6) + (x2 * m7);
+
+        //bit shift and divide
+
+        mcu[i] = f0 >> 1;
+        mcu[i + 8] = f1 >> 1;
+        mcu[i + 4] = f2 / m8;
+        mcu[i + 12] = f3 / m8;
+
+    }
+
+    mcu[0] = mcu[0] - previousCoefficient;
+    return mcu;
 }
-intMcus::intMcus(MCU uintMcu, dimensions dim)
+
+intMcus::intMcus(MCU uintMcu, dimensions dim, int previousCoefficient)
 {
     //y loop
     if (dim.Y == 8)
     {
         //this->Y = dct_II_uint_8t_int_8x8(uintMcu.Y);
         //testing
-        this->Y = test_8x8_int_DCT(uintMcu.Y);
-        //this->Y = test2_dct(uintMcu.Y);
+        this->Y = test_8x8_int_DCT(uintMcu.Y, previousCoefficient);
+        //this->Y = test2_dct(uintMcu.Y, previousCoefficient);
         quantizer_8x8_int(Y, lumTable);
     }
     else if (dim.Y == 4)
     {
-        this->Y = dct_II_uint_8t_int_8x8(uintMcu.Y);
+        this->Y = dct_II_uint_8t_int_8x8(uintMcu.Y, previousCoefficient);
+        //this->Y = dct_II_uint_8t_int_4x4_TEST(uintMcu.Y, previousCoefficient);
         quantizer_4x4_int(Y, lumTable);
     }
     //cb loop
     if(dim.Cb == 8)
     {
-        this->Cb = dct_II_uint_8t_int_8x8(uintMcu.Cb);
+        this->Cb = dct_II_uint_8t_int_8x8(uintMcu.Cb, previousCoefficient);
         quantizer_8x8_int(Cb, chromaTable);
     }
     else if (dim.Cb == 4)
     {
-        this->Cb = dct_II_uint_8t_int_4x4(uintMcu.Cb);
+        //this->Cb = dct_II_uint_8t_int_4x4(uintMcu.Cb, previousCoefficient);
+        this->Cb = dct_II_uint_8t_int_4x4_TEST(uintMcu.Cb, previousCoefficient);
         quantizer_4x4_int(Cb, chromaTable_2);
     }
     //cr loop
     if(dim.Cr == 8)
     {
-        this->Cr = dct_II_uint_8t_int_8x8(uintMcu.Cr);
+        this->Cr = dct_II_uint_8t_int_8x8(uintMcu.Cr, previousCoefficient);
         quantizer_8x8_int(Cr, chromaTable);
     }
     else if(dim.Cr == 4)
     {
-        this->Cr = dct_II_uint_8t_int_4x4(uintMcu.Cr);
+        //this->Cr = dct_II_uint_8t_int_4x4(uintMcu.Cr, previousCoefficient);
+        this->Cr = dct_II_uint_8t_int_4x4_TEST(uintMcu.Cr, previousCoefficient);
         quantizer_4x4_int(Cr, chromaTable_2);
     }
 }
@@ -773,12 +869,15 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
     fakeDictionary<int,int> freqCDc = fakeDictionary<int,int>();
     fakeDictionary<int,int> freqCAc = fakeDictionary<int,int>();
 
-    for (int i = 0; i < mcuLength; i++) 
+    for (int i = 0; i < mcuHeight; i++) 
     {
-        for (int j = 0; j < mcuHeight; j++)
+        for (int j = 0; j < mcuLength; j++)
         {
-            int pos = i + j * mcuLength;
-            mcus[pos] = intMcus(origin.mcuList[pos], origin.retrieveDim());
+            int pos = i * mcuLength + j;
+            mcus[pos] = intMcus(origin.mcuList[pos], origin.retrieveDim(), ((pos == 0) ? 0 : mcus[pos - 1].Y[0]));
+            //mcus[pos - 1].Y[0]
+            //im throwing the previous mcus DC coefficient, as this is what jpg does. Jpg standard says that DC coefficient are dependent on previous DC cocefficients, where the DC Coefficient = current coefficient - previous coefficient
+            //https://en.wikipedia.org/wiki/JPEG under entropy coding section
             yFrequency(this->dim.Y, mcus[pos].Y, freqYDc, freqYAc);
             cFrequency(this->dim.Cb, mcus[pos].Cb, mcus[pos].Cr, freqCDc, freqCAc);
         }
@@ -796,13 +895,13 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
         }
     }
 
-
-    int* keys = freqCAc.retrieveAllKeys();
+    freqYDc.sortByTerm(intSorter);
+    int* keys = freqYDc.retrieveAllKeys();
     std::cout << "HELLLLLLLLLLLLOOOOOOOO" << std::endl;
-    std::cout << "count: " << freqCAc.returnCount() << std::endl;
-    for (int i = 0; i < freqCAc.returnCount(); i++)
+    std::cout << "count: " << freqYDc.returnCount() << std::endl;
+    for (int i = 0; i < freqYDc.returnCount(); i++)
     {
-        std::cout << "Value: " << keys[i] << " || Frequency: " << freqCAc.retrieveTerm(keys[i]) << std::endl;
+        std::cout << "Value: " << keys[i] << " || Frequency: " << freqYDc.retrieveTerm(keys[i]) << std::endl;
     }
     delete keys;
 
@@ -818,11 +917,11 @@ void testIntMcus(mcuHuffmanContainer mine, int num)
         std::cout << std::endl;
     }
 }
-void yFrequency(int yDim, int* yTable, fakeDictionary<int,int> Dc, fakeDictionary<int,int> &Ac)
+void yFrequency(int yDim, int* yTable, fakeDictionary<int,int> &Dc, fakeDictionary<int,int> &Ac)
 {
     //dc
 
-    
+    if (Dc.addPair(yTable[0], 1 == -1) == -1) Dc.changeTerm(yTable[0], Dc.retrieveTerm(yTable[0]) + 1);
     
     //ac
 
@@ -833,14 +932,14 @@ void yFrequency(int yDim, int* yTable, fakeDictionary<int,int> Dc, fakeDictionar
             Ac.changeTerm(yTable[i], Ac.retrieveTerm(yTable[i]) + 1);
         }
     }
-    std::cout << Ac.returnCount() << std::endl;
 
 }
-void cFrequency(int cDim, int* cbTable, int*crTable, fakeDictionary<int, int> Dc, fakeDictionary<int, int> &Ac)
+void cFrequency(int cDim, int* cbTable, int*crTable, fakeDictionary<int, int> &Dc, fakeDictionary<int, int> &Ac)
 {
     //dc
 
-
+    if (Dc.addPair(cbTable[0], 1 == -1) == -1) Dc.changeTerm(cbTable[0], Dc.retrieveTerm(cbTable[0]) + 1);
+    if (Dc.addPair(crTable[0], 1 == -1) == -1) Dc.changeTerm(crTable[0], Dc.retrieveTerm(crTable[0]) + 1);
 
     //ac
 
@@ -850,4 +949,9 @@ void cFrequency(int cDim, int* cbTable, int*crTable, fakeDictionary<int, int> Dc
         if (Ac.addPair(crTable[i], 1) == -1)Ac.changeTerm(crTable[i], Ac.retrieveTerm(crTable[i]) + 1);
     }
 
+}
+int intSorter(int a, int b)
+{
+    if (a < b) return 0;
+    return 1;
 }

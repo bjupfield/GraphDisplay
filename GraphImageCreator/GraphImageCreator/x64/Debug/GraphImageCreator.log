@@ -1,6 +1,21 @@
-﻿  JPGer.cpp
+﻿  DumbFuncsNClasses.cpp
+  GraphImageCreator.cpp
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(35,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
+  (compiling source file 'GraphImageCreator.cpp')
+  
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphImageCreator.cpp(28,23): warning C4244: 'initializing': conversion from 'std::streamoff' to 'int', possible loss of data
+  JPGer.cpp
 C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(35,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
   (compiling source file 'JPGer.cpp')
   
-C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(366,9): warning C4101: 'iter': unreferenced local variable
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(376,9): warning C4101: 'iter': unreferenced local variable
+  Mcuer.cpp
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(35,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
+  (compiling source file 'Mcuer.cpp')
+  
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\Mcuer.cpp(118,12): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\Mcuer.cpp(119,12): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\Mcuer.cpp(120,12): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  Generating Code...
+x64\Debug\RGBtoYCrCb.obj : warning LNK4042: object specified more than once; extras ignored
   GraphImageCreator.vcxproj -> C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\x64\Debug\GraphImageCreator.exe

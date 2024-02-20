@@ -16,17 +16,23 @@ template <typename Key, typename Term>
 int fakeDictionary<Key,Term>::addPair(Key key, Term term)
 {
 
-	if (this->count == 0 || searchArray(key, this->keys, this->count) == -1) 
+	if (this->count == 0) 
 	{
-		this->count += 1;
-		std::cout << "Counters" << this->count << std::endl;
-		this->keys = (Key*)realloc(this->keys, sizeof(Key) * count);
-		this->terms = (Term*)realloc(this->terms, sizeof(Term) * count);
+		this->count = 1;
 
 		keys[count - 1] = key;
 		terms[count - 1] = term;
 
 		return count;
+	}
+	else if (searchArray(key, this->keys, this->count) == -1)
+	{
+		this->count += 1;
+		this->keys = (Key*)realloc(this->keys, sizeof(Key) * count);
+		this->terms = (Term*)realloc(this->terms, sizeof(Term) * count);
+
+		keys[count - 1] = key;
+		terms[count - 1] = term;
 	}
 
 	return -1;
@@ -66,6 +72,41 @@ int fakeDictionary<Key,Term>::removePair(Key key, Term term)
 		return position;
 	}
 	return -1;
+}
+template <typename Key, typename Term>
+int fakeDictionary<Key, Term>::sortByTerm(CompFunc func)
+{
+	int bologoSort = 0;
+	
+	Term* newTerms = (Term*)malloc(sizeof(Term) * count);
+	Key* newKeys = (Key*)malloc(sizeof(Key) * count);
+
+	newTerms[this->count - 1] = this->terms[bologoSort];
+	newKeys[this->count - 1] = this->keys[bologoSort];
+	++bologoSort;
+
+	for(bologoSort; bologoSort < this->count; bologoSort++)
+	{
+		int i = bologoSort / 2;
+		while (i < bologoSort && !((i == bologoSort ? true : func(newTerms[count - i - 1], this->terms[bologoSort]) == 1 /* newTerms[count - i - 1] <= this->terms[bologoSort] */) && func(newTerms[count - i], this->terms[bologoSort]) == 0 /* >= this->terms[bologoSort] */))
+		{
+			int adder = (i / 4);
+			if (func(newTerms[count - i], this->terms[bologoSort]) == 0) i += i > 0 ? i : 1;
+			else i -= i > 0 ? i : 1;
+		}
+		copyArray(newTerms, newTerms, count - bologoSort, bologoSort - i, count - bologoSort - 1);
+		newTerms[count - i] = this->terms[bologoSort];
+		copyArray(newKeys, newKeys, count - bologoSort, bologoSort - i, count - bologoSort - 1);
+		newKeys[count - i] = this->keys[bologoSort];
+
+	}
+	
+	delete this->keys;
+	delete this->terms;
+	this->keys = newKeys;
+	this->terms = newTerms;
+	
+	return 1;
 }
 template <typename Key, typename Term>
 Term fakeDictionary<Key,Term>::retrieveTerm(Key key)

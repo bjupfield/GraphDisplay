@@ -5,6 +5,7 @@ template <typename Key, typename Term>
 class fakeDictionary
 {
 private:
+	typedef int (*CompFunc)(Term, Term);
 	Key* keys;
 	Term* terms;
 	int count;
@@ -15,6 +16,7 @@ public:
 	int addPair(Key key, Term term);
 	int changeTerm(Key key, Term term);
 	int removePair(Key key, Term term);
+	int sortByTerm(CompFunc func);//funcs return should be 0 if less than or equal 1 if greater than
 	Term retrieveTerm(Key key);
 	Key* retrieveKeys(Term term);
 	Key* retrieveAllKeys();
@@ -54,14 +56,13 @@ int* searchArrayAll(T exist, T* in, int length)
 }
 
 template <typename T>
-void copyArray(T* source, T* destination, int startIndex, int num)
+void copyArray(T* source, T* destination, int startIndex, int num, int destinationStart = 0)
 {
 	for (int b = startIndex; b < startIndex + num; b++)
 	{
 		destination[b] = source[b - startIndex];
 	}
 }
-
 
 
 #endif
