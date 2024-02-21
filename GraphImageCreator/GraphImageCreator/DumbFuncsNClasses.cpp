@@ -90,10 +90,10 @@ int fakeDictionary<Key, Term>::sortByTerm(CompFunc func)
 			int adder = (i / 2);
 			if (func(this->terms[count - i], this->terms[0]) == 1) 
 			{
-				if (i != 1)i -= adder > 0 ? adder : 1;
+				if (i != 1)i -= (adder > 0 && i - adder < 1) ? adder : 1;
 				else break;
 			}
-			else i += adder > 0 ? adder : 1;
+			else i += (adder > 0 && adder + i > bologoSort) ? adder : 1;
 		}
 
 
