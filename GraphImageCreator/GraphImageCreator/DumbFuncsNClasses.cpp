@@ -78,41 +78,69 @@ int fakeDictionary<Key, Term>::sortByTerm(CompFunc func)
 {
 	int bologoSort = 0;
 	
-	Term* newTerms = (Term*)malloc(sizeof(Term) * count);
-	Key* newKeys = (Key*)malloc(sizeof(Key) * count);
-
-	newTerms[this->count - 1] = this->terms[bologoSort];
-	newKeys[this->count - 1] = this->keys[bologoSort];
-	++bologoSort;
-	
+	Term bufferTerm;	
+	Key bufferKey;
 	std::cout << "Count Before Sort: " << this->count << std::endl;
 
-	for(bologoSort; bologoSort < /*this->count*/ 3; bologoSort++)
+	//bufferTerm = this->terms[count - 1];
+	//this->terms[count - 1] = this->terms[0];
+	//this->terms[0] = bufferTerm;
+	//
+	//bufferKey = this->keys[count - 1];
+	//this->keys[count - 1] = this->keys[0];
+	//this->keys[0] = bufferKey;
+	++bologoSort;
+
+	for(bologoSort; bologoSort < this->count; bologoSort++)
 	{
-		int i = bologoSort / 2;
-		std::cout << "Bologsort Term: " << this->terms[bologoSort] << "I Term: " << newTerms[count - i - 1] << std::endl;
-		std::cout << "OG I: " << i  << " || Bologo: " << bologoSort << std::endl;
-		while (i < bologoSort && !(((i == bologoSort || i == 0) ? true : func(newTerms[count - i - 2], this->terms[bologoSort]) == 1) && func(newTerms[count - i - 1], this->terms[bologoSort]) == 0))
+		int i = bologoSort >= 2 ? bologoSort / 2 : 1;
+		std::cout << "First I: " << i << std::endl;
+		while (i <= bologoSort && !((func(this->terms[count - i], this->terms[0]) == 1) && (i == 1 ? true : func(this->terms[count - i + 1], this->terms[0]) == 0)))
 		{
+			std::cout << "|| || || || ||" << std::endl;
 			int adder = (i / 2);
-			if (func(newTerms[count - i - 1], this->terms[bologoSort]) == 0) i -= i > 0 ? i : 1;
-			else i += i > 0 ? i : 1;
+			if (func(this->terms[count - i], this->terms[0]) == 1) 
+			{
+				if (i != 1)i -= adder > 0 ? adder : 1;
+				else break;
+			}
+			else i += adder > 0 ? adder : 1;
 			std::cout << "New I: " << i << std::endl;
 		}
-		std::cout << "Bologo Before Sort: " << bologoSort << std::endl;
-		std::cout << "I Before Sort: " << i << std::endl;
-		copyArray(newTerms, newTerms, count - bologoSort - 1, bologoSort - i, count - bologoSort);
-		newTerms[count - i - 1] = this->terms[bologoSort];
-		std::cout << "Keys SORT" << std::endl;
-		copyArray(newKeys, newKeys, count - bologoSort - 1, bologoSort - i, count - bologoSort);
-		newKeys[count - i - 1] = this->keys[bologoSort];
+
+
+		std::cout << "Finalized I: " << i << std::endl;
+		if(i > bologoSort)
+		{
+			if (i > bologoSort + 1) i = bologoSort + 1;
+			bufferTerm = this->terms[count - i];
+			this->terms[count - i] = this->terms[0];
+			this->terms[0] = bufferTerm;
+
+			bufferKey = this->keys[count - i];
+			this->keys[count - i] = this->keys[0];
+			this->keys[0] = bufferKey;
+			std::cout << "Single Change Index: " << count - i <<  " || I Term : " << this->terms[count - i] << " || 0th Term : " << this->terms[0] << std::endl;
+		}
+		else
+		{
+			for (i; i <= bologoSort + 1; i++)
+			{
+				bufferTerm = this->terms[count - i];
+				this->terms[count - i] = this->terms[0];
+				this->terms[0] = bufferTerm;
+
+				bufferKey = this->keys[count - i];
+				this->keys[count - i] = this->keys[0];
+				this->keys[0] = bufferKey;
+				std::cout << "Index: " << count - i << "I Term: " << this->terms[count - i] << " || 0th Term: " << this->terms[0] << std::endl;
+			}
+		}
+
 
 	}
 	
-	delete this->keys;
-	delete this->terms;
-	this->keys = (Key*)newKeys;
-	this->terms = (Term*)newTerms;
+
 	
 	return 1;
 }

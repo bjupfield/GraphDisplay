@@ -901,7 +901,6 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
     {
         std::cout << "Value: " << keys[i] << " || Frequency: " << freqYDc.retrieveTerm(keys[i]) << std::endl;
     }
-    delete keys;
 
     freqYDc.sortByTerm(intSorter);
     keys = freqYDc.retrieveAllKeys();
@@ -911,7 +910,6 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
     {
         std::cout << "Value: " << keys[i] << " || Frequency: " << freqYDc.retrieveTerm(keys[i]) << std::endl;
     }
-    delete keys;
 
 }
 void testIntMcus(mcuHuffmanContainer mine, int num)
@@ -960,7 +958,6 @@ void cFrequency(int cDim, int* cbTable, int*crTable, fakeDictionary<int, int> &D
 }
 int intSorter(int a, int b)
 {
-    std::cout << "A: " << a << " || B: " << b << " || Returns: " << ((a > b) ? 0 : 1) << std::endl;
     if (a >= b) return 0;
     return 1;
 }
