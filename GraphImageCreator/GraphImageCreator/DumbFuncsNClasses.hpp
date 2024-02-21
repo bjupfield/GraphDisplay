@@ -13,12 +13,13 @@ private:
 public:
 	//fakeDictionary() : keys(nullptr), terms(nullptr), count(0), pos(0) {}
 	fakeDictionary();
-	int addPair(Key key, Term term);
-	int changeTerm(Key key, Term term);
-	int removePair(Key key, Term term);
-	int sortByTerm(CompFunc func);//funcs return should be 0 if less than or equal 1 if greater than
-	Term retrieveTerm(Key key);
-	Key* retrieveKeys(Term term);
+	int addPair(Key key, Term term);//returns -1 if key already exist
+	int changeTerm(Key key, Term term);//returns -1 if key does not exist
+	int removePair(Key key);//returns -1 if key does not exist
+	int sortByTerm(CompFunc func);
+	//funcs return should be 0 if less than 1 if greater than or equal too to sort from greatest to least, opposite to sort from least to greatest
+	Term retrieveTerm(Key key);//returns null if key does not exist
+	Key* retrieveKeys(Term term);//returns null if term does not exist
 	Key* retrieveAllKeys();
 	int returnCount();
 }

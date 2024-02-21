@@ -821,13 +821,13 @@ intMcus::intMcus(MCU uintMcu, dimensions dim, int previousCoefficient)
     {
         //this->Y = dct_II_uint_8t_int_8x8(uintMcu.Y);
         //testing
-        this->Y = test_8x8_int_DCT(uintMcu.Y, previousCoefficient);
-        //this->Y = test2_dct(uintMcu.Y, previousCoefficient);
+        //this->Y = test_8x8_int_DCT(uintMcu.Y, previousCoefficient);
+        this->Y = test2_dct(uintMcu.Y, previousCoefficient);
         quantizer_8x8_int(Y, lumTable);
     }
     else if (dim.Y == 4)
     {
-        this->Y = dct_II_uint_8t_int_8x8(uintMcu.Y, previousCoefficient);
+        this->Y = dct_II_uint_8t_int_4x4(uintMcu.Y, previousCoefficient);
         //this->Y = dct_II_uint_8t_int_4x4_TEST(uintMcu.Y, previousCoefficient);
         quantizer_4x4_int(Y, lumTable);
     }
@@ -894,21 +894,21 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
             std::cout << std::endl;
         }
     }
-    int* keys = freqYDc.retrieveAllKeys();
+    int* keys = freqYAc.retrieveAllKeys();
     std::cout << "HELLLLLLLLLLLLOOOOOOOO" << std::endl;
-    std::cout << "count: " << freqYDc.returnCount() << std::endl;
-    for (int i = 0; i < freqYDc.returnCount(); i++)
+    std::cout << "count: " << freqYAc.returnCount() << std::endl;
+    for (int i = 0; i < freqYAc.returnCount(); i++)
     {
-        std::cout << "Value: " << keys[i] << " || Frequency: " << freqYDc.retrieveTerm(keys[i]) << std::endl;
+        std::cout << "Value: " << keys[i] << " || Frequency: " << freqYAc.retrieveTerm(keys[i]) << std::endl;
     }
 
-    freqYDc.sortByTerm(intSorter);
-    keys = freqYDc.retrieveAllKeys();
+    freqYAc.sortByTerm(intSorter);
+    keys = freqYAc.retrieveAllKeys();
     std::cout << "HELLLLLLLLLLLLOOOOOOOO" << std::endl;
-    std::cout << "count: " << freqYDc.returnCount() << std::endl;
-    for (int i = 0; i < freqYDc.returnCount(); i++)
+    std::cout << "count: " << freqYAc.returnCount() << std::endl;
+    for (int i = 0; i < freqYAc.returnCount(); i++)
     {
-        std::cout << "Value: " << keys[i] << " || Frequency: " << freqYDc.retrieveTerm(keys[i]) << std::endl;
+        std::cout << "Value: " << keys[i] << " || Frequency: " << freqYAc.retrieveTerm(keys[i]) << std::endl;
     }
 
 }
@@ -926,13 +926,14 @@ void testIntMcus(mcuHuffmanContainer mine, int num)
 void yFrequency(int yDim, int* yTable, fakeDictionary<int,int> &Dc, fakeDictionary<int,int> &Ac)
 {
     //dc
-
-    if (Dc.addPair(yTable[0], 1 == -1) == -1) Dc.changeTerm(yTable[0], Dc.retrieveTerm(yTable[0]) + 1);
+    if(yTable[0] != 0)
+    if (Dc.addPair(yTable[0], 1) == -1) Dc.changeTerm(yTable[0], Dc.retrieveTerm(yTable[0]) + 1);
     
     //ac
 
     for (int i = 1; i < yDim * yDim; i++)
     {
+        if(yTable[i] != 0)
         if (Ac.addPair(yTable[i], 1) == -1) 
         {
             Ac.changeTerm(yTable[i], Ac.retrieveTerm(yTable[i]) + 1);
@@ -943,21 +944,24 @@ void yFrequency(int yDim, int* yTable, fakeDictionary<int,int> &Dc, fakeDictiona
 void cFrequency(int cDim, int* cbTable, int*crTable, fakeDictionary<int, int> &Dc, fakeDictionary<int, int> &Ac)
 {
     //dc
-
+    if(cbTable[0] != 0)
     if (Dc.addPair(cbTable[0], 1 == -1) == -1) Dc.changeTerm(cbTable[0], Dc.retrieveTerm(cbTable[0]) + 1);
+    if(crTable[0] != 0)
     if (Dc.addPair(crTable[0], 1 == -1) == -1) Dc.changeTerm(crTable[0], Dc.retrieveTerm(crTable[0]) + 1);
 
     //ac
 
     for (int i = 1; i < cDim * cDim; i++)
     {
+        if(cbTable[i] != 0)
         if (Ac.addPair(cbTable[i], 1) == -1)Ac.changeTerm(cbTable[i], Ac.retrieveTerm(cbTable[i]) + 1);
+        if(cbTable[i] != 0)
         if (Ac.addPair(crTable[i], 1) == -1)Ac.changeTerm(crTable[i], Ac.retrieveTerm(crTable[i]) + 1);
     }
 
 }
 int intSorter(int a, int b)
 {
-    if (a >= b) return 0;
+    if (a < b) return 0;
     return 1;
 }

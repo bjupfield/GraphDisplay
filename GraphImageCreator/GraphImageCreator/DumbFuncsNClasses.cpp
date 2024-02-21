@@ -51,7 +51,7 @@ int fakeDictionary<Key,Term>::changeTerm(Key key, Term term)
 	return -1;
 }
 template <typename Key, typename Term>
-int fakeDictionary<Key,Term>::removePair(Key key, Term term)
+int fakeDictionary<Key,Term>::removePair(Key key)
 {
 	int position = searchArray(key, this->keys, this->count);
 	if(position != -1)
@@ -80,24 +80,13 @@ int fakeDictionary<Key, Term>::sortByTerm(CompFunc func)
 	
 	Term bufferTerm;	
 	Key bufferKey;
-	std::cout << "Count Before Sort: " << this->count << std::endl;
-
-	//bufferTerm = this->terms[count - 1];
-	//this->terms[count - 1] = this->terms[0];
-	//this->terms[0] = bufferTerm;
-	//
-	//bufferKey = this->keys[count - 1];
-	//this->keys[count - 1] = this->keys[0];
-	//this->keys[0] = bufferKey;
 	++bologoSort;
 
 	for(bologoSort; bologoSort < this->count; bologoSort++)
 	{
 		int i = bologoSort >= 2 ? bologoSort / 2 : 1;
-		std::cout << "First I: " << i << std::endl;
 		while (i <= bologoSort && !((func(this->terms[count - i], this->terms[0]) == 1) && (i == 1 ? true : func(this->terms[count - i + 1], this->terms[0]) == 0)))
 		{
-			std::cout << "|| || || || ||" << std::endl;
 			int adder = (i / 2);
 			if (func(this->terms[count - i], this->terms[0]) == 1) 
 			{
@@ -105,11 +94,9 @@ int fakeDictionary<Key, Term>::sortByTerm(CompFunc func)
 				else break;
 			}
 			else i += adder > 0 ? adder : 1;
-			std::cout << "New I: " << i << std::endl;
 		}
 
 
-		std::cout << "Finalized I: " << i << std::endl;
 		if(i > bologoSort)
 		{
 			if (i > bologoSort + 1) i = bologoSort + 1;
@@ -120,7 +107,6 @@ int fakeDictionary<Key, Term>::sortByTerm(CompFunc func)
 			bufferKey = this->keys[count - i];
 			this->keys[count - i] = this->keys[0];
 			this->keys[0] = bufferKey;
-			std::cout << "Single Change Index: " << count - i <<  " || I Term : " << this->terms[count - i] << " || 0th Term : " << this->terms[0] << std::endl;
 		}
 		else
 		{
@@ -133,7 +119,6 @@ int fakeDictionary<Key, Term>::sortByTerm(CompFunc func)
 				bufferKey = this->keys[count - i];
 				this->keys[count - i] = this->keys[0];
 				this->keys[0] = bufferKey;
-				std::cout << "Index: " << count - i << "I Term: " << this->terms[count - i] << " || 0th Term: " << this->terms[0] << std::endl;
 			}
 		}
 
