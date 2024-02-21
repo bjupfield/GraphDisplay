@@ -894,9 +894,17 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
             std::cout << std::endl;
         }
     }
+    int* keys = freqYDc.retrieveAllKeys();
+    std::cout << "HELLLLLLLLLLLLOOOOOOOO" << std::endl;
+    std::cout << "count: " << freqYDc.returnCount() << std::endl;
+    for (int i = 0; i < freqYDc.returnCount(); i++)
+    {
+        std::cout << "Value: " << keys[i] << " || Frequency: " << freqYDc.retrieveTerm(keys[i]) << std::endl;
+    }
+    delete keys;
 
     freqYDc.sortByTerm(intSorter);
-    int* keys = freqYDc.retrieveAllKeys();
+    keys = freqYDc.retrieveAllKeys();
     std::cout << "HELLLLLLLLLLLLOOOOOOOO" << std::endl;
     std::cout << "count: " << freqYDc.returnCount() << std::endl;
     for (int i = 0; i < freqYDc.returnCount(); i++)
@@ -952,6 +960,7 @@ void cFrequency(int cDim, int* cbTable, int*crTable, fakeDictionary<int, int> &D
 }
 int intSorter(int a, int b)
 {
-    if (a < b) return 0;
+    std::cout << "A: " << a << " || B: " << b << " || Returns: " << ((a > b) ? 0 : 1) << std::endl;
+    if (a >= b) return 0;
     return 1;
 }

@@ -54,13 +54,24 @@ int* searchArrayAll(T exist, T* in, int length)
 	}
 	return evilCommited;
 }
-
+#include <iostream>
 template <typename T>
-void copyArray(T* source, T* destination, int startIndex, int num, int destinationStart = 0)
+void copyArray(T* source, T* destination, int destinationStartIndex, int num, int sourceStartIndex = 0)
 {
-	for (int b = startIndex; b < startIndex + num; b++)
+	for (int b = destinationStartIndex; b < destinationStartIndex + num; b++)
 	{
-		destination[b] = source[b - startIndex];
+		if (sourceStartIndex != 0)
+		{
+
+			std::cout << "B: " << sourceStartIndex << " || Value: " << destination[sourceStartIndex] << std::endl;
+		}
+		destination[b] = source[b - destinationStartIndex + sourceStartIndex];
+	}
+	if (sourceStartIndex != 0)
+	{
+		std::cout << "SourceStartIndex: " << sourceStartIndex << " || DestiniationStartIndex: " << destinationStartIndex << std::endl;
+		std::cout << "SourceIndexValue: " << destination[sourceStartIndex];
+		std::cout << " || SourceIndex - 1 Value: " << destination[sourceStartIndex - 1] << std::endl;
 	}
 }
 

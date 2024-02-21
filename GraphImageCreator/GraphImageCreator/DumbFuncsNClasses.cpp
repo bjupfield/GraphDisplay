@@ -84,27 +84,35 @@ int fakeDictionary<Key, Term>::sortByTerm(CompFunc func)
 	newTerms[this->count - 1] = this->terms[bologoSort];
 	newKeys[this->count - 1] = this->keys[bologoSort];
 	++bologoSort;
+	
+	std::cout << "Count Before Sort: " << this->count << std::endl;
 
-	for(bologoSort; bologoSort < this->count; bologoSort++)
+	for(bologoSort; bologoSort < /*this->count*/ 3; bologoSort++)
 	{
 		int i = bologoSort / 2;
-		while (i < bologoSort && !((i == bologoSort ? true : func(newTerms[count - i - 1], this->terms[bologoSort]) == 1 /* newTerms[count - i - 1] <= this->terms[bologoSort] */) && func(newTerms[count - i], this->terms[bologoSort]) == 0 /* >= this->terms[bologoSort] */))
+		std::cout << "Bologsort Term: " << this->terms[bologoSort] << "I Term: " << newTerms[count - i - 1] << std::endl;
+		std::cout << "OG I: " << i  << " || Bologo: " << bologoSort << std::endl;
+		while (i < bologoSort && !(((i == bologoSort || i == 0) ? true : func(newTerms[count - i - 2], this->terms[bologoSort]) == 1) && func(newTerms[count - i - 1], this->terms[bologoSort]) == 0))
 		{
-			int adder = (i / 4);
-			if (func(newTerms[count - i], this->terms[bologoSort]) == 0) i += i > 0 ? i : 1;
-			else i -= i > 0 ? i : 1;
+			int adder = (i / 2);
+			if (func(newTerms[count - i - 1], this->terms[bologoSort]) == 0) i -= i > 0 ? i : 1;
+			else i += i > 0 ? i : 1;
+			std::cout << "New I: " << i << std::endl;
 		}
-		copyArray(newTerms, newTerms, count - bologoSort, bologoSort - i, count - bologoSort - 1);
-		newTerms[count - i] = this->terms[bologoSort];
-		copyArray(newKeys, newKeys, count - bologoSort, bologoSort - i, count - bologoSort - 1);
-		newKeys[count - i] = this->keys[bologoSort];
+		std::cout << "Bologo Before Sort: " << bologoSort << std::endl;
+		std::cout << "I Before Sort: " << i << std::endl;
+		copyArray(newTerms, newTerms, count - bologoSort - 1, bologoSort - i, count - bologoSort);
+		newTerms[count - i - 1] = this->terms[bologoSort];
+		std::cout << "Keys SORT" << std::endl;
+		copyArray(newKeys, newKeys, count - bologoSort - 1, bologoSort - i, count - bologoSort);
+		newKeys[count - i - 1] = this->keys[bologoSort];
 
 	}
 	
 	delete this->keys;
 	delete this->terms;
-	this->keys = newKeys;
-	this->terms = newTerms;
+	this->keys = (Key*)newKeys;
+	this->terms = (Term*)newTerms;
 	
 	return 1;
 }
