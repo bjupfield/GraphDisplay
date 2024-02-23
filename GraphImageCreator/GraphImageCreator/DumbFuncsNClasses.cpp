@@ -164,12 +164,17 @@ Key* fakeDictionary<Key,Term>::retrieveKeys(Term term)
 	return NULL;
 }
 template <typename Key, typename Term>
-Key* fakeDictionary<Key, Term>::retrieveAllKeys()
+Key* fakeDictionary<Key,Term>::retrieveAllKeys()
 {
 	return this->keys;
 }
 template <typename Key, typename Term>
-int fakeDictionary<Key, Term>::returnCount()
+Term* fakeDictionary<Key, Term>::retrieveAllTerms()
+{
+	return this->terms;
+}
+template <typename Key, typename Term>
+int fakeDictionary<Key,Term>::returnCount()
 {
 	return this->count;
 }

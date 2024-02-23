@@ -895,21 +895,27 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
             std::cout << std::endl;
         }
     }
-    int* keys = freqYAc.retrieveAllKeys();
+    int* keys = freqCAc.retrieveAllKeys();
     std::cout << "HELLLLLLLLLLLLOOOOOOOO" << std::endl;
-    std::cout << "count: " << freqYAc.returnCount() << std::endl;
-    for (int i = 0; i < freqYAc.returnCount(); i++)
+    std::cout << "count: " << freqCAc.returnCount() << std::endl;
+    for (int i = 0; i < freqCAc.returnCount(); i++)
     {
-        std::cout << "Value: " << keys[i] << " || Frequency: " << freqYAc.retrieveTerm(keys[i]) << std::endl;
+        std::cout << "Value: " << keys[i] << " || Frequency: " << freqCAc.retrieveTerm(keys[i]) << std::endl;
     }
 
+    freqYDc.sortByTerm(intSorter);
     freqYAc.sortByTerm(intSorter);
-    keys = freqYAc.retrieveAllKeys();
+    freqCDc.sortByTerm(intSorter);
+    freqCAc.sortByTerm(intSorter);
+    keys = freqCAc.retrieveAllKeys();
     std::cout << "HELLLLLLLLLLLLOOOOOOOO" << std::endl;
-    std::cout << "count: " << freqYAc.returnCount() << std::endl;
-    for (int i = 0; i < freqYAc.returnCount(); i++)
+    std::cout << "count: " << freqCAc.returnCount() << std::endl;
+
+    int *huffman = huffmanCodeCountArray(freqCAc.retrieveAllTerms(), freqCAc.returnCount());
+
+    for (int i = 0; i < freqCAc.returnCount(); i++)
     {
-        std::cout << "Value: " << keys[i] << " || Frequency: " << freqYAc.retrieveTerm(keys[i]) << std::endl;
+        std::cout << "Value: " << keys[i] << " || Frequency: " << freqCAc.retrieveTerm(keys[i]) << " || CodeLength: " << huffman[i] << std::endl;
     }
 
 }
@@ -961,10 +967,12 @@ void cFrequency(int cDim, int* cbTable, int*crTable, fakeDictionary<int, int> &D
     }
 
 }
-int* huffmanCodeCountArray(int* a, int arraySize) //okay this function accepts a frequenc array and returns 
+int* huffmanCodeCountArray(int* a, int arraySize) //okay this function accepts a frequenc array and returns a huffman tree arrray. The array it returns is equal in size to the array it enters and has the huffman positions of the frequencies stored where the frequencies were.
+//the huffman positions means the huffman code length, the position in the tree that would increase the binary code by 1 digit, such as 01 to 010. What I store is the number of digits it takes, the code length, which in the case of 01 is 2 and 010 is 3.
 {
     if(arraySize > 1)
     {
+        //find two mininum values
         int pos1 = 0, pos1Min = a[0];
 
         for (int i = 1; i < arraySize; i++)
@@ -988,26 +996,46 @@ int* huffmanCodeCountArray(int* a, int arraySize) //okay this function accepts a
         }
         
         int* b = new int[arraySize - 1] {0};
-        newCopyArray(a, b, 0, 0, pos2 - 1);//copy all values before pos2 into array
+        newCopyArray(a, b, 0, 0, pos2);//copy all values before pos2 into array
         newCopyArray(a, b, pos2 + 1, pos2, arraySize - 1 - pos2);//copy all values after pos2 into array
+        b[(pos1 > pos2) ? pos1 - 1 : pos1] = pos2Min + pos1Min;//combine the two minimum values into one frequency in the new array
 
-        int* c = huffmanCodeCountArray(b, arraySize - 1);
+        int* c = huffmanCodeCountArray(b, arraySize - 1);//recursively call the function with the new frequencies
 
         int* d = new int[arraySize] {0};
         newCopyArray(c, d, 0, 0, pos2 - 1);//reverse the shrink
         newCopyArray(c, d, pos2, pos2 + 1, arraySize - 1 - pos2);
 
-        d[pos1] += 1;
-        d[pos2] = d[pos1];
+        std::cout << "Size: " << arraySize << " || Pos1Value: " << d[pos1] << std::endl;
+        
+        for (int i = 0; i < arraySize; i++)
+        {
+            std::cout << a[i] << ",";
+        }
+        std::cout << " || A" << std::endl;
+        
+        for (int i = 0; i < arraySize - 1; i++)
+        {
+            std::cout << b[i] << ",";
+        }
+        std::cout << " || B" << std::endl;
+        
+        for(int i = 0; i < arraySize - 1; i++)
+        {
+            std::cout << d[i] << ",";
+        }
+        std::cout << " || C" << std::endl;
+        d[pos1] += 1;//add 1 code length to the minimum value that was shrunk
+        d[pos2] = d[pos1];//readd the minimum value back into the array
 
         delete c;
         delete b;
 
-        return d;
+        return d;//return the array
     }
     else
     {
-        return new int[1] {1};
+        return new int[1] {1};//all codes have a minimum code length of 1
     }
 }
 int intSorter(int a, int b)

@@ -21,6 +21,7 @@ public:
 	Term retrieveTerm(Key key);//returns null if key does not exist
 	Key* retrieveKeys(Term term);//returns null if term does not exist
 	Key* retrieveAllKeys();
+	Term* retrieveAllTerms();//retrieves terms regardless of repeats
 	int returnCount();
 }
 ;
@@ -67,11 +68,11 @@ void copyArray(T* source, T* destination, int destinationStartIndex, int num, in
 
 }
 template <typename T>
-void newCopyArray(T* source, T* destination, int sourceStartIndex = 0, int destinationStartIndex, int num)
+void newCopyArray(T* source, T* destination, int sourceStartIndex = 0, int destinationStartIndex = 0, int num = 0)
 {
 	for (int b = 0; b < num; b++)
 	{
-		destination[b + destinationStartIndex] = &source[b + sourceStartIndex];
+		destination[b + destinationStartIndex] = source[b + sourceStartIndex];
 	}
 
 }
