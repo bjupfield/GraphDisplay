@@ -44,6 +44,8 @@ void yFrequency(int yDim, int* yTable, fakeDictionary<int, int> &Dc, fakeDiction
 void cFrequency(int cDim, int* cbTable, int* crTable, fakeDictionary<int, int> &Dc, fakeDictionary<int, int> &Ac);
 int intSorter(int a, int b);
 int* huffmanCodeCountArray(int *a, int arraySize);
+fakeDictionary<int, uint8_t> huffManReferenceTable(int* codeLengthArray, );
+//hmmm I dont know, will have to think of the structure a more later
 
 
 void graphMaptoJPG(graphMap map)
@@ -895,27 +897,27 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
             std::cout << std::endl;
         }
     }
-    int* keys = freqCAc.retrieveAllKeys();
+    int* keys = freqYAc.retrieveAllKeys();
     std::cout << "HELLLLLLLLLLLLOOOOOOOO" << std::endl;
-    std::cout << "count: " << freqCAc.returnCount() << std::endl;
-    for (int i = 0; i < freqCAc.returnCount(); i++)
+    std::cout << "count: " << freqYAc.returnCount() << std::endl;
+    for (int i = 0; i < freqYAc.returnCount(); i++)
     {
-        std::cout << "Value: " << keys[i] << " || Frequency: " << freqCAc.retrieveTerm(keys[i]) << std::endl;
+        std::cout << "Value: " << keys[i] << " || Frequency: " << freqYAc.retrieveTerm(keys[i]) << std::endl;
     }
 
     freqYDc.sortByTerm(intSorter);
     freqYAc.sortByTerm(intSorter);
     freqCDc.sortByTerm(intSorter);
     freqCAc.sortByTerm(intSorter);
-    keys = freqCAc.retrieveAllKeys();
+    keys = freqYAc.retrieveAllKeys();
     std::cout << "HELLLLLLLLLLLLOOOOOOOO" << std::endl;
-    std::cout << "count: " << freqCAc.returnCount() << std::endl;
+    std::cout << "count: " << freqYAc.returnCount() << std::endl;
 
-    int *huffman = huffmanCodeCountArray(freqCAc.retrieveAllTerms(), freqCAc.returnCount());
+    int *huffman = huffmanCodeCountArray(freqYAc.retrieveAllTerms(), freqYAc.returnCount());
 
-    for (int i = 0; i < freqCAc.returnCount(); i++)
+    for (int i = 0; i < freqYAc.returnCount(); i++)
     {
-        std::cout << "Value: " << keys[i] << " || Frequency: " << freqCAc.retrieveTerm(keys[i]) << " || CodeLength: " << huffman[i] << std::endl;
+        std::cout << "Value: " << keys[i] << " || Frequency: " << freqYAc.retrieveTerm(keys[i]) << " || CodeLength: " << huffman[i] << std::endl;
     }
 
 }
@@ -990,7 +992,7 @@ int* huffmanCodeCountArray(int* a, int arraySize) //okay this function accepts a
         {
             if(pos2Min > a[i] && i != pos1)
             {
-                pos2Min = a[1];
+                pos2Min = a[i];
                 pos2 = i;
             }
         }
@@ -1003,28 +1005,10 @@ int* huffmanCodeCountArray(int* a, int arraySize) //okay this function accepts a
         int* c = huffmanCodeCountArray(b, arraySize - 1);//recursively call the function with the new frequencies
 
         int* d = new int[arraySize] {0};
-        newCopyArray(c, d, 0, 0, pos2 - 1);//reverse the shrink
+        newCopyArray(c, d, 0, 0, pos2);//reverse the shrink
         newCopyArray(c, d, pos2, pos2 + 1, arraySize - 1 - pos2);
 
-        std::cout << "Size: " << arraySize << " || Pos1Value: " << d[pos1] << std::endl;
-        
-        for (int i = 0; i < arraySize; i++)
-        {
-            std::cout << a[i] << ",";
-        }
-        std::cout << " || A" << std::endl;
-        
-        for (int i = 0; i < arraySize - 1; i++)
-        {
-            std::cout << b[i] << ",";
-        }
-        std::cout << " || B" << std::endl;
-        
-        for(int i = 0; i < arraySize - 1; i++)
-        {
-            std::cout << d[i] << ",";
-        }
-        std::cout << " || C" << std::endl;
+
         d[pos1] += 1;//add 1 code length to the minimum value that was shrunk
         d[pos2] = d[pos1];//readd the minimum value back into the array
 
