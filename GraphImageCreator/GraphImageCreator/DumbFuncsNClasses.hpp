@@ -61,19 +61,19 @@ void copyArray(T* source, T* destination, int destinationStartIndex, int num, in
 {
 	for (int b = destinationStartIndex; b < destinationStartIndex + num; b++)
 	{
-		if (sourceStartIndex != 0)
-		{
 
-			std::cout << "B: " << sourceStartIndex << " || Value: " << destination[sourceStartIndex] << std::endl;
-		}
 		destination[b] = source[b - destinationStartIndex + sourceStartIndex];
 	}
-	if (sourceStartIndex != 0)
+
+}
+template <typename T>
+void newCopyArray(T* source, T* destination, int sourceStartIndex = 0, int destinationStartIndex, int num)
+{
+	for (int b = 0; b < num; b++)
 	{
-		std::cout << "SourceStartIndex: " << sourceStartIndex << " || DestiniationStartIndex: " << destinationStartIndex << std::endl;
-		std::cout << "SourceIndexValue: " << destination[sourceStartIndex];
-		std::cout << " || SourceIndex - 1 Value: " << destination[sourceStartIndex - 1] << std::endl;
+		destination[b + destinationStartIndex] = &source[b + sourceStartIndex];
 	}
+
 }
 
 

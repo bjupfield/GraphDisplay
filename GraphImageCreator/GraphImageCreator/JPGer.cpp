@@ -43,6 +43,7 @@ static const int chromaTable_2[16] =
 void yFrequency(int yDim, int* yTable, fakeDictionary<int, int> &Dc, fakeDictionary<int, int> &Ac);
 void cFrequency(int cDim, int* cbTable, int* crTable, fakeDictionary<int, int> &Dc, fakeDictionary<int, int> &Ac);
 int intSorter(int a, int b);
+int* huffmanCodeCountArray(int *a, int arraySize);
 
 
 void graphMaptoJPG(graphMap map)
@@ -959,6 +960,55 @@ void cFrequency(int cDim, int* cbTable, int*crTable, fakeDictionary<int, int> &D
         if (Ac.addPair(crTable[i], 1) == -1)Ac.changeTerm(crTable[i], Ac.retrieveTerm(crTable[i]) + 1);
     }
 
+}
+int* huffmanCodeCountArray(int* a, int arraySize) //okay this function accepts a frequenc array and returns 
+{
+    if(arraySize > 1)
+    {
+        int pos1 = 0, pos1Min = a[0];
+
+        for (int i = 1; i < arraySize; i++)
+        {
+            if (pos1Min > a[i])
+            {
+                pos1Min = a[i];
+                pos1 = i;
+            }
+        }
+
+        int pos2 = pos1 == 0 ? 1 : 0, pos2Min = pos1 == 0 ? a[1] : a[0];
+
+        for (int i = 1; i < arraySize; i++)
+        {
+            if(pos2Min > a[i] && i != pos1)
+            {
+                pos2Min = a[1];
+                pos2 = i;
+            }
+        }
+        
+        int* b = new int[arraySize - 1] {0};
+        newCopyArray(a, b, 0, 0, pos2 - 1);//copy all values before pos2 into array
+        newCopyArray(a, b, pos2 + 1, pos2, arraySize - 1 - pos2);//copy all values after pos2 into array
+
+        int* c = huffmanCodeCountArray(b, arraySize - 1);
+
+        int* d = new int[arraySize] {0};
+        newCopyArray(c, d, 0, 0, pos2 - 1);//reverse the shrink
+        newCopyArray(c, d, pos2, pos2 + 1, arraySize - 1 - pos2);
+
+        d[pos1] += 1;
+        d[pos2] = d[pos1];
+
+        delete c;
+        delete b;
+
+        return d;
+    }
+    else
+    {
+        return new int[1] {1};
+    }
 }
 int intSorter(int a, int b)
 {

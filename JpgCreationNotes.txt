@@ -148,6 +148,21 @@ its on pg 4, and its pretty simple as you can see
 
 
 //okay below here is going to be my detailed notes on Jpg huffman tables and coding
+https://www.youtube.com/watch?v=TlrNCT15NM4&list=PLpsTn9TA_Q8VMDyOPrDKmSJYt1DLgDZU4&index=3
+https://www.youtube.com/watch?v=TlrNCT15NM4&list=PLpsTn9TA_Q8VMDyOPrDKmSJYt1DLgDZU4&index=3
+https://www.youtube.com/watch?v=TlrNCT15NM4&list=PLpsTn9TA_Q8VMDyOPrDKmSJYt1DLgDZU4&index=3
+https://www.youtube.com/watch?v=TlrNCT15NM4&list=PLpsTn9TA_Q8VMDyOPrDKmSJYt1DLgDZU4&index=3
+https://www.youtube.com/watch?v=TlrNCT15NM4&list=PLpsTn9TA_Q8VMDyOPrDKmSJYt1DLgDZU4&index=3
+https://www.youtube.com/watch?v=TlrNCT15NM4&list=PLpsTn9TA_Q8VMDyOPrDKmSJYt1DLgDZU4&index=3
+https://www.youtube.com/watch?v=TlrNCT15NM4&list=PLpsTn9TA_Q8VMDyOPrDKmSJYt1DLgDZU4&index=3
+https://www.youtube.com/watch?v=TlrNCT15NM4&list=PLpsTn9TA_Q8VMDyOPrDKmSJYt1DLgDZU4&index=3
+https://www.youtube.com/watch?v=TlrNCT15NM4&list=PLpsTn9TA_Q8VMDyOPrDKmSJYt1DLgDZU4&index=3
+https://www.youtube.com/watch?v=TlrNCT15NM4&list=PLpsTn9TA_Q8VMDyOPrDKmSJYt1DLgDZU4&index=3
+https://www.youtube.com/watch?v=TlrNCT15NM4&list=PLpsTn9TA_Q8VMDyOPrDKmSJYt1DLgDZU4&index=3
+https://www.youtube.com/watch?v=TlrNCT15NM4&list=PLpsTn9TA_Q8VMDyOPrDKmSJYt1DLgDZU4&index=3
+https://www.youtube.com/watch?v=TlrNCT15NM4&list=PLpsTn9TA_Q8VMDyOPrDKmSJYt1DLgDZU4&index=3
+https://www.youtube.com/watch?v=TlrNCT15NM4&list=PLpsTn9TA_Q8VMDyOPrDKmSJYt1DLgDZU4&index=3
+
 
 huffman codes cannot have value start with the value of another huffman code, obvious reasons,
 The 16 byte info in the jpg huffman table defines the amount of huffman codes of each length there are
