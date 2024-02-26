@@ -13,6 +13,7 @@ private:
 public:
 	//fakeDictionary() : keys(nullptr), terms(nullptr), count(0), pos(0) {}
 	fakeDictionary();
+	~fakeDictionary();
 	int addPair(Key key, Term term);//returns -1 if key already exist
 	int changeTerm(Key key, Term term);//returns -1 if key does not exist
 	int removePair(Key key);//returns -1 if key does not exist
@@ -25,6 +26,17 @@ public:
 	int returnCount();
 }
 ;
+#include <fstream>
+class byteWritter
+{
+private:
+	std::fstream outFile;
+	int currentBit;
+	uint8_t byte;
+public:
+	byteWritter(const char* fileName);
+	int write(uint8_t bits, uint8_t bitLength);
+};
 template <typename T>
 int searchArray(T exist, T* in, int length)
 {

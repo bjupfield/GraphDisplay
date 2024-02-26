@@ -13,6 +13,13 @@ fakeDictionary<Key,Term>::fakeDictionary()
 	this->terms = (Term*)malloc(sizeof(Term) * 10);
 }
 template <typename Key, typename Term>
+fakeDictionary<Key, Term>::~fakeDictionary()
+{
+	if (this->keys != nullptr) free(this->keys);
+
+	if (this->terms != nullptr) free(this->terms);
+}
+template <typename Key, typename Term>
 int fakeDictionary<Key,Term>::addPair(Key key, Term term)
 {
 
@@ -63,8 +70,8 @@ int fakeDictionary<Key,Term>::removePair(Key key)
 		copyArray(this->terms, newTerms, 0, position - 1);
 		copyArray(this->terms, newTerms, position + 1, count + 1);
 
-		delete this->terms;
-		delete this->keys;
+		free(this->terms);
+		free(this->keys);
 
 		this->terms = newTerms;
 		this->keys = newKeys;
@@ -155,12 +162,12 @@ Key* fakeDictionary<Key,Term>::retrieveKeys(Term term)
 			myKeys[i - 1] = this->keys[posArray[i]];
 		}
 
-		delete posArray;
+		free(posArray);
 
 		return myKeys;
 	}
 
-	delete posArray;
+	free(posArray);
 	return NULL;
 }
 template <typename Key, typename Term>
@@ -179,3 +186,80 @@ int fakeDictionary<Key,Term>::returnCount()
 	return this->count;
 }
 template class fakeDictionary<int, int>;
+byteWritter::byteWritter(const char* fileName)
+{
+	this->byte = 0;
+	this->currentBit = 8;
+	this->outFile.open(fileName, std::ios::out);
+	if(!this->outFile.is_open())
+	{
+		delete this;
+	}
+}
+int byteWritter::write(uint8_t bits, uint8_t bitLength)
+{
+	if (bitLength <= 0 || bitLength > 8)//return -1 if bitlength is greater than possible bit length or zero
+	{
+		return -1;
+	}
+	if ((bits >> bitLength) > 0)//bits recieved are larger than the bitlength
+	{
+		return -2;
+	}
+
+	//find how many bits are 0 at the start, as we are reading from a uint8_t it could give us a value of 1
+	//equal to 001 or a value of 1 equal to 01, and the only way to tell is the bitlength
+	//so to solve this we bit shift the bits to the right starting from bit length - 1 untill we find a value greater than 1, meaning that there is a non zero value bit stored
+	int leadingZeroBits = 0;
+	if (bits == 0) leadingZeroBits = bitLength;
+	else
+	{
+		while ((bits >> ((bitLength - 1) - leadingZeroBits)) > 0 && bitLength > leadingZeroBits)
+		{
+			leadingZeroBits++;
+		}
+	}
+	//find if bits given will exceed current byte if added to current byte
+	int hangingBits = bitLength - currentBit;
+	if (hangingBits < 0) hangingBits = 0;
+	int nonHangingBits = bitLength - hangingBits;//just using this to make it more clear
+	
+	//adjust leading zero to account for hanging bits
+	if (leadingZeroBits > nonHangingBits) leadingZeroBits = nonHangingBits;
+
+	//write bits to byte
+	uint8_t bitsToAdd = bits >> hangingBits;//right-bit-shift to remove hangingbits
+	this->byte = this->byte << leadingZeroBits;//first add leading zero bits
+	this->byte += bitsToAdd;//than add bits
+	this->currentBit -= nonHangingBits;
+
+	if(currentBit == 0)
+	{
+		//turn byte to char
+		char buffer = this->byte;
+		this->outFile.write(&buffer, 1);
+		//reset byte
+		this->byte = 0;
+		this->currentBit = 8;
+		if(hangingBits > 0)
+		{
+			//bit mask and recursion
+			bitsToAdd = 1;
+			for (nonHangingBits = 1; nonHangingBits < hangingBits; nonHangingBits++) bitsToAdd = bitsToAdd << 1 | 1;
+			return this->write(bits & bitsToAdd, hangingBits);
+		}
+		return 0;
+	}
+	else if (currentBit > 0 && currentBit <= 8) 
+	{
+		return 0;
+	}
+	else if(currentBit > 8)
+	{
+		return -3;
+	}
+	else if (currentBit < 0)
+	{
+		return -4;
+	}
+}

@@ -44,7 +44,7 @@ void yFrequency(int yDim, int* yTable, fakeDictionary<int, int> &Dc, fakeDiction
 void cFrequency(int cDim, int* cbTable, int* crTable, fakeDictionary<int, int> &Dc, fakeDictionary<int, int> &Ac);
 int intSorter(int a, int b);
 int* huffmanCodeCountArray(int *a, int arraySize);
-fakeDictionary<int, uint8_t> huffManReferenceTable(int* codeLengthArray, );
+//fakeDictionary<int, uint8_t> huffManReferenceTable(int* codeLengthArray, );
 //hmmm I dont know, will have to think of the structure a more later
 
 
@@ -1012,8 +1012,8 @@ int* huffmanCodeCountArray(int* a, int arraySize) //okay this function accepts a
         d[pos1] += 1;//add 1 code length to the minimum value that was shrunk
         d[pos2] = d[pos1];//readd the minimum value back into the array
 
-        delete c;
-        delete b;
+        delete[] c;
+        delete[] b;
 
         return d;//return the array
     }

@@ -147,9 +147,38 @@ int main()
     MCUS mine = graphPresetToMcus(myGraph);
     printMcus(mine);
     mcuHuffmanContainer mine2 = mcuHuffmanContainer(mine);
-    //testIntMcus(mine2, 2);
+    
+    byteWritter writer = byteWritter("../../heyJerry.txt");
+    std::cout << writer.write(104, 8) << std::endl;
+    std::cout << writer.write(101, 8) << std::endl;
+    std::cout << writer.write(121, 8) << std::endl;
+    std::cout << writer.write(74, 8) << std::endl;
+    std::cout << writer.write(101, 8) << std::endl;
+    std::cout << writer.write(114, 8) << std::endl;
+    std::cout << writer.write(114, 8) << std::endl;
+    std::cout << writer.write(121, 8) << std::endl;
+    std::cout << writer.write(0, 2) << std::endl;
+    std::cout << writer.write(32, 6) << std::endl;
+    std::cout << writer.write(0, 2) << std::endl;
+    std::cout << writer.write(48, 6) << std::endl;
+    std::cout << writer.write(0, 1) << std::endl;
+    std::cout << writer.write(120, 7) << std::endl;
+    std::cout << writer.write(0, 2) << std::endl;
+    std::cout << writer.write(48, 6) << std::endl;
+    std::cout << writer.write(0, 2) << std::endl;
+    std::cout << writer.write(48, 6) << std::endl;
+    std::cout << writer.write(0, 2) << std::endl;
+    std::cout << writer.write(32, 6) << std::endl;
+    std::cout << writer.write(0, 2) << std::endl;
+    std::cout << writer.write(96, 7) << std::endl;
+    std::cout << writer.write(120, 7) << std::endl;
+    std::cout << writer.write(3, 4) << std::endl;
+    std::cout << writer.write(0, 6) << std::endl;
+    std::cout << writer.write(48, 6) << std::endl;
 
-   // delete[] myimageArray;
+
+
+
     exit(2);
 }
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
