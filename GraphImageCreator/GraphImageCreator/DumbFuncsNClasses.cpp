@@ -186,6 +186,7 @@ int fakeDictionary<Key,Term>::returnCount()
 	return this->count;
 }
 template class fakeDictionary<int, int>;
+template class fakeDictionary<int, uint8_t>;
 byteWritter::byteWritter(const char* fileName)
 {
 	this->byte = 0;

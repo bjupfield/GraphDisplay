@@ -16,8 +16,13 @@ public:
 };
 class huffmanTable {
 public:
-	uint8_t amount[16];
-	uint8_t sortedValue[255];
+	fakeDictionary<int, int> DCcodeLength;
+	fakeDictionary<int, uint8_t> DCcode;
+	fakeDictionary<int, int> ACcodeLength;
+	fakeDictionary<int, uint8_t> ACcode;
+	huffmanTable() : DCcodeLength(fakeDictionary<int, int>()), ACcodeLength(fakeDictionary<int, int>()), DCcode(fakeDictionary<int, uint8_t>()), ACcode(fakeDictionary<int, uint8_t>()) {}
+	void frequency(int dim, int* table);
+	void huffmanCodes();
 };
 class mcuHuffmanContainer {
 private:

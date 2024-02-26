@@ -40,11 +40,11 @@ static const int chromaTable_2[16] =
     47, 66, 99, 128,
 };
 
-void yFrequency(int yDim, int* yTable, fakeDictionary<int, int> &Dc, fakeDictionary<int, int> &Ac);
-void cFrequency(int cDim, int* cbTable, int* crTable, fakeDictionary<int, int> &Dc, fakeDictionary<int, int> &Ac);
+
 int intSorter(int a, int b);
+int intReverseSorter(int a, int b);
 int* huffmanCodeCountArray(int *a, int arraySize);
-//fakeDictionary<int, uint8_t> huffManReferenceTable(int* codeLengthArray, );
+void huffManReferenceTable(fakeDictionary<int, int>& huffmanCodeLength, fakeDictionary<int, uint8_t>& target, bool b = false);
 //hmmm I dont know, will have to think of the structure a more later
 
 
@@ -867,10 +867,8 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
 
     this->mcus = new intMcus[mcuHeight * mcuLength];
 
-    fakeDictionary<int,int> freqYDc = fakeDictionary<int,int>();
-    fakeDictionary<int,int> freqYAc = fakeDictionary<int,int>();
-    fakeDictionary<int,int> freqCDc = fakeDictionary<int,int>();
-    fakeDictionary<int,int> freqCAc = fakeDictionary<int,int>();
+    huffmanTable yTable = huffmanTable();
+    huffmanTable cTable = huffmanTable();
 
     for (int i = 0; i < mcuHeight; i++) 
     {
@@ -881,8 +879,9 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
             //mcus[pos - 1].Y[0]
             //im throwing the previous mcus DC coefficient, as this is what jpg does. Jpg standard says that DC coefficient are dependent on previous DC cocefficients, where the DC Coefficient = current coefficient - previous coefficient
             //https://en.wikipedia.org/wiki/JPEG under entropy coding section
-            yFrequency(this->dim.Y, mcus[pos].Y, freqYDc, freqYAc);
-            cFrequency(this->dim.Cb, mcus[pos].Cb, mcus[pos].Cr, freqCDc, freqCAc);
+            yTable.frequency(dim.Y, mcus[pos].Y);
+            cTable.frequency(dim.Cb, mcus[pos].Cb);
+            cTable.frequency(dim.Cr, mcus[pos].Cr);
         }
     }
     
@@ -897,28 +896,9 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
             std::cout << std::endl;
         }
     }
-    int* keys = freqYAc.retrieveAllKeys();
-    std::cout << "HELLLLLLLLLLLLOOOOOOOO" << std::endl;
-    std::cout << "count: " << freqYAc.returnCount() << std::endl;
-    for (int i = 0; i < freqYAc.returnCount(); i++)
-    {
-        std::cout << "Value: " << keys[i] << " || Frequency: " << freqYAc.retrieveTerm(keys[i]) << std::endl;
-    }
-
-    freqYDc.sortByTerm(intSorter);
-    freqYAc.sortByTerm(intSorter);
-    freqCDc.sortByTerm(intSorter);
-    freqCAc.sortByTerm(intSorter);
-    keys = freqYAc.retrieveAllKeys();
-    std::cout << "HELLLLLLLLLLLLOOOOOOOO" << std::endl;
-    std::cout << "count: " << freqYAc.returnCount() << std::endl;
-
-    int *huffman = huffmanCodeCountArray(freqYAc.retrieveAllTerms(), freqYAc.returnCount());
-
-    for (int i = 0; i < freqYAc.returnCount(); i++)
-    {
-        std::cout << "Value: " << keys[i] << " || Frequency: " << freqYAc.retrieveTerm(keys[i]) << " || CodeLength: " << huffman[i] << std::endl;
-    }
+    
+    yTable.huffmanCodes();
+    cTable.huffmanCodes();
 
 }
 void testIntMcus(mcuHuffmanContainer mine, int num)
@@ -932,42 +912,56 @@ void testIntMcus(mcuHuffmanContainer mine, int num)
         std::cout << std::endl;
     }
 }
-void yFrequency(int yDim, int* yTable, fakeDictionary<int,int> &Dc, fakeDictionary<int,int> &Ac)
+void huffmanTable::frequency(int dim, int* table)
 {
     //dc
-    if(yTable[0] != 0)
-    if (Dc.addPair(yTable[0], 1) == -1) Dc.changeTerm(yTable[0], Dc.retrieveTerm(yTable[0]) + 1);
-    
+    if (table[0] != 0)
+        if (this->DCcodeLength.addPair(table[0], 1) == -1) DCcodeLength.changeTerm(table[0], DCcodeLength.retrieveTerm(table[0]) + 1);
+
     //ac
 
-    for (int i = 1; i < yDim * yDim; i++)
+    for (int i = 1; i < dim * dim; i++)
     {
-        if(yTable[i] != 0)
-        if (Ac.addPair(yTable[i], 1) == -1) 
-        {
-            Ac.changeTerm(yTable[i], Ac.retrieveTerm(yTable[i]) + 1);
-        }
+        if (table[i] != 0)
+            if (ACcodeLength.addPair(table[i], 1) == -1)
+            {
+                ACcodeLength.changeTerm(table[i], ACcodeLength.retrieveTerm(table[i]) + 1);
+            }
     }
-
 }
-void cFrequency(int cDim, int* cbTable, int*crTable, fakeDictionary<int, int> &Dc, fakeDictionary<int, int> &Ac)
+void huffmanTable::huffmanCodes()
 {
-    //dc
-    if(cbTable[0] != 0)
-    if (Dc.addPair(cbTable[0], 1 == -1) == -1) Dc.changeTerm(cbTable[0], Dc.retrieveTerm(cbTable[0]) + 1);
-    if(crTable[0] != 0)
-    if (Dc.addPair(crTable[0], 1 == -1) == -1) Dc.changeTerm(crTable[0], Dc.retrieveTerm(crTable[0]) + 1);
+    this->DCcodeLength.sortByTerm(intSorter);
+    this->ACcodeLength.sortByTerm(intSorter);
 
-    //ac
+    int* huffmanDC = huffmanCodeCountArray(this->DCcodeLength.retrieveAllTerms(), this->DCcodeLength.returnCount());
+    int* huffmanAC = huffmanCodeCountArray(this->ACcodeLength.retrieveAllTerms(), this->ACcodeLength.returnCount());
 
-    for (int i = 1; i < cDim * cDim; i++)
+    int* keysDC = this->DCcodeLength.retrieveAllKeys();
+    int* keysAC = this->ACcodeLength.retrieveAllKeys();
+    for (int i = 0; i < this->DCcodeLength.returnCount(); i++)
     {
-        if(cbTable[i] != 0)
-        if (Ac.addPair(cbTable[i], 1) == -1)Ac.changeTerm(cbTable[i], Ac.retrieveTerm(cbTable[i]) + 1);
-        if(cbTable[i] != 0)
-        if (Ac.addPair(crTable[i], 1) == -1)Ac.changeTerm(crTable[i], Ac.retrieveTerm(crTable[i]) + 1);
+        this->DCcodeLength.changeTerm(keysDC[i], huffmanDC[i]);
+    }
+    
+    for (int i = 0; i < this->ACcodeLength.returnCount(); i++)
+    {
+        this->ACcodeLength.changeTerm(keysAC[i], huffmanAC[i]);
     }
 
+    this->DCcodeLength.sortByTerm(intReverseSorter);
+    this->ACcodeLength.sortByTerm(intReverseSorter);
+
+    huffManReferenceTable(this->DCcodeLength, this->DCcode);
+    huffManReferenceTable(this->ACcodeLength, this->ACcode, true);
+
+    std::cout << "Hey!!!" << std::endl;
+    for (int i = 0; i < ACcode.returnCount(); i++)
+    {
+        std::cout << "Value: " << keysAC[i] << " || CodeLength: " << (int)this->ACcodeLength.retrieveTerm(keysAC[i]) << std::endl;
+        std::cout << "Value: " << keysAC[i] << " || Codes: " << (int)ACcode.retrieveTerm(keysAC[i]) << std::endl;
+    }
+    std::cout << "Here!?!?!" << std::endl;
 }
 int* huffmanCodeCountArray(int* a, int arraySize) //okay this function accepts a frequenc array and returns a huffman tree arrray. The array it returns is equal in size to the array it enters and has the huffman positions of the frequencies stored where the frequencies were.
 //the huffman positions means the huffman code length, the position in the tree that would increase the binary code by 1 digit, such as 01 to 010. What I store is the number of digits it takes, the code length, which in the case of 01 is 2 and 010 is 3.
@@ -1022,8 +1016,40 @@ int* huffmanCodeCountArray(int* a, int arraySize) //okay this function accepts a
         return new int[1] {1};//all codes have a minimum code length of 1
     }
 }
+void huffManReferenceTable(fakeDictionary<int, int>& huffmanCodeLength, fakeDictionary<int, uint8_t> &target,bool b)//this creates a dictionary for referencing the code values later
+{
+    int count = huffmanCodeLength.returnCount();
+
+    if (count > 170 || count < 1)//if above 170 or below 1 value cannot store as huffman table
+    {
+        std::cout << "Failure" << std::endl;
+    }
+
+    int* funnyPtr = huffmanCodeLength.retrieveAllKeys();
+    int* funnyPtr2 = huffmanCodeLength.retrieveAllTerms();
+
+    //code starts at zero, add 1 for every iteration
+    //when code lenght changes bit shift to the left by newcodelength - curcodelength 
+    uint8_t code = 0;
+    uint8_t codeLength = funnyPtr2[0];
+    for (int i = 0; i < count; i++)
+    {
+        if (i != 0 && codeLength != funnyPtr2[i])
+        {
+            code = code << funnyPtr2[i] - codeLength;
+            codeLength = funnyPtr2[i];
+        }
+        target.addPair(funnyPtr[i], code);
+        ++code;
+    }
+}
 int intSorter(int a, int b)
 {
     if (a < b) return 0;
+    return 1;
+}
+int intReverseSorter(int a, int b)
+{
+    if (a >= b) return 0;
     return 1;
 }
