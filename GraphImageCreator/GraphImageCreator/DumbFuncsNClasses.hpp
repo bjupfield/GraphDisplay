@@ -36,6 +36,8 @@ private:
 public:
 	byteWritter(const char* fileName);
 	int write(uint8_t bits, uint8_t bitLength);
+	int write(uint8_t bits);
+	bool open();
 };
 template <typename T>
 int searchArray(T exist, T* in, int length)

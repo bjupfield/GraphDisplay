@@ -264,3 +264,24 @@ int byteWritter::write(uint8_t bits, uint8_t bitLength)
 		return -4;
 	}
 }
+int byteWritter::write(uint8_t bits)
+{
+	char buffer;
+	if (currentBit != 8)
+	{
+		this->byte << (currentBit);
+		buffer = this->byte;
+		this->outFile.write(&buffer, 1);
+	}
+	buffer = bits;
+	this->outFile.write(&buffer, 1);
+	return 0;
+}
+bool byteWritter::open()
+{
+	if (this)
+	{
+		return true;
+	}
+	return false;
+}

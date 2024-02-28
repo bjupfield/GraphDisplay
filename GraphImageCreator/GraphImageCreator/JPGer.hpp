@@ -66,6 +66,18 @@ public:
 	huffmanTable* yCHuffman;
 	mcuHuffmanContainer(MCUS origin);
 };
+struct hInfoStruct {
+	int pixelHeight;//picture size
+	int pixelLength;//picture size
+	int samplingY;//y compression amount, standard is 1
+	int samplingCr;//cr compression amount, standard is 2
+	int samplingCb;//cb compression amount, standard is 2
+	int densityY;//should almost always be 1
+	int densityX;//should almost always be 1
+	int componentNums;//should be 1 or 3, as this is the color components adn is either monchrome or not...
+
+};
 void testIntMcus(mcuHuffmanContainer mine, int num);
+void actualJpg(hInfoStruct hInfo, mcuHuffmanContainer mcuHuffman, char *fileName);
 
 #endif

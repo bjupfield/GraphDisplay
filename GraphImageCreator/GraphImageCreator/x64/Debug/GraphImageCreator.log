@@ -1,7 +1,31 @@
-﻿  JPGer.cpp
-C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(35,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
+﻿  DumbFuncsNClasses.cpp
+  GraphImageCreator.cpp
+C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(35,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
+  (compiling source file 'GraphImageCreator.cpp')
+  
+C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\GraphImageCreator.cpp(28,23): warning C4244: 'initializing': conversion from 'std::streamoff' to 'int', possible loss of data
+  GraphPresets.cpp
+C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(35,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
+  (compiling source file 'GraphPresets.cpp')
+  
+C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\GraphPresets.cpp(20,19): warning C4244: 'initializing': conversion from 'std::streamoff' to 'int', possible loss of data
+  JPGer.cpp
+C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(35,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
   (compiling source file 'JPGer.cpp')
   
-C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(391,9): warning C4101: 'iter': unreferenced local variable
-C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1086,53): warning C4554: '<<': check operator precedence for possible error; use parentheses to clarify precedence
-  GraphImageCreator.vcxproj -> C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\x64\Debug\GraphImageCreator.exe
+C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\JPGer.cpp(389,9): warning C4101: 'iter': unreferenced local variable
+C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\JPGer.cpp(1064,53): warning C4554: '<<': check operator precedence for possible error; use parentheses to clarify precedence
+  Mcuer.cpp
+C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(35,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
+  (compiling source file 'Mcuer.cpp')
+  
+C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\Mcuer.cpp(118,12): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\Mcuer.cpp(119,12): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\Mcuer.cpp(120,12): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  RGBtoYCrCb.cpp
+  RGBtoYCrCb.hpp
+  Generating Code...
+C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\GraphPresets.cpp(155): warning C4715: 'accessImage::recieveOrCreate': not all control paths return a value
+C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\DumbFuncsNClasses.cpp(266): warning C4715: 'byteWritter::write': not all control paths return a value
+x64\Debug\RGBtoYCrCb.obj : warning LNK4042: object specified more than once; extras ignored
+  GraphImageCreator.vcxproj -> C:\Users\bjupf\JpgEncoder\GraphImageCreator\x64\Debug\GraphImageCreator.exe

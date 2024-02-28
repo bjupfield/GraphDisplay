@@ -54,7 +54,7 @@ int intReverseSorter(int a, int b);
 int* dctQuantizer(uint8_t* table, int dim, int previousDC, int num);
 int* huffmanCodeCountArray(int *a, int arraySize);
 void huffManReferenceTable(fakeDictionary<int, int>& huffmanCodeLength, fakeDictionary<int, uint8_t>& target, bool b = false);
-//hmmm I dont know, will have to think of the structure a more later
+void SOI_APPO(byteWritter& bw, int densityY, int densityX);
 
 
 void graphMaptoJPG(graphMap map)
@@ -826,49 +826,15 @@ int* dct_II_uint_8t_int_4x4_TEST(uint8_t* source_mcu, int previousCoefficient)
     mcu[0] = mcu[0] - previousCoefficient;
     return mcu;
 }
+void actualJpg(hInfoStruct hInfo, mcuHuffmanContainer mcuHuffman, char* fileName)
+{
+    byteWritter bW = byteWritter(fileName);
 
-//intMcus::intMcus(MCU uintMcu, dimensions dim, int previousCoefficient)
-//{
-//    //y loop
-//    if (dim.Y == 8)
-//    {
-//        //this->Y = dct_II_uint_8t_int_8x8(uintMcu.Y);
-//        //testing
-//        //this->Y = test_8x8_int_DCT(uintMcu.Y, previousCoefficient);
-//        this->Y = test2_dct(uintMcu.Y, previousCoefficient);
-//        quantizer_8x8_int(Y, lumTable);
-//    }
-//    else if (dim.Y == 4)
-//    {
-//        this->Y = dct_II_uint_8t_int_4x4(uintMcu.Y, previousCoefficient);
-//        //this->Y = dct_II_uint_8t_int_4x4_TEST(uintMcu.Y, previousCoefficient);
-//        quantizer_4x4_int(Y, lumTable);
-//    }
-//    //cb loop
-//    if(dim.Cb == 8)
-//    {
-//        this->Cb = dct_II_uint_8t_int_8x8(uintMcu.Cb, previousCoefficient);
-//        quantizer_8x8_int(Cb, chromaTable);
-//    }
-//    else if (dim.Cb == 4)
-//    {
-//        //this->Cb = dct_II_uint_8t_int_4x4(uintMcu.Cb, previousCoefficient);
-//        this->Cb = dct_II_uint_8t_int_4x4_TEST(uintMcu.Cb, previousCoefficient);
-//        quantizer_4x4_int(Cb, chromaTable_2);
-//    }
-//    //cr loop
-//    if(dim.Cr == 8)
-//    {
-//        this->Cr = dct_II_uint_8t_int_8x8(uintMcu.Cr, previousCoefficient);
-//        quantizer_8x8_int(Cr, chromaTable);
-//    }
-//    else if(dim.Cr == 4)
-//    {
-//        //this->Cr = dct_II_uint_8t_int_4x4(uintMcu.Cr, previousCoefficient);
-//        this->Cr = dct_II_uint_8t_int_4x4_TEST(uintMcu.Cr, previousCoefficient);
-//        quantizer_4x4_int(Cr, chromaTable_2);
-//    }
-//}
+    if (bW.open())
+    {
+        //write jpg...
+    }
+}
 mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
 {
     this->dim = origin.retrieveDim();
@@ -940,7 +906,6 @@ int* dctQuantizer(uint8_t* table,int dim, int previousDC, int num)
         //returnTable = dct_II_uint_8t_int_4x4(table, previousDC);
         returnTable = dct_II_uint_8t_int_4x4_TEST(table, previousDC);
         quantizer_4x4_int(returnTable, quantTables4x4[num]);
-        std::cout << "After Tranform: " << std::endl;
     }
     return returnTable;
 }
@@ -1077,4 +1042,11 @@ int intReverseSorter(int a, int b)
 {
     if (a >= b) return 0;
     return 1;
+}
+void SOI_APPO(byteWritter& bw, int densityY, int densityX)
+{
+    bw.write(255); bw.write(216);//SOI Marker, START OF IMAGE MARKER
+    bw.write(255); bw.write(224);//APPO Marker, application date marker
+    bw.write(0); bw.write(16);//APPO segment size, because we are not using the thumbnail this will always be the same size
+    bw.write(74); bw.write(70); bw.write(73); bw.write(70); bw.write(0);//JFIF indentifier string, this constant identifies the jpeg as a jfif type, which is standard
 }
