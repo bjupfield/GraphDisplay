@@ -1043,10 +1043,15 @@ int intReverseSorter(int a, int b)
     if (a >= b) return 0;
     return 1;
 }
-void SOI_APPO(byteWritter& bw, int densityY, int densityX)
+void SOI_APPO(byteWritter& bw, int densityY, int densityX, int density)
 {
     bw.write(255); bw.write(216);//SOI Marker, START OF IMAGE MARKER
     bw.write(255); bw.write(224);//APPO Marker, application date marker
     bw.write(0); bw.write(16);//APPO segment size, because we are not using the thumbnail this will always be the same size
     bw.write(74); bw.write(70); bw.write(73); bw.write(70); bw.write(0);//JFIF indentifier string, this constant identifies the jpeg as a jfif type, which is standard
+    bw.write((uint8_t)density);
+    bw.write((uint8_t)densityY, 16);
+    bw.write((uint8_t)densityX, 16);
+    bw.write(0);//thumbnailsizex
+    bw.write(0);//thumbnailsizey
 }
