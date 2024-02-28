@@ -101,15 +101,15 @@ dimensions MCUS::retrieveDim()
 	return this->dim;
 }
 MCU::MCU(int YDim, int CbDim, int CrDm) {
-	Y = new uint8_t[YDim * YDim];
-	Cb = new uint8_t[CbDim * CbDim];
-	Cr = new uint8_t[CrDm * CrDm];
+	this->ycbcr.Y = new uint8_t[YDim * YDim];
+	this->ycbcr.Cb = new uint8_t[CbDim * CbDim];
+	this->ycbcr.Cr = new uint8_t[CrDm * CrDm];
 }
 void MCU::fillMcu(uint8_t* y, uint8_t* cb, uint8_t* cr)
 {
-	this->Y = y;
-	this->Cb = cb;
-	this->Cr = cr;
+	this->ycbcr.Y = y;
+	this->ycbcr.Cb = cb;
+	this->ycbcr.Cr = cr;
 }
 uint8_t* extractYCbCr(Pixel* pixel, int size) {
 	uint8_t* myYCbCrArray = new uint8_t[size * 3];

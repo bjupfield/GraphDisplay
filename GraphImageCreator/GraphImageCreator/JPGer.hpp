@@ -5,13 +5,45 @@
 #include "DumbFuncsNClasses.hpp"
 
 void graphMaptoJPG(graphMap map);
-
 class intMcus {
 public:
-	int* Y;
-	int* Cb;
-	int* Cr;
-	intMcus() : Y(nullptr), Cb(nullptr), Cr(nullptr) {}
+	struct intMcu
+	{
+		int* Y;
+		int* Cb;
+		int* Cr;
+
+		int* operator[](int i)
+		{
+			switch (i)
+			{
+			case 0:
+				return Y;
+			case 1:
+				return Cb;
+			case 2:
+				return Cr;
+			default:
+				return nullptr;
+			}
+		}
+		int*& operator()(int i)
+		{
+			switch (i)
+			{
+			case 0:
+				return Y;
+			case 1:
+				return Cb;
+			case 2:
+				return Cr;
+			default:
+				return Y;
+			}
+		}
+	};
+	intMcu yCbCr;
+	intMcus() : yCbCr{nullptr, nullptr, nullptr} {}
 	intMcus(MCU uintMcu, dimensions dim, int previousCoefficient);
 };
 class huffmanTable {
@@ -31,6 +63,7 @@ private:
 public:
 	dimensions dim;
 	intMcus* mcus;
+	huffmanTable* yCHuffman;
 	mcuHuffmanContainer(MCUS origin);
 };
 void testIntMcus(mcuHuffmanContainer mine, int num);

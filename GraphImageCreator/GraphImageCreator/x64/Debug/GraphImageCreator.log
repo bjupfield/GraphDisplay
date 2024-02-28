@@ -1,8 +1,7 @@
 ﻿  JPGer.cpp
-C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(35,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(35,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
   (compiling source file 'JPGer.cpp')
   
-C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\JPGer.cpp(379,9): warning C4101: 'iter': unreferenced local variable
-C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\JPGer.cpp(1039,53): warning C4554: '<<': check operator precedence for possible error; use parentheses to clarify precedence
-x64\Debug\RGBtoYCrCb.obj : warning LNK4042: object specified more than once; extras ignored
-  GraphImageCreator.vcxproj -> C:\Users\bjupf\JpgEncoder\GraphImageCreator\x64\Debug\GraphImageCreator.exe
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(391,9): warning C4101: 'iter': unreferenced local variable
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1086,53): warning C4554: '<<': check operator precedence for possible error; use parentheses to clarify precedence
+  GraphImageCreator.vcxproj -> C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\x64\Debug\GraphImageCreator.exe

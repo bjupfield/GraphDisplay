@@ -20,7 +20,13 @@ static const int lumTable[64] =
     55, 68, 81, 93, 117, 136, 144, 126,
     75, 81, 83, 90, 109, 115, 126, 126
 };
-
+static const int lumTable_2[16] =
+{
+    16, 12, 12, 15,
+    12, 12, 14, 18, 
+    12, 14, 16, 24, 
+    15, 18, 24, 30, 
+};
 static const int chromaTable[64] =
 {
     17, 18, 24, 47, 99, 128, 192, 256,
@@ -39,10 +45,13 @@ static const int chromaTable_2[16] =
     24, 26, 56, 99,
     47, 66, 99, 128,
 };
+static const int* quantTables8x8[3] = { lumTable, chromaTable, chromaTable };
+static const int* quantTables4x4[3] = { lumTable_2, chromaTable_2, chromaTable_2 };
 
 
 int intSorter(int a, int b);
 int intReverseSorter(int a, int b);
+int* dctQuantizer(uint8_t* table, int dim, int previousDC, int num);
 int* huffmanCodeCountArray(int *a, int arraySize);
 void huffManReferenceTable(fakeDictionary<int, int>& huffmanCodeLength, fakeDictionary<int, uint8_t>& target, bool b = false);
 //hmmm I dont know, will have to think of the structure a more later
@@ -264,6 +273,7 @@ const int m7 = 946;//sin(3pi/8) * 2^10
 const int m8 = 1448;//sqrt(2) * 2^10
 int *dct_II_uint_8t_int_4x4(uint8_t* source_mcu, int previousCoefficient)
 {
+
     int* mcu = new int[16];
 
     //row DCT
@@ -817,48 +827,48 @@ int* dct_II_uint_8t_int_4x4_TEST(uint8_t* source_mcu, int previousCoefficient)
     return mcu;
 }
 
-intMcus::intMcus(MCU uintMcu, dimensions dim, int previousCoefficient)
-{
-    //y loop
-    if (dim.Y == 8)
-    {
-        //this->Y = dct_II_uint_8t_int_8x8(uintMcu.Y);
-        //testing
-        //this->Y = test_8x8_int_DCT(uintMcu.Y, previousCoefficient);
-        this->Y = test2_dct(uintMcu.Y, previousCoefficient);
-        quantizer_8x8_int(Y, lumTable);
-    }
-    else if (dim.Y == 4)
-    {
-        this->Y = dct_II_uint_8t_int_4x4(uintMcu.Y, previousCoefficient);
-        //this->Y = dct_II_uint_8t_int_4x4_TEST(uintMcu.Y, previousCoefficient);
-        quantizer_4x4_int(Y, lumTable);
-    }
-    //cb loop
-    if(dim.Cb == 8)
-    {
-        this->Cb = dct_II_uint_8t_int_8x8(uintMcu.Cb, previousCoefficient);
-        quantizer_8x8_int(Cb, chromaTable);
-    }
-    else if (dim.Cb == 4)
-    {
-        //this->Cb = dct_II_uint_8t_int_4x4(uintMcu.Cb, previousCoefficient);
-        this->Cb = dct_II_uint_8t_int_4x4_TEST(uintMcu.Cb, previousCoefficient);
-        quantizer_4x4_int(Cb, chromaTable_2);
-    }
-    //cr loop
-    if(dim.Cr == 8)
-    {
-        this->Cr = dct_II_uint_8t_int_8x8(uintMcu.Cr, previousCoefficient);
-        quantizer_8x8_int(Cr, chromaTable);
-    }
-    else if(dim.Cr == 4)
-    {
-        //this->Cr = dct_II_uint_8t_int_4x4(uintMcu.Cr, previousCoefficient);
-        this->Cr = dct_II_uint_8t_int_4x4_TEST(uintMcu.Cr, previousCoefficient);
-        quantizer_4x4_int(Cr, chromaTable_2);
-    }
-}
+//intMcus::intMcus(MCU uintMcu, dimensions dim, int previousCoefficient)
+//{
+//    //y loop
+//    if (dim.Y == 8)
+//    {
+//        //this->Y = dct_II_uint_8t_int_8x8(uintMcu.Y);
+//        //testing
+//        //this->Y = test_8x8_int_DCT(uintMcu.Y, previousCoefficient);
+//        this->Y = test2_dct(uintMcu.Y, previousCoefficient);
+//        quantizer_8x8_int(Y, lumTable);
+//    }
+//    else if (dim.Y == 4)
+//    {
+//        this->Y = dct_II_uint_8t_int_4x4(uintMcu.Y, previousCoefficient);
+//        //this->Y = dct_II_uint_8t_int_4x4_TEST(uintMcu.Y, previousCoefficient);
+//        quantizer_4x4_int(Y, lumTable);
+//    }
+//    //cb loop
+//    if(dim.Cb == 8)
+//    {
+//        this->Cb = dct_II_uint_8t_int_8x8(uintMcu.Cb, previousCoefficient);
+//        quantizer_8x8_int(Cb, chromaTable);
+//    }
+//    else if (dim.Cb == 4)
+//    {
+//        //this->Cb = dct_II_uint_8t_int_4x4(uintMcu.Cb, previousCoefficient);
+//        this->Cb = dct_II_uint_8t_int_4x4_TEST(uintMcu.Cb, previousCoefficient);
+//        quantizer_4x4_int(Cb, chromaTable_2);
+//    }
+//    //cr loop
+//    if(dim.Cr == 8)
+//    {
+//        this->Cr = dct_II_uint_8t_int_8x8(uintMcu.Cr, previousCoefficient);
+//        quantizer_8x8_int(Cr, chromaTable);
+//    }
+//    else if(dim.Cr == 4)
+//    {
+//        //this->Cr = dct_II_uint_8t_int_4x4(uintMcu.Cr, previousCoefficient);
+//        this->Cr = dct_II_uint_8t_int_4x4_TEST(uintMcu.Cr, previousCoefficient);
+//        quantizer_4x4_int(Cr, chromaTable_2);
+//    }
+//}
 mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
 {
     this->dim = origin.retrieveDim();
@@ -867,21 +877,25 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
 
     this->mcus = new intMcus[mcuHeight * mcuLength];
 
-    huffmanTable yTable = huffmanTable();
-    huffmanTable cTable = huffmanTable();
+    this->yCHuffman = new huffmanTable[2];
+    /*this->yCHuffman[0] = huffmanTable();
+    this->yCHuffman[1] = huffmanTable();*/
+
 
     for (int i = 0; i < mcuHeight; i++) 
     {
         for (int j = 0; j < mcuLength; j++)
         {
             int pos = i * mcuLength + j;
-            mcus[pos] = intMcus(origin.mcuList[pos], origin.retrieveDim(), ((pos == 0) ? 0 : mcus[pos - 1].Y[0]));
+            mcus[pos] = intMcus();
+            for(int i = 0; i < 3; i++)//if we ever want to make it monochrome...
+            {
+                mcus[pos].yCbCr(i) = dctQuantizer(&origin.mcuList[pos].ycbcr[i], this->dim[i], ((pos == 0) ? 0 : mcus[pos - 1].yCbCr[i][0]), i);
+                yCHuffman[i < 1 ? i : 1].frequency(this->dim[i], this->mcus[pos].yCbCr[i]);
+            }
             //mcus[pos - 1].Y[0]
             //im throwing the previous mcus DC coefficient, as this is what jpg does. Jpg standard says that DC coefficient are dependent on previous DC cocefficients, where the DC Coefficient = current coefficient - previous coefficient
             //https://en.wikipedia.org/wiki/JPEG under entropy coding section
-            yTable.frequency(dim.Y, mcus[pos].Y);
-            cTable.frequency(dim.Cb, mcus[pos].Cb);
-            cTable.frequency(dim.Cr, mcus[pos].Cr);
         }
     }
     
@@ -891,15 +905,13 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
         {
             for (int j = 0; j < 4; j++)
             {
-                std::cout << this->mcus[n].Cr[j + i * 4] << ", ";
+                std::cout << this->mcus[n].yCbCr[1][j + i * 4] << ", ";
             }
             std::cout << std::endl;
         }
     }
-    
-    yTable.huffmanCodes();
-    cTable.huffmanCodes();
-
+    yCHuffman[0].huffmanCodes();
+    yCHuffman[1].huffmanCodes();
 }
 void testIntMcus(mcuHuffmanContainer mine, int num)
 {
@@ -907,10 +919,30 @@ void testIntMcus(mcuHuffmanContainer mine, int num)
     {
         for(int j = 0; j < mine.dim.Y; j++)
         {
-            std::cout << mine.mcus[num].Y[j + i * mine.dim.Y] << " ";
+            std::cout << mine.mcus[num].yCbCr[0][j + i * mine.dim.Y] << " ";
         }
         std::cout << std::endl;
     }
+}
+int* dctQuantizer(uint8_t* table,int dim, int previousDC, int num) 
+{
+    int* returnTable = (int*)malloc(dim * dim * sizeof(int));
+    if (dim == 8)
+    {
+        //this->Y = dct_II_uint_8t_int_8x8(uintMcu.Y);
+        //testing
+        //this->Y = test_8x8_int_DCT(uintMcu.Y, previousCoefficient);
+        returnTable = test2_dct(table, previousDC);
+        quantizer_8x8_int(returnTable, quantTables8x8[num]);
+    }
+    else if (dim == 4)
+    {
+        //returnTable = dct_II_uint_8t_int_4x4(table, previousDC);
+        returnTable = dct_II_uint_8t_int_4x4_TEST(table, previousDC);
+        quantizer_4x4_int(returnTable, quantTables4x4[num]);
+        std::cout << "After Tranform: " << std::endl;
+    }
+    return returnTable;
 }
 void huffmanTable::frequency(int dim, int* table)
 {
@@ -955,13 +987,6 @@ void huffmanTable::huffmanCodes()
     huffManReferenceTable(this->DCcodeLength, this->DCcode);
     huffManReferenceTable(this->ACcodeLength, this->ACcode, true);
 
-    std::cout << "Hey!!!" << std::endl;
-    for (int i = 0; i < ACcode.returnCount(); i++)
-    {
-        std::cout << "Value: " << keysAC[i] << " || CodeLength: " << (int)this->ACcodeLength.retrieveTerm(keysAC[i]) << std::endl;
-        std::cout << "Value: " << keysAC[i] << " || Codes: " << (int)ACcode.retrieveTerm(keysAC[i]) << std::endl;
-    }
-    std::cout << "Here!?!?!" << std::endl;
 }
 int* huffmanCodeCountArray(int* a, int arraySize) //okay this function accepts a frequenc array and returns a huffman tree arrray. The array it returns is equal in size to the array it enters and has the huffman positions of the frequencies stored where the frequencies were.
 //the huffman positions means the huffman code length, the position in the tree that would increase the binary code by 1 digit, such as 01 to 010. What I store is the number of digits it takes, the code length, which in the case of 01 is 2 and 010 is 3.
