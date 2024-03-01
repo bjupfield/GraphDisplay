@@ -9,6 +9,19 @@ using namespace std;
 //at 
 //https://legacy.imagemagick.org/discourse-server/viewtopic.php?t=20333
 
+const uint8_t ff = 255;
+
+const int zigging[64] = {
+    0,   1,  8, 16,  9,  2,  3, 10,
+    17, 24, 32, 25, 18, 11,  4,  5,
+    12, 19, 26, 33, 40, 48, 41, 34,
+    27, 20, 13,  6,  7, 14, 21, 28,
+    35, 42, 49, 56, 57, 50, 43, 36,
+    29, 22, 15, 23, 30, 37, 44, 51,
+    58, 59, 52, 45, 38, 31, 39, 46,
+    53, 60, 61, 54, 47, 55, 62, 63
+};
+
 static const int lumTable[64] =
 {
     16, 12, 12, 15, 22, 33, 55, 75,
@@ -54,8 +67,10 @@ int intReverseSorter(int a, int b);
 int* dctQuantizer(uint8_t* table, int dim, int previousDC, int num);
 int* huffmanCodeCountArray(int *a, int arraySize);
 void huffManReferenceTable(fakeDictionary<int, int>& huffmanCodeLength, fakeDictionary<int, uint8_t>& target, bool b = false);
-void SOI_APPO(byteWritter& bw, int densityY, int densityX);
-
+void SOI_APPO_M(byteWritter& bw, int densityY, int densityX, int density);
+void DQT_M(byteWritter& bw, int*& table, int tableNum, int num);
+void SOF_M(byteWritter& bw, int chromaExist, int ySamplingSize, int cSamplingSize, int pixelHeight, int pixelWidth);
+void DHT_M(byteWritter& bw, huffmanTable& huff);
 
 void graphMaptoJPG(graphMap map)
 	{
@@ -826,13 +841,19 @@ int* dct_II_uint_8t_int_4x4_TEST(uint8_t* source_mcu, int previousCoefficient)
     mcu[0] = mcu[0] - previousCoefficient;
     return mcu;
 }
-void actualJpg(hInfoStruct hInfo, mcuHuffmanContainer mcuHuffman, char* fileName)
+void actualJpg(hInfoStruct hInfo, mcuHuffmanContainer mcuHuffman, char*& fileName)
 {
     byteWritter bW = byteWritter(fileName);
 
     if (bW.open())
     {
         //write jpg...
+        SOI_APPO_M(bW, hInfo.densityY, hInfo.densityX, hInfo.density);
+        DQT_M(bW, hInfo.lumaTable, hInfo.lumaTableType, 0);//luma table will be used if monochrome
+        if (hInfo.chromaTableType != 0) DQT_M(bW, hInfo.chromaTable, hInfo.chromaTableType, 1);//check if chromatable exist (will not if monochrome image)
+
+
+
     }
 }
 mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
@@ -1043,15 +1064,40 @@ int intReverseSorter(int a, int b)
     if (a >= b) return 0;
     return 1;
 }
-void SOI_APPO(byteWritter& bw, int densityY, int densityX, int density)
+void SOI_APPO_M(byteWritter& bw, int densityY, int densityX, int density)
 {
-    bw.write(255); bw.write(216);//SOI Marker, START OF IMAGE MARKER
-    bw.write(255); bw.write(224);//APPO Marker, application date marker
+    bw.write(ff); bw.write(216);//SOI Marker, START OF IMAGE MARKER
+    bw.write(ff); bw.write(224);//APPO Marker, application date marker
     bw.write(0); bw.write(16);//APPO segment size, because we are not using the thumbnail this will always be the same size
     bw.write(74); bw.write(70); bw.write(73); bw.write(70); bw.write(0);//JFIF indentifier string, this constant identifies the jpeg as a jfif type, which is standard
-    bw.write((uint8_t)density);
-    bw.write((uint8_t)densityY, 16);
-    bw.write((uint8_t)densityX, 16);
-    bw.write(0);//thumbnailsizex
+    bw.write((uint8_t)density);//these next three are the resoultuion density of the image. say that the resolution is 3 by 2, so every inch there is three pixels y and 2 pixels x
+    bw.write((uint8_t)densityY, 16);//this means we would set density to 3
+    bw.write((uint8_t)densityX, 16);//and y density to 2 x density to 2...... however it is almost always zero density and 1, 1 for y density and x density, because no one uses different density images
+    bw.write(0);//thumbnailsize
     bw.write(0);//thumbnailsizey
+}
+void DQT_M(byteWritter& bw, int*& table, int tableNum, int num)
+{
+    bw.write(ff); bw.write(219);//DQT header, Data Quantization Table Header
+    bw.write(tableNum + 3, 16);//Header length, table length + 3 bits written here not including marker
+    bw.write(0, 4); bw.write(num, 4);// this byte here contains two bits (lol not actually bits) of information, the table integer size either 8 bit or 16 bit and the table id number. We will only be using 8 bit which is 0000 (16 is 0001)m abd the second bit contains the id, possible nums 0-3
+    for (int i = 0; i < tableNum; i++)
+    {
+        bw.write(table[zigging[i]]);
+    }
+}
+void SOF_M(byteWritter& bw, int chromaExist, int ySamplingSize, int cSamplingSize, int pixelHeight, int pixelWidth) 
+{
+    bw.write(ff); bw.write(192);//S0F header, start of frame header type 0
+    bw.write(chromaExist != 0 ? 17 : 11);//length of segment, if monochrome only 11 bytes if not 17 
+    bw.write(8);//jpg pixel precision, jpg only supports 8bit precision but it must be included anyway lol
+    bw.write(pixelHeight, 16);//jpg pixel height, stored in two bits maxinum size of 256 x 256
+    bw.write(pixelWidth, 16);//jpg pixel length
+    bw.write(1); bw.write(ySamplingSize == 2 ? 34 : 17); bw.write(0);//y component or monochrome component data, sampling size will either by 1 or 2, should almost always be two for the y component
+    if (chromaExist != 0)
+    {
+        bw.write(2); bw.write(ySamplingSize == 2 ? 34 : 17); bw.write(1);//cb component, sampling size should almost always be one and therefor 0x11, also quant tables are at the end, chroma uses quant table one luma uses quant table 0
+        bw.write(3); bw.write(ySamplingSize == 2 ? 34 : 17); bw.write(1);
+    }
+
 }

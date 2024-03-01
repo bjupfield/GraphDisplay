@@ -264,7 +264,7 @@ int byteWritter::write(uint8_t bits, uint8_t bitLength)
 		return -4;
 	}
 }
-int byteWritter::write(uint8_t bits)
+int byteWritter::write(uint8_t bits)//this func writes a single byte, no matter the size, it also finishes the current byte
 {
 	char buffer;
 	if (currentBit != 8)
