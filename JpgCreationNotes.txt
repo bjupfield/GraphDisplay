@@ -213,3 +213,31 @@ part 1 timestamp 25:00 covers this
 
 
 okay I also stopped watching the thing at 21:33
+
+Okay pg 92 of https://www.w3.org/Graphics/JPEG/itu-t81.pdf
+goes over the exact procedures for the huffman code and value coding...
+okay I think what it is saying to resolve the problem of amplitude of the huffman codes is
+that the huffman codes are defined. This means that there are really only 10 options and 11 options respectively
+for the huffman ac and huffman dc amplitude of the actual coefficient values...
+however it seems that "additional"bits are added to define what the amplitudes actual value is...
+the amplitudeis just the bit lenght of the value of the coefficient, so for a code like 5 the amplitude is 3,
+but the amplitude is 3 for 4-7
+to resolve this problem the additional bits are the lower order bits of the values bits, so for 5
+the bits are 101, so the lower order bits would be 01 as those distinguish it from its amplitudes
+however this doesnt seem efficient so it must be wrong
+okay its actually not inefficient enough, there doesnt seem to be lower order bits, it just encodes the
+entire coefficient after the huffman values, so it encodes for 5 with 15 0s before
+11110011 101,
+with 11110011 being the huffman value and 101 being the coefficient value (So the huffman value would actually be converted
+to a  huffman code
+okay, i finally know what the negative number coefficient are,
+they simply are the coefficient values flipped, so for the
+coefficient value of 101, its 010
+yeah thats it... so the huffman values and coefficient are set in this way,
+huffmanvaluebits(high-bits(numofzeroesbeforethiscoefficient)low-bits(coefficientbitlength))coefficientbits(if(-)coefficentbitflippedif(+)justcoefficentbits)
+so lets say we have the coefficient value -47 preceded by 7 zeroes
+the high-order bits of the huffmanvalue would be 0111, representing 7 zeroes
+the lower-order bits of the huffmanvalue would be 0110, representing the bit length of 47, 6
+and then the coefficient bits would be 010000, which is the value 47 flipped
+without the huffman value coded, like it would be this can be represented as
+01110110 010000

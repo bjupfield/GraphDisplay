@@ -7,3 +7,15 @@ so we create a graph object of say size 3x2 and the array holds picture objects 
 where that array would mean that the first pixel is a picture object of label 1 and the next 3 are label 2 and so on, obviously
 standard 1-d to 2-d array shenanigans
 we would than send this graph object to the jpg encoder which would pull the data from the labels by searching for the picture objects
+
+
+okay our next thing we need to do is change the huffmanTable::frequency function
+to actual go through the mcu and count the huffman values that are in it, so it would do this
+by something like counting until the next Coefficent thats non-zero than saving that count to the
+first 4 bits and saving the coefficients bit length to the last four bits
+we dont stop counting when the zeros are above a 15 count, we count untill the next coefficient
+or the end of the mcu
+this has to be done because F0 do not need to be implemented before a 00 so we can only tell if we
+need an F0 if there is a coefficiet after it.
+we should probably make a function that works for both writing to the file and creating the huffman tables
+to be efficient
