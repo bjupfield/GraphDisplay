@@ -21,6 +21,7 @@ public:
 	//funcs return should be 0 if less than 1 if greater than or equal too to sort from greatest to least, opposite to sort from least to greatest
 	Term retrieveTerm(Key key);//returns null if key does not exist
 	Key* retrieveKeys(Term term);//returns null if term does not exist
+	int retrieveTermCount(Term term);//returns the amount of keys that a term is tied too
 	Key* retrieveAllKeys();
 	Term* retrieveAllTerms();//retrieves terms regardless of repeats
 	int returnCount();
@@ -33,11 +34,14 @@ private:
 	std::fstream outFile;
 	int currentBit;
 	uint8_t byte;
+	bool inScan = false;//this is a condition only necessary because of the jpg scan needing to put 00 after an ff if it appears...
 public:
 	byteWritter(const char* fileName);
 	int write(uint8_t bits, uint8_t bitLength);
 	int write(uint8_t bits);
 	bool open();
+	void inScanFlip();
+	int bitPosition();
 };
 template <typename T>
 int searchArray(T exist, T* in, int length)

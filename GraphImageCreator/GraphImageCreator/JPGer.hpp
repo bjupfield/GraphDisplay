@@ -65,6 +65,7 @@ public:
 	intMcus* mcus;
 	huffmanTable* yCHuffman;
 	mcuHuffmanContainer(MCUS origin);
+	int size();
 };
 struct hInfoStruct {
 	int pixelHeight;//picture size

@@ -171,6 +171,13 @@ Key* fakeDictionary<Key,Term>::retrieveKeys(Term term)
 	return NULL;
 }
 template <typename Key, typename Term>
+int fakeDictionary<Key, Term>::retrieveTermCount(Term term)
+{
+	int* posArray = searchArrayAll(term, this->terms, this->count);
+
+	return posArray[0];
+}
+template <typename Key, typename Term>
 Key* fakeDictionary<Key,Term>::retrieveAllKeys()
 {
 	return this->keys;
@@ -239,6 +246,11 @@ int byteWritter::write(uint8_t bits, uint8_t bitLength)
 		//turn byte to char
 		char buffer = this->byte;
 		this->outFile.write(&buffer, 1);
+		if(inScan)//funny condition needed to prevent ff in scan for jpg, writes 00 after any ff that appears in scan to prevent marker readings
+		{
+			char buffer = (char)0;
+			this->outFile.write(&buffer, 1);
+		}
 		//reset byte
 		this->byte = 0;
 		this->currentBit = 8;
@@ -284,4 +296,12 @@ bool byteWritter::open()
 		return true;
 	}
 	return false;
+}
+void byteWritter::inScanFlip()
+{
+	this->inScan = !this->inScan;
+}
+int byteWritter::bitPosition()
+{
+	return this->currentBit;
 }

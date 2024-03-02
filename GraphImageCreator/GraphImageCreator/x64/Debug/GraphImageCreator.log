@@ -1,7 +1,12 @@
-﻿  JPGer.cpp
+﻿  DumbFuncsNClasses.cpp
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\DumbFuncsNClasses.cpp(284,14): warning C4552: '<<': result of expression not used
+  JPGer.cpp
 C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(35,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
   (compiling source file 'JPGer.cpp')
   
-C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(413,9): warning C4101: 'iter': unreferenced local variable
-C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1090,53): warning C4554: '<<': check operator precedence for possible error; use parentheses to clarify precedence
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(416,9): warning C4101: 'iter': unreferenced local variable
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1119,53): warning C4554: '<<': check operator precedence for possible error; use parentheses to clarify precedence
+  Generating Code...
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\DumbFuncsNClasses.cpp(278): warning C4715: 'byteWritter::write': not all control paths return a value
+x64\Debug\RGBtoYCrCb.obj : warning LNK4042: object specified more than once; extras ignored
   GraphImageCreator.vcxproj -> C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\x64\Debug\GraphImageCreator.exe

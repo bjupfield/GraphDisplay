@@ -79,7 +79,10 @@ void huffManReferenceTable(fakeDictionary<int, int>& huffmanCodeLength, fakeDict
 void SOI_APPO_M(byteWritter& bw, int densityY, int densityX, int density);
 void DQT_M(byteWritter& bw, int*& table, int tableNum, int num);
 void SOF_M(byteWritter& bw, int chromaExist, int ySamplingSize, int cSamplingSize, int pixelHeight, int pixelWidth);
-void DHT_M(byteWritter& bw, huffmanTable& huff);
+void DHT_M(byteWritter& bw, int ACDC, int tableNum, fakeDictionary<int, int>& codeFreq);
+void SOS_M(byteWritter& bw, int components, int firstComponentLength);
+void MCU_W(byteWritter& bw, fakeDictionary<int, uint8_t>& huffmanDcValueCodes, fakeDictionary<int, int>& huffmanDcValueLength, fakeDictionary<int, uint8_t>& huffmanAcValueCodes, fakeDictionary<int, int>& huffmanAcValueLength, int dim, int* table);
+void EOI_M(byteWritter& bw);
 
 void graphMaptoJPG(graphMap map)
 	{
@@ -860,9 +863,25 @@ void actualJpg(hInfoStruct hInfo, mcuHuffmanContainer mcuHuffman, char*& fileNam
         SOI_APPO_M(bW, hInfo.densityY, hInfo.densityX, hInfo.density);
         DQT_M(bW, hInfo.lumaTable, hInfo.lumaTableType, 0);//luma table will be used if monochrome
         if (hInfo.chromaTableType != 0) DQT_M(bW, hInfo.chromaTable, hInfo.chromaTableType, 1);//check if chromatable exist (will not if monochrome image)
-
-
-
+        SOF_M(bW, hInfo.chromaTableType, hInfo.samplingY, hInfo.samplingC, hInfo.pixelHeight, hInfo.pixelLength);
+        DHT_M(bW, 0, 0, mcuHuffman.yCHuffman[0].DCcodeLength);
+        DHT_M(bW, 1, 0, mcuHuffman.yCHuffman[0].ACcodeLength);
+        if (hInfo.chromaTable != 0)
+        {
+            DHT_M(bW, 0, 1, mcuHuffman.yCHuffman[1].DCcodeLength);
+            DHT_M(bW, 1, 1, mcuHuffman.yCHuffman[1].DCcodeLength);
+        }
+        int chromad = hInfo.chromaTableType != 0 ? 3 : 1;
+        SOS_M(bW, chromad, hInfo.lumaTableType);
+        for (int i = 0; i < mcuHuffman.size(); i++)
+        {
+            MCU_W(bW, mcuHuffman.yCHuffman[0].DCcode, mcuHuffman.yCHuffman[0].DCcodeLength, mcuHuffman.yCHuffman[0].ACcode, mcuHuffman.yCHuffman[0].ACcodeLength, hInfo.lumaTableType, mcuHuffman.mcus[i].yCbCr[0]);
+            if (chromad == 3)
+            {
+                MCU_W(bW, mcuHuffman.yCHuffman[1].DCcode, mcuHuffman.yCHuffman[1].DCcodeLength, mcuHuffman.yCHuffman[1].ACcode, mcuHuffman.yCHuffman[1].ACcodeLength, hInfo.chromaTableType, mcuHuffman.mcus[i].yCbCr[1]);
+                MCU_W(bW, mcuHuffman.yCHuffman[1].DCcode, mcuHuffman.yCHuffman[1].DCcodeLength, mcuHuffman.yCHuffman[1].ACcode, mcuHuffman.yCHuffman[1].ACcodeLength, hInfo.chromaTableType, mcuHuffman.mcus[i].yCbCr[2]);
+            }
+        }
     }
 }
 mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
@@ -907,17 +926,29 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
         }
     }
 
-
-    //print huffman values
     int* keys = yCHuffman[0].ACcodeLength.retrieveAllKeys();
     for (int i = 0; i < yCHuffman[0].ACcodeLength.returnCount(); i++)
     {
-        std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[0].ACcodeLength.retrieveTerm(keys[i]) << std::endl;
+        std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[0].ACcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[0].ACcode.retrieveTerm(keys[i]) << std::endl;
     }
 
 
     yCHuffman[0].huffmanCodes();
     yCHuffman[1].huffmanCodes();
+
+
+
+    //print huffman values
+
+    //int* keys = yCHuffman[0].ACcodeLength.retrieveAllKeys();
+    for (int i = 0; i < yCHuffman[0].ACcodeLength.returnCount(); i++)
+    {
+        std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[0].ACcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[0].ACcode.retrieveTerm(keys[i]) << std::endl;
+    }
+}
+int mcuHuffmanContainer::size()
+{
+    return this->mcuHeight * this->mcuLength;
 }
 void testIntMcus(mcuHuffmanContainer mine, int num)
 {
@@ -1062,7 +1093,7 @@ int* huffmanCodeCountArray(int* a, int arraySize) //okay this function accepts a
     }
     else
     {
-        return new int[1] {1};//all codes have a minimum code length of 1
+        return new int[1] {0};//all codes have a minimum code length of 1, but the start node is 0
     }
 }
 void huffManReferenceTable(fakeDictionary<int, int>& huffmanCodeLength, fakeDictionary<int, uint8_t> &target,bool b)//this creates a dictionary for referencing the code values later
@@ -1128,7 +1159,7 @@ void DQT_M(byteWritter& bw, int*& table, int tableNum, int num)
     bw.write(0, 4); bw.write(num, 4);// this byte here contains two bits (lol not actually bits) of information, the table integer size either 8 bit or 16 bit and the table id number. We will only be using 8 bit which is 0000 (16 is 0001)m abd the second bit contains the id, possible nums 0-3
     for (int i = 0; i < tableNum; i++)
     {
-        bw.write(table[zigging[i]]);
+        bw.write(table[tableNum == 64 ? zigging[i] : zigging2[i]]);
     }
 }
 void SOF_M(byteWritter& bw, int chromaExist, int ySamplingSize, int cSamplingSize, int pixelHeight, int pixelWidth) 
@@ -1145,4 +1176,80 @@ void SOF_M(byteWritter& bw, int chromaExist, int ySamplingSize, int cSamplingSiz
         bw.write(3); bw.write(ySamplingSize == 2 ? 34 : 17); bw.write(1);
     }
 
+}
+void DHT_M(byteWritter& bw, int ACDC /*1 = AC 0 = DC*/, int tableNum /*tablenum 0-3*/, fakeDictionary<int, int>& codeFreq)
+{
+    bw.write(ff); bw.write(196);//DHT Header, define huffman table header
+    bw.write(19 + codeFreq.returnCount(), 16);//code length, codelength (2) + tableinfo(1) + number codeLengths(16) + symbols(variable)
+    bw.write(16 * ACDC + tableNum);//table info, first 4 bits are 0 if dc 1 is ac, last 4 bits are tablenum 0 is going to be y and 1 is going to be the chrominance
+    //below is the # of code lengths, which is stored instead ofthe codes as you can just reconstruct the codes...
+    for (int i = 1; i < 17; i++)    bw.write(codeFreq.retrieveTermCount(i));
+    //below are the symbols, our dictionary is already sorted into the proper format so we just use that
+    //the way this works is the symbols below are tied to the code lengths above, the first symbol below is tied to the first code length above and so on
+    int* huffValues = codeFreq.retrieveAllKeys();
+    for (int i = 0; i < codeFreq.returnCount(); i++)
+    {
+        bw.write(huffValues[i]);
+    }
+
+}
+void SOS_M(byteWritter& bw, int components, int firstComponentLength)
+{
+    bw.write(ff); bw.write(218);//SOS marker, start of scan marker
+    bw.write(components * 2 + 6, 16);//length of marker, variable
+    bw.write(components);
+    for (int i = 0; i < 3; i++)
+    {
+        bw.write(i);//component
+        bw.write(i == 0 ? 0 : 17);//component dc/ac table, first 4 bits are dc table id last 4 bits ac table
+        //because we are using standard sequential y and chrominance tables we know the first component y will have the table ids of 0 and the second and third components cb and cr will be 1
+    }
+    bw.write(0);//start of mcus
+    bw.write(firstComponentLength);//length of mcus...
+    bw.write(0);//hurrr
+}
+void MCU_W(byteWritter& bw, fakeDictionary<int, uint8_t>& huffmanDcValueCodes, fakeDictionary<int, int>& huffmanDcValueLength, fakeDictionary<int, uint8_t>& huffmanAcValueCodes, fakeDictionary<int, int>& huffmanAcValueLength, int dim, int* table)
+{
+    //write dc
+    int coeffLength = bitLength(table[0] > 0 ? table[0] : -table[0]);
+    bw.write(huffmanDcValueCodes.retrieveTerm(coeffLength), huffmanDcValueLength.retrieveTerm(coeffLength));//write dchuffman value
+    bw.write(table[0] > 0 ? (uint8_t)table[0] : (uint8_t)(~table[0]), coeffLength);//flip bits if negative, write coefficient value
+    //write ac
+    unsigned zeroes = 0;
+    for (int i = 1; i < dim; i++, zeroes++)
+    {
+        int coeff = table[dim == 64 ? zigging[i] : zigging2[i]];
+        if (coeff != 0)
+        {//if the coeff is zero we dont add, because the huffman values have coeff and previous values
+            if (zeroes > 15)
+            {
+                while (zeroes > 15)
+                {//if the coeff has more than 15 zeroes we need to add the special code f0 which means 16 zeroes
+                    bw.write(huffmanAcValueCodes.retrieveTerm(f0), huffmanAcValueLength.retrieveTerm(f0));
+                    zeroes -= 16;
+                }
+            }
+            coeffLength = bitLength(coeff > 0 ? coeff : -coeff);
+            if (bitLength(coeffLength) > 4) {
+                std::cout << "error coeff length greater than 4: " << coeffLength << " || coeff: " << coeff << " || I: " << i;
+                exit(3);
+            }
+            int huffValue = (zeroes << 4);
+            bw.write(huffmanAcValueCodes.retrieveTerm(huffValue), huffmanAcValueLength.retrieveTerm(huffValue));
+            bw.write(coeff > 0 ? (uint8_t)coeff : (uint8_t)(~coeff), coeffLength);
+            zeroes = 0;
+        }
+        else if (i == 63)
+        {
+            bw.write(huffmanAcValueCodes.retrieveTerm(x00), huffmanAcValueLength.retrieveTerm(x00));
+        }
+    }
+}
+void EOI_M(byteWritter& bw)
+{
+    if(bw.bitPosition() != 8)//stuff remaining values with 1 if the byte is not complete and than do the end of image marker
+    {
+        bw.write((uint8_t)255 >> (8 - bw.bitPosition()), bw.bitPosition());
+    }
+    bw.write(ff); bw.write(217);//EOI marker, end of image marker
 }
