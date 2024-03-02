@@ -10,6 +10,8 @@ using namespace std;
 //https://legacy.imagemagick.org/discourse-server/viewtopic.php?t=20333
 
 const uint8_t ff = 255;
+const uint8_t f0 = 240;
+const uint8_t x00 = 0;
 
 const int zigging[64] = {
     0,   1,  8, 16,  9,  2,  3, 10,
@@ -20,6 +22,12 @@ const int zigging[64] = {
     29, 22, 15, 23, 30, 37, 44, 51,
     58, 59, 52, 45, 38, 31, 39, 46,
     53, 60, 61, 54, 47, 55, 62, 63
+};
+const int zigging2[16] = {
+    0,  1,  4,  8,
+    5,  2,  3,  6,
+    9, 12, 13, 10,
+    7, 11, 14, 15
 };
 
 static const int lumTable[64] =
@@ -64,6 +72,7 @@ static const int* quantTables4x4[3] = { lumTable_2, chromaTable_2, chromaTable_2
 
 int intSorter(int a, int b);
 int intReverseSorter(int a, int b);
+int bitLength(int bits);
 int* dctQuantizer(uint8_t* table, int dim, int previousDC, int num);
 int* huffmanCodeCountArray(int *a, int arraySize);
 void huffManReferenceTable(fakeDictionary<int, int>& huffmanCodeLength, fakeDictionary<int, uint8_t>& target, bool b = false);
@@ -888,15 +897,25 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
     
     for (int n = 0; n < 20; n++)
     {
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 8; i++)
         {
-            for (int j = 0; j < 4; j++)
+            for (int j = 0; j < 8; j++)
             {
-                std::cout << this->mcus[n].yCbCr[1][j + i * 4] << ", ";
+                std::cout << this->mcus[n].yCbCr[0][j + i * 8] << ", ";
             }
             std::cout << std::endl;
         }
     }
+
+
+    //print huffman values
+    int* keys = yCHuffman[0].ACcodeLength.retrieveAllKeys();
+    for (int i = 0; i < yCHuffman[0].ACcodeLength.returnCount(); i++)
+    {
+        std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[0].ACcodeLength.retrieveTerm(keys[i]) << std::endl;
+    }
+
+
     yCHuffman[0].huffmanCodes();
     yCHuffman[1].huffmanCodes();
 }
@@ -933,18 +952,37 @@ int* dctQuantizer(uint8_t* table,int dim, int previousDC, int num)
 void huffmanTable::frequency(int dim, int* table)
 {
     //dc
-    if (table[0] != 0)
-        if (this->DCcodeLength.addPair(table[0], 1) == -1) DCcodeLength.changeTerm(table[0], DCcodeLength.retrieveTerm(table[0]) + 1);
+    int coeffLength = bitLength(table[0] > 0 ? table[0] : -table[0]);
+    if (DCcodeLength.addPair(coeffLength, 1) == -1) DCcodeLength.changeTerm(coeffLength, DCcodeLength.retrieveTerm(coeffLength) + 1);
 
     //ac
-
-    for (int i = 1; i < dim * dim; i++)
+    unsigned zeroes = 0;
+    for (int i = 1; i < dim * dim; i++, zeroes++)
     {
-        if (table[i] != 0)
-            if (ACcodeLength.addPair(table[i], 1) == -1)
+        int coeff = table[dim == 8 ? zigging[i] : zigging2[i]];
+        if (coeff != 0)
+        {//if the coeff is zero we dont add, because the huffman values have coeff and previous values
+            if (zeroes > 15)
             {
-                ACcodeLength.changeTerm(table[i], ACcodeLength.retrieveTerm(table[i]) + 1);
+                while (zeroes > 15)
+                {//if the coeff has more than 15 zeroes we need to add the special code f0 which means 16 zeroes
+                    if (ACcodeLength.addPair(f0, 1) == -1)ACcodeLength.changeTerm(f0, ACcodeLength.retrieveTerm(f0) + 1);
+                    zeroes -= 16;
+                }
             }
+            coeffLength = bitLength(coeff > 0 ? coeff : -coeff);
+            if (bitLength(coeffLength) > 4) {
+                std::cout << "error coeff length greater than 4: " << coeffLength << " || coeff: " << coeff << " || I: " << i;
+                exit(3);
+            }
+            coeffLength += (zeroes << 4);//the zeroes value are stored as the frist 4 bits and the coeff length is stored as the last 4 bits, if all goes well in the dct the coeffient should never exceed 4 bit length so this should work
+            if (ACcodeLength.addPair(coeffLength, 1) == -1) ACcodeLength.changeTerm(coeffLength, ACcodeLength.retrieveTerm(coeffLength) + 1);
+            zeroes = 0;
+        }
+        else if (i == 63)
+        {
+            if (ACcodeLength.addPair(x00, 1) == -1)ACcodeLength.changeTerm(x00, ACcodeLength.retrieveTerm(x00) + 1);
+        }
     }
 }
 void huffmanTable::huffmanCodes()
@@ -1063,6 +1101,13 @@ int intReverseSorter(int a, int b)
 {
     if (a >= b) return 0;
     return 1;
+}
+int bitLength(int bits)//gives the position of the most significant bit
+{
+    unsigned bitDestroyer = bits;
+    unsigned bitLength;
+    for (bitLength = 0; bitDestroyer != 0; ++bitLength) bitDestroyer >>= 1;
+    return bitLength;
 }
 void SOI_APPO_M(byteWritter& bw, int densityY, int densityX, int density)
 {
