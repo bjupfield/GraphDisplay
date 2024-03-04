@@ -72,12 +72,13 @@ static const int* quantTables4x4[3] = { lumTable_2, chromaTable_2, chromaTable_2
 
 int intSorter(int a, int b);
 int intReverseSorter(int a, int b);
+int customSorter(uint8_t a, uint8_t b);
 int bitLength(int bits);
 int* dctQuantizer(uint8_t* table, int dim, int previousDC, int num);
 int* huffmanCodeCountArray(int *a, int arraySize);
 void huffManReferenceTable(fakeDictionary<int, int>& huffmanCodeLength, fakeDictionary<int, uint8_t>& target, bool b = false);
 void SOI_APPO_M(byteWritter& bw, int densityY, int densityX, int density);
-void DQT_M(byteWritter& bw, int*& table, int tableNum, int num);
+void DQT_M(byteWritter& bw, const int* table, int tableNum, int num);
 void SOF_M(byteWritter& bw, int chromaExist, int ySamplingSize, int cSamplingSize, int pixelHeight, int pixelWidth);
 void DHT_M(byteWritter& bw, int ACDC, int tableNum, fakeDictionary<int, int>& codeFreq);
 void SOS_M(byteWritter& bw, int components, int firstComponentLength);
@@ -853,37 +854,6 @@ int* dct_II_uint_8t_int_4x4_TEST(uint8_t* source_mcu, int previousCoefficient)
     mcu[0] = mcu[0] - previousCoefficient;
     return mcu;
 }
-void actualJpg(hInfoStruct hInfo, mcuHuffmanContainer mcuHuffman, char*& fileName)
-{
-    byteWritter bW = byteWritter(fileName);
-
-    if (bW.open())
-    {
-        //write jpg...
-        SOI_APPO_M(bW, hInfo.densityY, hInfo.densityX, hInfo.density);
-        DQT_M(bW, hInfo.lumaTable, hInfo.lumaTableType, 0);//luma table will be used if monochrome
-        if (hInfo.chromaTableType != 0) DQT_M(bW, hInfo.chromaTable, hInfo.chromaTableType, 1);//check if chromatable exist (will not if monochrome image)
-        SOF_M(bW, hInfo.chromaTableType, hInfo.samplingY, hInfo.samplingC, hInfo.pixelHeight, hInfo.pixelLength);
-        DHT_M(bW, 0, 0, mcuHuffman.yCHuffman[0].DCcodeLength);
-        DHT_M(bW, 1, 0, mcuHuffman.yCHuffman[0].ACcodeLength);
-        if (hInfo.chromaTable != 0)
-        {
-            DHT_M(bW, 0, 1, mcuHuffman.yCHuffman[1].DCcodeLength);
-            DHT_M(bW, 1, 1, mcuHuffman.yCHuffman[1].DCcodeLength);
-        }
-        int chromad = hInfo.chromaTableType != 0 ? 3 : 1;
-        SOS_M(bW, chromad, hInfo.lumaTableType);
-        for (int i = 0; i < mcuHuffman.size(); i++)
-        {
-            MCU_W(bW, mcuHuffman.yCHuffman[0].DCcode, mcuHuffman.yCHuffman[0].DCcodeLength, mcuHuffman.yCHuffman[0].ACcode, mcuHuffman.yCHuffman[0].ACcodeLength, hInfo.lumaTableType, mcuHuffman.mcus[i].yCbCr[0]);
-            if (chromad == 3)
-            {
-                MCU_W(bW, mcuHuffman.yCHuffman[1].DCcode, mcuHuffman.yCHuffman[1].DCcodeLength, mcuHuffman.yCHuffman[1].ACcode, mcuHuffman.yCHuffman[1].ACcodeLength, hInfo.chromaTableType, mcuHuffman.mcus[i].yCbCr[1]);
-                MCU_W(bW, mcuHuffman.yCHuffman[1].DCcode, mcuHuffman.yCHuffman[1].DCcodeLength, mcuHuffman.yCHuffman[1].ACcode, mcuHuffman.yCHuffman[1].ACcodeLength, hInfo.chromaTableType, mcuHuffman.mcus[i].yCbCr[2]);
-            }
-        }
-    }
-}
 mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
 {
     this->dim = origin.retrieveDim();
@@ -926,29 +896,60 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
         }
     }
 
-    int* keys = yCHuffman[0].ACcodeLength.retrieveAllKeys();
-    for (int i = 0; i < yCHuffman[0].ACcodeLength.returnCount(); i++)
+    int* keys = yCHuffman[1].ACcodeLength.retrieveAllKeys();
+    for (int i = 0; i < yCHuffman[1].ACcodeLength.returnCount(); i++)
     {
-        std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[0].ACcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[0].ACcode.retrieveTerm(keys[i]) << std::endl;
+        std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[1].ACcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[1].ACcode.retrieveTerm(keys[i]) << std::endl;
     }
 
 
     yCHuffman[0].huffmanCodes();
     yCHuffman[1].huffmanCodes();
 
-
-
+ 
+    std::cout << " ||||||||||||||||||| " << std::endl;
     //print huffman values
 
     //int* keys = yCHuffman[0].ACcodeLength.retrieveAllKeys();
-    for (int i = 0; i < yCHuffman[0].ACcodeLength.returnCount(); i++)
+    for (int i = 0; i < yCHuffman[1].ACcodeLength.returnCount(); i++)
     {
-        std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[0].ACcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[0].ACcode.retrieveTerm(keys[i]) << std::endl;
+        std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[1].ACcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[1].ACcode.retrieveTerm(keys[i]) << std::endl;
     }
 }
 int mcuHuffmanContainer::size()
 {
     return this->mcuHeight * this->mcuLength;
+}
+void mcuHuffmanContainer::actualJpg(hInfoStruct hInfo, mcuHuffmanContainer mcuHuffman, char* fileName)
+{
+    byteWritter bW = byteWritter(fileName);
+
+    if (bW.open())
+    {
+        //write jpg...
+        SOI_APPO_M(bW, hInfo.densityY, hInfo.densityX, hInfo.density);
+        DQT_M(bW, (hInfo.lumaTableType == 64 ? lumTable : lumTable_2), hInfo.lumaTableType, 0);//luma table will be used if monochrome
+        if (hInfo.chromaTableType != 0) DQT_M(bW, hInfo.chromaTableType == 64 ? chromaTable : chromaTable_2, hInfo.chromaTableType, 1);//check if chromatable exist (will not if monochrome image)
+        SOF_M(bW, hInfo.chromaTableType, hInfo.samplingY, hInfo.samplingC, hInfo.pixelHeight, hInfo.pixelLength);
+        DHT_M(bW, 0, 0, mcuHuffman.yCHuffman[0].DCcodeLength);
+        DHT_M(bW, 1, 0, mcuHuffman.yCHuffman[0].ACcodeLength);
+        if (hInfo.chromaTableType != 0)
+        {
+            DHT_M(bW, 0, 1, mcuHuffman.yCHuffman[1].DCcodeLength);
+            DHT_M(bW, 1, 1, mcuHuffman.yCHuffman[1].DCcodeLength);
+        }
+        int chromad = hInfo.chromaTableType != 0 ? 3 : 1;
+        SOS_M(bW, chromad, hInfo.lumaTableType);
+        for (int i = 0; i < mcuHuffman.size(); i++)
+        {
+            MCU_W(bW, mcuHuffman.yCHuffman[0].DCcode, mcuHuffman.yCHuffman[0].DCcodeLength, mcuHuffman.yCHuffman[0].ACcode, mcuHuffman.yCHuffman[0].ACcodeLength, hInfo.lumaTableType, mcuHuffman.mcus[i].yCbCr[0]);
+            if (chromad == 3)
+            {
+                MCU_W(bW, mcuHuffman.yCHuffman[1].DCcode, mcuHuffman.yCHuffman[1].DCcodeLength, mcuHuffman.yCHuffman[1].ACcode, mcuHuffman.yCHuffman[1].ACcodeLength, hInfo.chromaTableType, mcuHuffman.mcus[i].yCbCr[1]);
+                MCU_W(bW, mcuHuffman.yCHuffman[1].DCcode, mcuHuffman.yCHuffman[1].DCcodeLength, mcuHuffman.yCHuffman[1].ACcode, mcuHuffman.yCHuffman[1].ACcodeLength, hInfo.chromaTableType, mcuHuffman.mcus[i].yCbCr[2]);
+            }
+        }
+    }
 }
 void testIntMcus(mcuHuffmanContainer mine, int num)
 {
@@ -1042,6 +1043,11 @@ void huffmanTable::huffmanCodes()
     huffManReferenceTable(this->DCcodeLength, this->DCcode);
     huffManReferenceTable(this->ACcodeLength, this->ACcode, true);
 
+    this->DCcodeLength.sortByTerm(intReverseSorter);
+    this->ACcodeLength.sortByTerm(intReverseSorter);
+    this->DCcode.sortByTerm(customSorter);
+    this->ACcode.sortByTerm(customSorter);
+
 }
 int* huffmanCodeCountArray(int* a, int arraySize) //okay this function accepts a frequenc array and returns a huffman tree arrray. The array it returns is equal in size to the array it enters and has the huffman positions of the frequencies stored where the frequencies were.
 //the huffman positions means the huffman code length, the position in the tree that would increase the binary code by 1 digit, such as 01 to 010. What I store is the number of digits it takes, the code length, which in the case of 01 is 2 and 010 is 3.
@@ -1133,6 +1139,11 @@ int intReverseSorter(int a, int b)
     if (a >= b) return 0;
     return 1;
 }
+int customSorter(uint8_t a, uint8_t b)
+{
+    if (a >= b)return 0;
+    return 1;
+}
 int bitLength(int bits)//gives the position of the most significant bit
 {
     unsigned bitDestroyer = bits;
@@ -1146,13 +1157,14 @@ void SOI_APPO_M(byteWritter& bw, int densityY, int densityX, int density)
     bw.write(ff); bw.write(224);//APPO Marker, application date marker
     bw.write(0); bw.write(16);//APPO segment size, because we are not using the thumbnail this will always be the same size
     bw.write(74); bw.write(70); bw.write(73); bw.write(70); bw.write(0);//JFIF indentifier string, this constant identifies the jpeg as a jfif type, which is standard
+    bw.write(1); bw.write(1);//JFIF version, 1.01
     bw.write((uint8_t)density);//these next three are the resoultuion density of the image. say that the resolution is 3 by 2, so every inch there is three pixels y and 2 pixels x
     bw.write((uint8_t)densityY, 16);//this means we would set density to 3
     bw.write((uint8_t)densityX, 16);//and y density to 2 x density to 2...... however it is almost always zero density and 1, 1 for y density and x density, because no one uses different density images
     bw.write(0);//thumbnailsize
     bw.write(0);//thumbnailsizey
 }
-void DQT_M(byteWritter& bw, int*& table, int tableNum, int num)
+void DQT_M(byteWritter& bw, const int* table, int tableNum, int num)
 {
     bw.write(ff); bw.write(219);//DQT header, Data Quantization Table Header
     bw.write(tableNum + 3, 16);//Header length, table length + 3 bits written here not including marker
@@ -1169,11 +1181,12 @@ void SOF_M(byteWritter& bw, int chromaExist, int ySamplingSize, int cSamplingSiz
     bw.write(8);//jpg pixel precision, jpg only supports 8bit precision but it must be included anyway lol
     bw.write(pixelHeight, 16);//jpg pixel height, stored in two bits maxinum size of 256 x 256
     bw.write(pixelWidth, 16);//jpg pixel length
-    bw.write(1); bw.write(ySamplingSize == 2 ? 34 : 17); bw.write(0);//y component or monochrome component data, sampling size will either by 1 or 2, should almost always be two for the y component
+    bw.write((chromaExist ? 3 : 1));
+    bw.write(1); bw.write(ySamplingSize == 1 ? 34 : 17); bw.write(0);//y component or monochrome component data, sampling size will either by 1 or 2, should almost always be 1 for the y component
     if (chromaExist != 0)
     {
-        bw.write(2); bw.write(ySamplingSize == 2 ? 34 : 17); bw.write(1);//cb component, sampling size should almost always be one and therefor 0x11, also quant tables are at the end, chroma uses quant table one luma uses quant table 0
-        bw.write(3); bw.write(ySamplingSize == 2 ? 34 : 17); bw.write(1);
+        bw.write(2); bw.write(cSamplingSize == 1 ? 34 : 17); bw.write(1);//cb component, sampling size should almost always be 2 and therefor 0x11, also quant tables are at the end, chroma uses quant table one luma uses quant table 0
+        bw.write(3); bw.write(cSamplingSize == 1 ? 34 : 17); bw.write(1);
     }
 
 }
@@ -1187,9 +1200,11 @@ void DHT_M(byteWritter& bw, int ACDC /*1 = AC 0 = DC*/, int tableNum /*tablenum 
     //below are the symbols, our dictionary is already sorted into the proper format so we just use that
     //the way this works is the symbols below are tied to the code lengths above, the first symbol below is tied to the first code length above and so on
     int* huffValues = codeFreq.retrieveAllKeys();
+    //std::cout << "HuffValues List" << ((tableNum == 0) ? " Luma " : " Chroma ") << ((ACDC == 1) ? " AC: " : " DC: ") << codeFreq.returnCount() << std::endl;
     for (int i = 0; i < codeFreq.returnCount(); i++)
     {
-        bw.write(huffValues[i]);
+        //std::cout << huffValues[i] << std::endl;
+        bw.write((uint8_t)huffValues[i]);
     }
 
 }
@@ -1200,12 +1215,12 @@ void SOS_M(byteWritter& bw, int components, int firstComponentLength)
     bw.write(components);
     for (int i = 0; i < 3; i++)
     {
-        bw.write(i);//component
+        bw.write(i + 1);//component
         bw.write(i == 0 ? 0 : 17);//component dc/ac table, first 4 bits are dc table id last 4 bits ac table
         //because we are using standard sequential y and chrominance tables we know the first component y will have the table ids of 0 and the second and third components cb and cr will be 1
     }
     bw.write(0);//start of mcus
-    bw.write(firstComponentLength);//length of mcus...
+    bw.write(firstComponentLength - 1);//length of mcus...
     bw.write(0);//hurrr
 }
 void MCU_W(byteWritter& bw, fakeDictionary<int, uint8_t>& huffmanDcValueCodes, fakeDictionary<int, int>& huffmanDcValueLength, fakeDictionary<int, uint8_t>& huffmanAcValueCodes, fakeDictionary<int, int>& huffmanAcValueLength, int dim, int* table)
@@ -1213,7 +1228,7 @@ void MCU_W(byteWritter& bw, fakeDictionary<int, uint8_t>& huffmanDcValueCodes, f
     //write dc
     int coeffLength = bitLength(table[0] > 0 ? table[0] : -table[0]);
     bw.write(huffmanDcValueCodes.retrieveTerm(coeffLength), huffmanDcValueLength.retrieveTerm(coeffLength));//write dchuffman value
-    bw.write(table[0] > 0 ? (uint8_t)table[0] : (uint8_t)(~table[0]), coeffLength);//flip bits if negative, write coefficient value
+    bw.write(table[0] > 0 ? (uint8_t)table[0] : ~(uint8_t)(table[0]), coeffLength);//flip bits if negative, write coefficient value
     //write ac
     unsigned zeroes = 0;
     for (int i = 1; i < dim; i++, zeroes++)

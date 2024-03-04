@@ -17,7 +17,7 @@ int main()
 {
     std::cout << "Hello World!\n";
     ifstream image;
-    image.open("../../yahDig.jpg", ios::in | ios::binary | ios::ate);
+    image.open("../../Funny.jpg", ios::in | ios::binary | ios::ate);
     if(!image.is_open())
     {
         cout << "Failed To Open!\n" << endl;
@@ -179,7 +179,11 @@ int main()
     uint32_t c = (uint32_t)b;
     cout << "Int Converted: " << (int)c << endl;
 
+    hInfoStruct hINFO = {2, 2, 1, 2, 0, 1, 1, 64, 16};
 
+    char fileNAMES[] = "../../Funny.jpg";
+
+    mine2.actualJpg(hINFO, mine2, fileNAMES);
 
     exit(2);
 }

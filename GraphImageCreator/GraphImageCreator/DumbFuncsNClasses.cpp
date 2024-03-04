@@ -206,7 +206,7 @@ byteWritter::byteWritter(const char* fileName)
 }
 int byteWritter::write(uint8_t bits, uint8_t bitLength)
 {
-	if (bitLength <= 0 || bitLength > 8)//return -1 if bitlength is greater than possible bit length or zero
+	if (bitLength <= 0 || bitLength > 255)//return -1 if bitlength is greater than possible bit length or zero
 	{
 		return -1;
 	}

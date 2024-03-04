@@ -56,17 +56,6 @@ public:
 	void frequency(int dim, int* table);
 	void huffmanCodes();
 };
-class mcuHuffmanContainer {
-private:
-	int mcuLength;
-	int mcuHeight;
-public:
-	dimensions dim;
-	intMcus* mcus;
-	huffmanTable* yCHuffman;
-	mcuHuffmanContainer(MCUS origin);
-	int size();
-};
 struct hInfoStruct {
 	int pixelHeight;//picture size
 	int pixelLength;//picture size
@@ -77,12 +66,21 @@ struct hInfoStruct {
 	int densityX;//should almost always be 1
 	//int componentNums;//should be 1 or 3, as this is the color components adn is either monchrome or not...
 	//component number will be stroed in chromatabletype... if it is greater than 0 than the component number is 3 as the chroma component numbers exist
-	int*& lumaTable;
-	int*& chromaTable;
 	int lumaTableType;
 	int chromaTableType;
 };
+class mcuHuffmanContainer {
+private:
+	int mcuLength;
+	int mcuHeight;
+public:
+	dimensions dim;
+	intMcus* mcus;
+	huffmanTable* yCHuffman;
+	mcuHuffmanContainer(MCUS origin);
+	int size();
+	void actualJpg(hInfoStruct hInfo, mcuHuffmanContainer mcuHuffman, char* fileName);
+};
 void testIntMcus(mcuHuffmanContainer mine, int num);
-void actualJpg(hInfoStruct hInfo, mcuHuffmanContainer mcuHuffman, char *fileName);
 
 #endif
