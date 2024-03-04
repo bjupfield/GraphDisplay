@@ -13,6 +13,8 @@ const uint8_t ff = 255;
 const uint8_t f0 = 240;
 const uint8_t x00 = 0;
 
+bool testVar = false;
+
 const int zigging[64] = {
     0,   1,  8, 16,  9,  2,  3, 10,
     17, 24, 32, 25, 18, 11,  4,  5,
@@ -876,7 +878,9 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
             for(int i = 0; i < 3; i++)//if we ever want to make it monochrome...
             {
                 mcus[pos].yCbCr(i) = dctQuantizer(&origin.mcuList[pos].ycbcr[i], this->dim[i], ((pos == 0) ? 0 : mcus[pos - 1].yCbCr[i][0]), i);
-                yCHuffman[i < 1 ? i : 1].frequency(this->dim[i], this->mcus[pos].yCbCr[i]);
+                if (i == 0) testVar = false;
+                else testVar = true;
+                yCHuffman[i == 0 ? 0 : 1].frequency(this->dim[i], this->mcus[pos].yCbCr[i]);
             }
             //mcus[pos - 1].Y[0]
             //im throwing the previous mcus DC coefficient, as this is what jpg does. Jpg standard says that DC coefficient are dependent on previous DC cocefficients, where the DC Coefficient = current coefficient - previous coefficient
@@ -884,19 +888,20 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
         }
     }
     
-    for (int n = 0; n < 20; n++)
+    for (int n = 0; n < mcuHeight * mcuLength; n++)
     {
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 4; i++)
         {
-            for (int j = 0; j < 8; j++)
+            for (int j = 0; j < 4; j++)
             {
-                std::cout << this->mcus[n].yCbCr[0][j + i * 8] << ", ";
+                std::cout << this->mcus[n].yCbCr[1][j + i * 4] << ", ";
             }
             std::cout << std::endl;
         }
     }
 
     int* keys = yCHuffman[1].ACcodeLength.retrieveAllKeys();
+    std::cout << "C AC" << std::endl;
     for (int i = 0; i < yCHuffman[1].ACcodeLength.returnCount(); i++)
     {
         std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[1].ACcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[1].ACcode.retrieveTerm(keys[i]) << std::endl;
@@ -914,6 +919,27 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
     for (int i = 0; i < yCHuffman[1].ACcodeLength.returnCount(); i++)
     {
         std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[1].ACcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[1].ACcode.retrieveTerm(keys[i]) << std::endl;
+    }
+
+    std::cout << "C DC" << std::endl;
+    keys = yCHuffman[1].DCcodeLength.retrieveAllKeys();
+    for (int i = 0; i < yCHuffman[1].DCcodeLength.returnCount(); i++)
+    {
+        std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[1].DCcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[1].DCcode.retrieveTerm(keys[i]) << std::endl;
+    }
+
+
+    yCHuffman[0].huffmanCodes();
+    yCHuffman[1].huffmanCodes();
+
+
+    std::cout << " ||||||||||||||||||| " << std::endl;
+    //print huffman values
+
+    //int* keys = yCHuffman[0].ACcodeLength.retrieveAllKeys();
+    for (int i = 0; i < yCHuffman[1].DCcodeLength.returnCount(); i++)
+    {
+        std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[1].DCcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[1].DCcode.retrieveTerm(keys[i]) << std::endl;
     }
 }
 int mcuHuffmanContainer::size()
@@ -936,7 +962,7 @@ void mcuHuffmanContainer::actualJpg(hInfoStruct hInfo, mcuHuffmanContainer mcuHu
         if (hInfo.chromaTableType != 0)
         {
             DHT_M(bW, 0, 1, mcuHuffman.yCHuffman[1].DCcodeLength);
-            DHT_M(bW, 1, 1, mcuHuffman.yCHuffman[1].DCcodeLength);
+            DHT_M(bW, 1, 1, mcuHuffman.yCHuffman[1].ACcodeLength);
         }
         int chromad = hInfo.chromaTableType != 0 ? 3 : 1;
         SOS_M(bW, chromad, hInfo.lumaTableType);
@@ -985,7 +1011,23 @@ void huffmanTable::frequency(int dim, int* table)
 {
     //dc
     int coeffLength = bitLength(table[0] > 0 ? table[0] : -table[0]);
-    if (DCcodeLength.addPair(coeffLength, 1) == -1) DCcodeLength.changeTerm(coeffLength, DCcodeLength.retrieveTerm(coeffLength) + 1);
+    //if(testVar)std::cout << coeffLength;
+    if (DCcodeLength.addPair(coeffLength, 1) == -1) 
+    {
+        //if(testVar)
+        //std::cout << "Hello" << dim;
+        DCcodeLength.changeTerm(coeffLength, DCcodeLength.retrieveTerm(coeffLength) + 1); 
+    }
+    //if(testVar)std::cout << std::endl;
+
+    //if (testVar) {
+    //    int* keys = DCcodeLength.retrieveAllKeys();
+    //    for (int i = 0; i < DCcodeLength.returnCount(); i++)
+    //    {
+    //        std::cout << keys[i] << ", ";
+    //    }
+    //    std::cout << std::endl;
+    //}
 
     //ac
     unsigned zeroes = 0;
@@ -1200,7 +1242,7 @@ void DHT_M(byteWritter& bw, int ACDC /*1 = AC 0 = DC*/, int tableNum /*tablenum 
     //below are the symbols, our dictionary is already sorted into the proper format so we just use that
     //the way this works is the symbols below are tied to the code lengths above, the first symbol below is tied to the first code length above and so on
     int* huffValues = codeFreq.retrieveAllKeys();
-    //std::cout << "HuffValues List" << ((tableNum == 0) ? " Luma " : " Chroma ") << ((ACDC == 1) ? " AC: " : " DC: ") << codeFreq.returnCount() << std::endl;
+    std::cout << "HuffValues List" << ((tableNum == 0) ? " Luma " : " Chroma ") << ((ACDC == 1) ? " AC: " : " DC: ") << codeFreq.returnCount() << std::endl;
     for (int i = 0; i < codeFreq.returnCount(); i++)
     {
         //std::cout << huffValues[i] << std::endl;
