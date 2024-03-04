@@ -549,7 +549,6 @@ int* test_8x8_int_DCT(uint8_t *source_mcu, int previousCoefficient)
 
     }
 
-    mcu[0] = mcu[0] - previousCoefficient;
     return mcu;
 }
 int* test2_dct(uint8_t* source_mcu, int previousCoefficient)
@@ -766,7 +765,6 @@ int* test2_dct(uint8_t* source_mcu, int previousCoefficient)
         mcu[i + 24] = (int)v7 >> 4;
     }
     
-    mcu[0] = mcu[0] - previousCoefficient;
     return mcu;
 }
 int* dct_II_uint_8t_int_4x4_TEST(uint8_t* source_mcu, int previousCoefficient)
@@ -853,7 +851,6 @@ int* dct_II_uint_8t_int_4x4_TEST(uint8_t* source_mcu, int previousCoefficient)
 
     }
 
-    mcu[0] = mcu[0] - previousCoefficient;
     return mcu;
 }
 mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
@@ -888,7 +885,7 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
         }
     }
     
-    for (int n = 0; n < mcuHeight * mcuLength; n++)
+    /*for (int n = 0; n < mcuHeight * mcuLength; n++)
     {
         for (int i = 0; i < 4; i++)
         {
@@ -898,34 +895,20 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
             }
             std::cout << std::endl;
         }
+    }*/
+
+    int* keys = yCHuffman[0].ACcodeLength.retrieveAllKeys();
+    std::cout << "Y AC" << std::endl;
+    for (int i = 0; i < yCHuffman[0].ACcodeLength.returnCount(); i++)
+    {
+        std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[0].ACcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[0].ACcode.retrieveTerm(keys[i]) << std::endl;
     }
 
-    int* keys = yCHuffman[1].ACcodeLength.retrieveAllKeys();
-    std::cout << "C AC" << std::endl;
-    for (int i = 0; i < yCHuffman[1].ACcodeLength.returnCount(); i++)
+    std::cout << "Y DC" << std::endl;
+    keys = yCHuffman[0].DCcodeLength.retrieveAllKeys();
+    for (int i = 0; i < yCHuffman[0].DCcodeLength.returnCount(); i++)
     {
-        std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[1].ACcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[1].ACcode.retrieveTerm(keys[i]) << std::endl;
-    }
-
-
-    yCHuffman[0].huffmanCodes();
-    yCHuffman[1].huffmanCodes();
-
- 
-    std::cout << " ||||||||||||||||||| " << std::endl;
-    //print huffman values
-
-    //int* keys = yCHuffman[0].ACcodeLength.retrieveAllKeys();
-    for (int i = 0; i < yCHuffman[1].ACcodeLength.returnCount(); i++)
-    {
-        std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[1].ACcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[1].ACcode.retrieveTerm(keys[i]) << std::endl;
-    }
-
-    std::cout << "C DC" << std::endl;
-    keys = yCHuffman[1].DCcodeLength.retrieveAllKeys();
-    for (int i = 0; i < yCHuffman[1].DCcodeLength.returnCount(); i++)
-    {
-        std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[1].DCcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[1].DCcode.retrieveTerm(keys[i]) << std::endl;
+        std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[0].DCcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[0].DCcode.retrieveTerm(keys[i]) << std::endl;
     }
 
 
@@ -936,10 +919,22 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
     std::cout << " ||||||||||||||||||| " << std::endl;
     //print huffman values
 
-    //int* keys = yCHuffman[0].ACcodeLength.retrieveAllKeys();
-    for (int i = 0; i < yCHuffman[1].DCcodeLength.returnCount(); i++)
+    std::cout << " ||| Y AC ||| " << std::endl;
+    //print huffman values
+
+    keys = yCHuffman[0].ACcodeLength.retrieveAllKeys();
+    for (int i = 0; i < yCHuffman[0].ACcodeLength.returnCount(); i++)
     {
-        std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[1].DCcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[1].DCcode.retrieveTerm(keys[i]) << std::endl;
+        std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[0].ACcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[0].ACcode.retrieveTerm(keys[i]) << std::endl;
+    }
+
+    std::cout << " ||| Y DC ||| " << std::endl;
+
+
+    keys = yCHuffman[0].DCcodeLength.retrieveAllKeys();
+    for (int i = 0; i < yCHuffman[0].DCcodeLength.returnCount(); i++)
+    {
+        std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[0].DCcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[0].DCcode.retrieveTerm(keys[i]) << std::endl;
     }
 }
 int mcuHuffmanContainer::size()
@@ -997,7 +992,7 @@ int* dctQuantizer(uint8_t* table,int dim, int previousDC, int num)
         //testing
         //this->Y = test_8x8_int_DCT(uintMcu.Y, previousCoefficient);
         returnTable = test2_dct(table, previousDC);
-        quantizer_8x8_int(returnTable, quantTables8x8[num]);
+        quantizer_8x8_int(returnTable, quantTables8x8[num]);;
     }
     else if (dim == 4)
     {
@@ -1005,29 +1000,31 @@ int* dctQuantizer(uint8_t* table,int dim, int previousDC, int num)
         returnTable = dct_II_uint_8t_int_4x4_TEST(table, previousDC);
         quantizer_4x4_int(returnTable, quantTables4x4[num]);
     }
+    returnTable[0] = returnTable[0] - previousDC;
     return returnTable;
 }
 void huffmanTable::frequency(int dim, int* table)
 {
     //dc
     int coeffLength = bitLength(table[0] > 0 ? table[0] : -table[0]);
-    //if(testVar)std::cout << coeffLength;
+    if(!testVar)std::cout << coeffLength;
     if (DCcodeLength.addPair(coeffLength, 1) == -1) 
     {
-        //if(testVar)
-        //std::cout << "Hello" << dim;
-        DCcodeLength.changeTerm(coeffLength, DCcodeLength.retrieveTerm(coeffLength) + 1); 
+        if(!testVar)
+        std::cout << "Hello" << dim << " || Entry: " << DCcodeLength.retrieveTerm(coeffLength);
+        DCcodeLength.changeTerm(coeffLength, DCcodeLength.retrieveTerm(coeffLength) + 1);
+        std::cout << " || EntryAfter: " << DCcodeLength.retrieveTerm(coeffLength);
     }
-    //if(testVar)std::cout << std::endl;
+    if(!testVar)std::cout << std::endl;
 
-    //if (testVar) {
-    //    int* keys = DCcodeLength.retrieveAllKeys();
-    //    for (int i = 0; i < DCcodeLength.returnCount(); i++)
-    //    {
-    //        std::cout << keys[i] << ", ";
-    //    }
-    //    std::cout << std::endl;
-    //}
+    if (!testVar) {
+        int* keys = DCcodeLength.retrieveAllKeys();
+        for (int i = 0; i < DCcodeLength.returnCount(); i++)
+        {
+            std::cout << keys[i] << ", ";
+        }
+        std::cout << std::endl;
+    }
 
     //ac
     unsigned zeroes = 0;
@@ -1050,10 +1047,17 @@ void huffmanTable::frequency(int dim, int* table)
                 exit(3);
             }
             coeffLength += (zeroes << 4);//the zeroes value are stored as the frist 4 bits and the coeff length is stored as the last 4 bits, if all goes well in the dct the coeffient should never exceed 4 bit length so this should work
-            if (ACcodeLength.addPair(coeffLength, 1) == -1) ACcodeLength.changeTerm(coeffLength, ACcodeLength.retrieveTerm(coeffLength) + 1);
+            if (ACcodeLength.addPair(coeffLength, 1) == -1) 
+            { 
+                ACcodeLength.changeTerm(coeffLength, ACcodeLength.retrieveTerm(coeffLength) + 1); 
+            }
+            //if(!testVar)
+            //{
+            //    std::cout << "New HuffmanValue:  " << coeff << " || Zeroes: " << zeroes << " || CoeffLength: " << coeffLength << std::endl;
+            //}
             zeroes = 0;
         }
-        else if (i == 63)
+        else if (i == ((dim * dim) - 1))
         {
             if (ACcodeLength.addPair(x00, 1) == -1)ACcodeLength.changeTerm(x00, ACcodeLength.retrieveTerm(x00) + 1);
         }
@@ -1081,14 +1085,17 @@ void huffmanTable::huffmanCodes()
 
     this->DCcodeLength.sortByTerm(intReverseSorter);
     this->ACcodeLength.sortByTerm(intReverseSorter);
+    this->DCcodeLength.sortByTerm(intReverseSorter);
+    this->ACcodeLength.sortByTerm(intReverseSorter);
+    //doesnt work sometimes just do it twice lol
 
     huffManReferenceTable(this->DCcodeLength, this->DCcode);
     huffManReferenceTable(this->ACcodeLength, this->ACcode, true);
 
-    this->DCcodeLength.sortByTerm(intReverseSorter);
-    this->ACcodeLength.sortByTerm(intReverseSorter);
-    this->DCcode.sortByTerm(customSorter);
-    this->ACcode.sortByTerm(customSorter);
+    //this->DCcodeLength.sortByTerm(intReverseSorter);
+    //this->ACcodeLength.sortByTerm(intReverseSorter);
+    //this->DCcode.sortByTerm(customSorter);
+    //this->ACcode.sortByTerm(customSorter);
 
 }
 int* huffmanCodeCountArray(int* a, int arraySize) //okay this function accepts a frequenc array and returns a huffman tree arrray. The array it returns is equal in size to the array it enters and has the huffman positions of the frequencies stored where the frequencies were.
@@ -1164,11 +1171,17 @@ void huffManReferenceTable(fakeDictionary<int, int>& huffmanCodeLength, fakeDict
     {
         if (i != 0 && codeLength != funnyPtr2[i])
         {
-            code = code << funnyPtr2[i] - codeLength;
+            code = code << (funnyPtr2[i] - codeLength);
             codeLength = funnyPtr2[i];
         }
+        if (code == 0) std::cout << "Code == 0: " << i << "Bit addition" << funnyPtr2[i] - codeLength << std::endl;
         target.addPair(funnyPtr[i], code);
         ++code;
+    }
+    std::cout << "Code Values: " << std::endl;
+    for (int i = 0; i < count; i++)
+    {
+        std::cout << (int)target.retrieveTerm(funnyPtr[i]) << std::endl;
     }
 }
 int intSorter(int a, int b)
@@ -1238,7 +1251,11 @@ void DHT_M(byteWritter& bw, int ACDC /*1 = AC 0 = DC*/, int tableNum /*tablenum 
     bw.write(19 + codeFreq.returnCount(), 16);//code length, codelength (2) + tableinfo(1) + number codeLengths(16) + symbols(variable)
     bw.write(16 * ACDC + tableNum);//table info, first 4 bits are 0 if dc 1 is ac, last 4 bits are tablenum 0 is going to be y and 1 is going to be the chrominance
     //below is the # of code lengths, which is stored instead ofthe codes as you can just reconstruct the codes...
-    for (int i = 1; i < 17; i++)    bw.write(codeFreq.retrieveTermCount(i));
+    std::cout << (tableNum == 0 ? "Y" : "C") << (ACDC == 1 ? " AC" : "DC") << std::endl;
+    for (int i = 1; i < 17; i++) {
+        std::cout << codeFreq.retrieveTermCount(i) << std::endl;
+        bw.write(codeFreq.retrieveTermCount(i));
+    }
     //below are the symbols, our dictionary is already sorted into the proper format so we just use that
     //the way this works is the symbols below are tied to the code lengths above, the first symbol below is tied to the first code length above and so on
     int* huffValues = codeFreq.retrieveAllKeys();

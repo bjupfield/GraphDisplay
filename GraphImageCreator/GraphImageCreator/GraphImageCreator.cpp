@@ -16,68 +16,6 @@ using namespace std;
 int main()
 {
     std::cout << "Hello World!\n";
-    ifstream image;
-    image.open("../../Funny.jpg", ios::in | ios::binary | ios::ate);
-    if(!image.is_open())
-    {
-        cout << "Failed To Open!\n" << endl;
-    }
-    else
-    {
-
-        int imageSize = image.tellg();
-        image.seekg(0, ios::beg);
-
-        int rowSize = 2;
-        uint8_t* myimageArray = new uint8_t[imageSize];
-        uint8_t* bufferArray = new uint8_t[rowSize];
-
-
-        for (int i = 0; i < imageSize / rowSize; i++)
-        {
-            image.read(reinterpret_cast<char*>(bufferArray), sizeof(uint8_t) * rowSize);
-            copyArray(bufferArray, myimageArray, i * rowSize, rowSize);
-            cout << i << " row: ";
-            for (int j = 0; j < rowSize; j++)
-            {
-                cout << std::hex << static_cast<int>(myimageArray[i * rowSize + j]) << " ";
-            }
-            cout << std::dec << endl;
-        }
-
-        cout << "File Size: " << imageSize << " bytes!!" << endl;
-        delete[] bufferArray;
-
-        image.close();
-        std::fstream outFile;
-        outFile.open("../../newestCreatedText.txt", ios::out | ios::trunc);
-        if (!outFile.is_open())
-        {
-            cout << "Not Open" << endl;
-        }
-        int bytes = 0;
-        while (bytes < imageSize)
-        {
-            //cout << "HEY WHAT THE FUCK: " << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(myimageArray[bytes]) << endl;
-            if (static_cast<int>(myimageArray[bytes]) == 255)
-            {
-                if (static_cast<int>(myimageArray[bytes + 1]) != 0)
-                {
-                    if (bytes != 0)
-                    {
-                        outFile << std::dec << endl;
-                    }
-                    outFile << std::dec << "New Section: ";
-                }
-            }
-
-            outFile << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(myimageArray[bytes]) << " ";
-
-            ++bytes;
-        }
-        outFile.close();
-
-    }
     
     char fileName[] = "../../ImageTxtFiles/blank.txt";
     char fileName2[] = "../../ImageTxtFiles/Arrow.txt";
@@ -184,6 +122,69 @@ int main()
     char fileNAMES[] = "../../Funny.jpg";
 
     mine2.actualJpg(hINFO, mine2, fileNAMES);
+
+    ifstream image;
+    image.open("../../Funny.jpg", ios::in | ios::binary | ios::ate);
+    if (!image.is_open())
+    {
+        cout << "Failed To Open!\n" << endl;
+    }
+    else
+    {
+
+        int imageSize = image.tellg();
+        image.seekg(0, ios::beg);
+
+        int rowSize = 2;
+        uint8_t* myimageArray = new uint8_t[imageSize];
+        uint8_t* bufferArray = new uint8_t[rowSize];
+
+
+        for (int i = 0; i < imageSize / rowSize; i++)
+        {
+            image.read(reinterpret_cast<char*>(bufferArray), sizeof(uint8_t) * rowSize);
+            copyArray(bufferArray, myimageArray, i * rowSize, rowSize);
+            //cout << i << " row: ";
+            //for (int j = 0; j < rowSize; j++)
+            //{
+            //    cout << std::hex << static_cast<int>(myimageArray[i * rowSize + j]) << " ";
+            //}
+            //cout << std::dec << endl;
+        }
+
+        cout << "File Size: " << imageSize << " bytes!!" << endl;
+        delete[] bufferArray;
+
+        image.close();
+        std::fstream outFile;
+        outFile.open("../../newestCreatedText.txt", ios::out | ios::trunc);
+        if (!outFile.is_open())
+        {
+            cout << "Not Open" << endl;
+        }
+        int bytes = 0;
+        while (bytes < imageSize)
+        {
+            //cout << "HEY WHAT THE FUCK: " << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(myimageArray[bytes]) << endl;
+            if (static_cast<int>(myimageArray[bytes]) == 255)
+            {
+                if (static_cast<int>(myimageArray[bytes + 1]) != 0)
+                {
+                    if (bytes != 0)
+                    {
+                        outFile << std::dec << endl;
+                    }
+                    outFile << std::dec << "New Section: ";
+                }
+            }
+
+            outFile << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(myimageArray[bytes]) << " ";
+
+            ++bytes;
+        }
+        outFile.close();
+
+    }
 
     exit(2);
 }
