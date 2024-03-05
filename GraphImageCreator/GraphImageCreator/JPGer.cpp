@@ -950,7 +950,7 @@ void mcuHuffmanContainer::actualJpg(hInfoStruct hInfo, mcuHuffmanContainer mcuHu
         //write jpg...
         SOI_APPO_M(bW, hInfo.densityY, hInfo.densityX, hInfo.density);
         DQT_M(bW, (hInfo.lumaTableType == 64 ? lumTable : lumTable_2), hInfo.lumaTableType, 0);//luma table will be used if monochrome
-        if (hInfo.chromaTableType != 0) DQT_M(bW, hInfo.chromaTableType == 64 ? chromaTable : chromaTable_2, hInfo.chromaTableType, 1);//check if chromatable exist (will not if monochrome image)
+        if (hInfo.chromaTableType != 0) DQT_M(bW, hInfo.chromaTableType == 64 ? chromaTable : chromaTable, 64, 1);//check if chromatable exist (will not if monochrome image)
         SOF_M(bW, hInfo.chromaTableType, hInfo.samplingY, hInfo.samplingC, hInfo.pixelHeight, hInfo.pixelLength);
         DHT_M(bW, 0, 0, mcuHuffman.yCHuffman[0].DCcodeLength);
         DHT_M(bW, 1, 0, mcuHuffman.yCHuffman[0].ACcodeLength);
@@ -970,6 +970,7 @@ void mcuHuffmanContainer::actualJpg(hInfoStruct hInfo, mcuHuffmanContainer mcuHu
                 MCU_W(bW, mcuHuffman.yCHuffman[1].DCcode, mcuHuffman.yCHuffman[1].DCcodeLength, mcuHuffman.yCHuffman[1].ACcode, mcuHuffman.yCHuffman[1].ACcodeLength, hInfo.chromaTableType, mcuHuffman.mcus[i].yCbCr[2]);
             }
         }
+        EOI_M(bW);
     }
 }
 void testIntMcus(mcuHuffmanContainer mine, int num)
@@ -1222,17 +1223,17 @@ void SOI_APPO_M(byteWritter& bw, int densityY, int densityX, int density)
 void DQT_M(byteWritter& bw, const int* table, int tableNum, int num)
 {
     bw.write(ff); bw.write(219);//DQT header, Data Quantization Table Header
-    bw.write(tableNum + 3, 16);//Header length, table length + 3 bits written here not including marker
+    bw.write((uint8_t)(tableNum + 3), 16);//Header length, table length + 3 bits written here not including marker
     bw.write(0, 4); bw.write(num, 4);// this byte here contains two bits (lol not actually bits) of information, the table integer size either 8 bit or 16 bit and the table id number. We will only be using 8 bit which is 0000 (16 is 0001)m abd the second bit contains the id, possible nums 0-3
     for (int i = 0; i < tableNum; i++)
     {
-        bw.write(table[tableNum == 64 ? zigging[i] : zigging2[i]]);
+        bw.write(table[tableNum == 64 ? zigging[i] : zigging2[i]] > 254 ? 254 : table[tableNum == 64 ? zigging[i] : zigging2[i]]);
     }
 }
 void SOF_M(byteWritter& bw, int chromaExist, int ySamplingSize, int cSamplingSize, int pixelHeight, int pixelWidth) 
 {
     bw.write(ff); bw.write(192);//S0F header, start of frame header type 0
-    bw.write(chromaExist != 0 ? 17 : 11);//length of segment, if monochrome only 11 bytes if not 17 
+    bw.write(chromaExist != 0 ? 17 : 11, 16);//length of segment, if monochrome only 11 bytes if not 17 
     bw.write(8);//jpg pixel precision, jpg only supports 8bit precision but it must be included anyway lol
     bw.write(pixelHeight, 16);//jpg pixel height, stored in two bits maxinum size of 256 x 256
     bw.write(pixelWidth, 16);//jpg pixel length
@@ -1269,6 +1270,7 @@ void DHT_M(byteWritter& bw, int ACDC /*1 = AC 0 = DC*/, int tableNum /*tablenum 
 }
 void SOS_M(byteWritter& bw, int components, int firstComponentLength)
 {
+    //EOI_M(bw);
     bw.write(ff); bw.write(218);//SOS marker, start of scan marker
     bw.write(components * 2 + 6, 16);//length of marker, variable
     bw.write(components);
