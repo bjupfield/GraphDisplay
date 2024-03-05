@@ -241,3 +241,6 @@ the lower-order bits of the huffmanvalue would be 0110, representing the bit len
 and then the coefficient bits would be 010000, which is the value 47 flipped
 without the huffman value coded, like it would be this can be represented as
 01110110 010000
+
+decoder we are stealing
+https://github.com/dannye/jed
