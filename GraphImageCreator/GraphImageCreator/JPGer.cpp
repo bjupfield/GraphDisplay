@@ -875,8 +875,6 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
             for(int i = 0; i < 3; i++)//if we ever want to make it monochrome...
             {
                 mcus[pos].yCbCr(i) = dctQuantizer(&origin.mcuList[pos].ycbcr[i], this->dim[i], ((pos == 0) ? 0 : mcus[pos - 1].yCbCr[i][0]), i);
-                if (i == 0) testVar = false;
-                else testVar = true;
                 yCHuffman[i == 0 ? 0 : 1].frequency(this->dim[i], this->mcus[pos].yCbCr[i]);
             }
             //mcus[pos - 1].Y[0]
@@ -961,15 +959,20 @@ void mcuHuffmanContainer::actualJpg(hInfoStruct hInfo, mcuHuffmanContainer mcuHu
         }
         int chromad = hInfo.chromaTableType != 0 ? 3 : 1;
         SOS_M(bW, chromad, hInfo.lumaTableType);
+        bW.inScanFlip();
         for (int i = 0; i < mcuHuffman.size(); i++)
         {
+            if (i == 0)testVar = true;
             MCU_W(bW, mcuHuffman.yCHuffman[0].DCcode, mcuHuffman.yCHuffman[0].DCcodeLength, mcuHuffman.yCHuffman[0].ACcode, mcuHuffman.yCHuffman[0].ACcodeLength, hInfo.lumaTableType, mcuHuffman.mcus[i].yCbCr[0]);
+            testVar = false;
             if (chromad == 3)
             {
                 MCU_W(bW, mcuHuffman.yCHuffman[1].DCcode, mcuHuffman.yCHuffman[1].DCcodeLength, mcuHuffman.yCHuffman[1].ACcode, mcuHuffman.yCHuffman[1].ACcodeLength, hInfo.chromaTableType, mcuHuffman.mcus[i].yCbCr[1]);
                 MCU_W(bW, mcuHuffman.yCHuffman[1].DCcode, mcuHuffman.yCHuffman[1].DCcodeLength, mcuHuffman.yCHuffman[1].ACcode, mcuHuffman.yCHuffman[1].ACcodeLength, hInfo.chromaTableType, mcuHuffman.mcus[i].yCbCr[2]);
             }
         }
+        std::cout << "Huffman Size: " << mcuHuffman.size() << std::endl;
+        bW.inScanFlip();
         EOI_M(bW);
     }
 }
@@ -1008,27 +1011,13 @@ void huffmanTable::frequency(int dim, int* table)
 {
     //dc
     int coeffLength = bitLength(table[0] > 0 ? table[0] : -table[0]);
-    if(!testVar)std::cout << coeffLength;
     if (DCcodeLength.addPair(coeffLength, 1) == -1) 
     {
-        if(!testVar)
-        std::cout << "Hello" << dim << " || Entry: " << DCcodeLength.retrieveTerm(coeffLength);
         DCcodeLength.changeTerm(coeffLength, DCcodeLength.retrieveTerm(coeffLength) + 1);
-        std::cout << " || EntryAfter: " << DCcodeLength.retrieveTerm(coeffLength);
-    }
-    if(!testVar)std::cout << std::endl;
-
-    if (!testVar) {
-        int* keys = DCcodeLength.retrieveAllKeys();
-        for (int i = 0; i < DCcodeLength.returnCount(); i++)
-        {
-            std::cout << keys[i] << ", ";
-        }
-        std::cout << std::endl;
     }
 
     //ac
-    unsigned zeroes = 0;
+    int zeroes = 0;
     for (int i = 1; i < dim * dim; i++, zeroes++)
     {
         int coeff = table[dim == 8 ? zigging[i] : zigging2[i]];
@@ -1052,11 +1041,7 @@ void huffmanTable::frequency(int dim, int* table)
             { 
                 ACcodeLength.changeTerm(coeffLength, ACcodeLength.retrieveTerm(coeffLength) + 1); 
             }
-            //if(!testVar)
-            //{
-            //    std::cout << "New HuffmanValue:  " << coeff << " || Zeroes: " << zeroes << " || CoeffLength: " << coeffLength << std::endl;
-            //}
-            zeroes = 0;
+            zeroes = -1;//evil
         }
         else if (i == ((dim * dim) - 1))
         {
@@ -1290,8 +1275,25 @@ void MCU_W(byteWritter& bw, fakeDictionary<int, uint8_t>& huffmanDcValueCodes, f
     int coeffLength = bitLength(table[0] > 0 ? table[0] : -table[0]);
     bw.write(huffmanDcValueCodes.retrieveTerm(coeffLength), huffmanDcValueLength.retrieveTerm(coeffLength));//write dchuffman value
     bw.write(table[0] > 0 ? (uint8_t)table[0] : ~(uint8_t)(table[0]), coeffLength);//flip bits if negative, write coefficient value
+
+    if (testVar) {
+        std::cout << "TESTING\n";
+        int* KEYS = huffmanAcValueCodes.retrieveAllKeys();
+        std::cout << "Keys:";
+        for (int i = 0; i < huffmanAcValueCodes.returnCount(); i++)
+        {
+            std::cout << KEYS[i] << ", ";
+        }
+        std::cout << std::endl;
+        std::cout << "code values: ";
+        for (int i = 0; i < huffmanAcValueCodes.returnCount(); i++)
+        {
+            std::cout << (int)huffmanAcValueCodes.retrieveTerm(KEYS[i]) << ", ";
+        }
+        std::cout << "DC: " << (int)table[0] << std::endl;
+    }
     //write ac
-    unsigned zeroes = 0;
+    int zeroes = 0;
     for (int i = 1; i < dim; i++, zeroes++)
     {
         int coeff = table[dim == 64 ? zigging[i] : zigging2[i]];
@@ -1302,6 +1304,7 @@ void MCU_W(byteWritter& bw, fakeDictionary<int, uint8_t>& huffmanDcValueCodes, f
                 while (zeroes > 15)
                 {//if the coeff has more than 15 zeroes we need to add the special code f0 which means 16 zeroes
                     bw.write(huffmanAcValueCodes.retrieveTerm(f0), huffmanAcValueLength.retrieveTerm(f0));
+                    if (testVar) std::cout << "MOre ZEROES\n";
                     zeroes -= 16;
                 }
             }
@@ -1310,15 +1313,30 @@ void MCU_W(byteWritter& bw, fakeDictionary<int, uint8_t>& huffmanDcValueCodes, f
                 std::cout << "error coeff length greater than 4: " << coeffLength << " || coeff: " << coeff << " || I: " << i;
                 exit(3);
             }
-            int huffValue = (zeroes << 4);
+            int huffValue = (zeroes << 4) + coeffLength;
+
             bw.write(huffmanAcValueCodes.retrieveTerm(huffValue), huffmanAcValueLength.retrieveTerm(huffValue));
-            bw.write(coeff > 0 ? (uint8_t)coeff : (uint8_t)(~coeff), coeffLength);
-            zeroes = 0;
+            bw.write(coeff > 0 ? (uint8_t)coeff : ~(uint8_t)(coeff), coeffLength);
+            if (testVar) 
+            {
+                if (huffmanAcValueCodes.retrieveTerm(huffValue) == NULL) std::cout << "Failed to Pull with Key: " << huffValue << std::endl;
+                std::cout << "ZEROES" << zeroes << std::endl;
+                std::cout << "Coeff" << coeff << std::endl;
+            }
+            zeroes = -1;
         }
         else if (i == 63)
         {
+            if (testVar)
+            {
+                std::cout << "end of the line\n";
+            }
             bw.write(huffmanAcValueCodes.retrieveTerm(x00), huffmanAcValueLength.retrieveTerm(x00));
         }
+    }
+    if (testVar) 
+    {
+        std::cout << "TESTING\n";
     }
 }
 void EOI_M(byteWritter& bw)

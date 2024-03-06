@@ -117,11 +117,22 @@ int main()
     uint32_t c = (uint32_t)b;
     cout << "Int Converted: " << (int)c << endl;
 
-    hInfoStruct hINFO = {2, 2, 1, 2, 0, 1, 1, 64, 16};
+    hInfoStruct hINFO = {mine.retrieveHeight() * 8, mine.retrieveLength() * 8, 2, 2, 0, 1, 1, 64, 16};
 
     char fileNAMES[] = "../../Funny.jpg";
 
     mine2.actualJpg(hINFO, mine2, fileNAMES);
+
+    std::cout << "BlockHeight: " << mine.retrieveHeight() << " || BlockWdith: " << mine.retrieveLength() << std::endl;
+    std::cout << "First Block: \n";
+    for (int i = 0; i < 8; i++)
+    {
+        for (int j = 0; j < 8; j++)
+        {
+            std::cout << (int)mine2.mcus[0].yCbCr[0][i * 8 + j] << ", ";
+        }
+        std::cout << std::endl;
+    }
 
     ifstream image;
     image.open("../../Funny.jpg", ios::in | ios::binary | ios::ate);

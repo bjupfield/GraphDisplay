@@ -10,7 +10,7 @@ MCUS graphPresetToMcus(graphMap Map) {
 	int *heightLength = Map.retrieveDimensions();
 	int mcuHeight = heightLength[0] / 8;
 	int mcuLength = heightLength[1] / 8;
-	MCUS myMcus = MCUS(mcuHeight, mcuLength, 8, 4, 4);
+	MCUS myMcus = MCUS(mcuHeight, mcuLength, 8, 8, 8);//decoder im testing doesnt account for 4:2:0 so dimesnions are 8,8,8
 
 	for(int i = 0; i < mcuLength; i++)
 	{
@@ -29,18 +29,20 @@ MCUS graphPresetToMcus(graphMap Map) {
 			}
 			uint8_t* undivided = extractYCbCr(buffer, 64);
 			uint8_t* Yvalue = new uint8_t[64];
-			uint8_t* Cbvalue = new uint8_t[16];
-			uint8_t* Crvalue = new uint8_t[16];
+			uint8_t* Cbvalue = new uint8_t[64];//decoder im testing with doesnt account for 4:2:0
+			uint8_t* Crvalue = new uint8_t[64];
 
 			copyArray(undivided, Yvalue, 0, 64);
-			for(int k = 0; k < 16; k++)
+			copyArray(undivided, Cbvalue, 0, 64, 64);
+			copyArray(undivided, Crvalue, 0, 64, 128);
+			/*for(int k = 0; k < 16; k++)
 			{
 				Cbvalue[k] = (uint8_t)(((int)undivided[64 + k * 4] + (int)undivided[64 + k * 4 + 1] + (int)undivided[64 + k * 4 + 16] + (int)undivided[64 + k * 4 + 16 +1]) / 4);
 			}
 			for (int k = 0; k < 16; k++)
 			{
 				Crvalue[k] = (uint8_t)(((int)undivided[128 + k * 4] + (int)undivided[128 + k * 4 + 1] + (int)undivided[128 + k * 4 + 16] + (int)undivided[128 + k * 4 + 16 + 1]) / 4);
-			}
+			}*/
 
 
 			myMcus.mcuList[j * mcuLength + i].fillMcu(Yvalue, Cbvalue, Crvalue);
@@ -55,8 +57,7 @@ MCUS graphPresetToMcus(graphMap Map) {
 }
 void printMcus(MCUS mine)
 {
-	std::cout << "HEY BITCH" << std::endl;
-	std::cout << "Count: " << mine.retrieveCount() << std::endl;
+
 	//for(int i = 0; i < mine.retrieveCount(); i++)
 	//{
 	//	std::cout << std::endl << "MCU NUMBER:" << i << ": ";

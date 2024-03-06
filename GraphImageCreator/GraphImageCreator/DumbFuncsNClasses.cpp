@@ -246,7 +246,7 @@ int byteWritter::write(uint8_t bits, uint8_t bitLength)
 		//turn byte to char
 		char buffer = this->byte;
 		this->outFile.write(&buffer, 1);
-		if(inScan)//funny condition needed to prevent ff in scan for jpg, writes 00 after any ff that appears in scan to prevent marker readings
+		if(inScan && buffer == char(255))//funny condition needed to prevent ff in scan for jpg, writes 00 after any ff that appears in scan to prevent marker readings
 		{
 			char buffer = (char)0;
 			this->outFile.write(&buffer, 1);
