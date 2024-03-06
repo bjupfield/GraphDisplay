@@ -244,3 +244,8 @@ without the huffman value coded, like it would be this can be represented as
 
 decoder we are stealing
 https://github.com/dannye/jed
+
+Okay what is currently messing us up is we are using a code value of 3, which in bits is 11,
+and the problem is that code values comprised of only 1 bit values are not allowed... I'm currently trying
+to find how these code values are coded out, and the ITU paper defines it on pg 148 section K.2 FIGURE K.2
+but I'm currently not seeing how it works.
