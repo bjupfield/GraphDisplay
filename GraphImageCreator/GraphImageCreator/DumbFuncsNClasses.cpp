@@ -222,30 +222,40 @@ int byteWritter::write(uint8_t bits, uint8_t bitLength)
 	if (bits == 0) leadingZeroBits = bitLength;
 	else
 	{
-		while ((bits >> ((bitLength - 1) - leadingZeroBits)) > 0 && bitLength > leadingZeroBits)
+		while ((bits >> leadingZeroBits) > 0 && bitLength > leadingZeroBits)
 		{
 			leadingZeroBits++;
 		}
 	}
+	leadingZeroBits = bitLength - leadingZeroBits;
 	//find if bits given will exceed current byte if added to current byte
 	int hangingBits = bitLength - currentBit;
 	if (hangingBits < 0) hangingBits = 0;
 	int nonHangingBits = bitLength - hangingBits;//just using this to make it more clear
-	
+
 	//adjust leading zero to account for hanging bits
-	if (leadingZeroBits > nonHangingBits) leadingZeroBits = nonHangingBits;
+	if (leadingZeroBits > nonHangingBits) {
+		leadingZeroBits = nonHangingBits;
+		if (inScan) std::cout << "HMMMM\n";
+	}
 
 	//write bits to byte
 	uint8_t bitsToAdd = bits >> hangingBits;//right-bit-shift to remove hangingbits
-	this->byte = this->byte << leadingZeroBits;//first add leading zero bits
+	this->byte <<= nonHangingBits;//move byte to the left by how many bits were adidng
+	//this->byte = this->byte << leadingZeroBits;//first add leading zero bits
 	this->byte += bitsToAdd;//than add bits
 	this->currentBit -= nonHangingBits;
+	if (inScan && ((int)bits == 18 || (int)bits == 3 || true))
+	{
+		std::cout << "In ByteWritter: || CurrentBit: " << currentBit << "" << " || Non-HangingBits: " << (int)nonHangingBits << " ||LeadingZeroes: " << leadingZeroBits << " || bitsToAdd: " << (int)bitsToAdd << " || BitLength: " << (int)bitLength << " || Bits: " << (int)bits << " || Finalized Byte" << (int)byte << std::endl;
+	}
 
 	if(currentBit == 0)
 	{
 		//turn byte to char
 		char buffer = this->byte;
 		this->outFile.write(&buffer, 1);
+		if (inScan) std::cout << "Sent Value: " << (int)byte << std::endl;
 		if(inScan && buffer == char(255))//funny condition needed to prevent ff in scan for jpg, writes 00 after any ff that appears in scan to prevent marker readings
 		{
 			char buffer = (char)0;

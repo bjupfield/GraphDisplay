@@ -1,6 +1,6 @@
-﻿  JPGer.cpp
-C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(35,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
-  (compiling source file 'JPGer.cpp')
+﻿  GraphImageCreator.cpp
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(35,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
+  (compiling source file 'GraphImageCreator.cpp')
   
-C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\JPGer.cpp(419,9): warning C4101: 'iter': unreferenced local variable
-  GraphImageCreator.vcxproj -> C:\Users\bjupf\JpgEncoder\GraphImageCreator\x64\Debug\GraphImageCreator.exe
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphImageCreator.cpp(146,23): warning C4244: 'initializing': conversion from 'std::streamoff' to 'int', possible loss of data
+  GraphImageCreator.vcxproj -> C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\x64\Debug\GraphImageCreator.exe
