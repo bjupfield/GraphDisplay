@@ -92,7 +92,7 @@ int fakeDictionary<Key, Term>::sortByTerm(CompFunc func)
 	for(bologoSort; bologoSort < this->count; bologoSort++)
 	{
 		int i = bologoSort >= 2 ? bologoSort / 2 : 1;
-		while (i <= bologoSort && !((func(this->terms[count - i], this->terms[0]) == 1) && (i == 1 ? true : func(this->terms[count - i + 1], this->terms[0]) == 0)))
+		while (i <= bologoSort && !((func(this->terms[count - i], this->terms[0]) == 1) && (i == 1 || (func(this->terms[count - i + 1], this->terms[0]) == 0))))
 		{
 			int adder = (i / 2);
 			if (func(this->terms[count - i], this->terms[0]) == 1) 
@@ -100,32 +100,23 @@ int fakeDictionary<Key, Term>::sortByTerm(CompFunc func)
 				if (i != 1)i -= (adder > 0 && i - adder < 1) ? adder : 1;
 				else break;
 			}
-			else i += (adder > 0 && adder + i > bologoSort) ? adder : 1;
+			else i += (adder > 0 && adder + i < bologoSort) ? adder : 1;
 			//if (i >= count) i = count - 1;
-		}
-
-		if (bologoSort > 5) {
-			std::cout << " Inside Bologo: " << bologoSort << " || I: " << i << " || Term[count - i]" << terms[count - i] << " || Terms[0]" << terms[0] << "\n";
 		}
 		if(i > bologoSort)
 		{
 			if (i > bologoSort + 1) i = bologoSort + 1;
-			if(bologoSort == 1)
-			{}
-			else
-			{
-				bufferTerm = this->terms[count - i];
-				this->terms[count - i] = this->terms[0];
-				this->terms[0] = bufferTerm;
+			bufferTerm = this->terms[count - i];
+			this->terms[count - i] = this->terms[0];
+			this->terms[0] = bufferTerm;
 
-				bufferKey = this->keys[count - i];
-				this->keys[count - i] = this->keys[0];
-				this->keys[0] = bufferKey;
-			}
+			bufferKey = this->keys[count - i];
+			this->keys[count - i] = this->keys[0];
+			this->keys[0] = bufferKey;
 		}
 		else
 		{
-			for (i; i < bologoSort + 1; i++)
+			for (i; i <= bologoSort + 1; i++)
 			{
 				bufferTerm = this->terms[count - i];
 				this->terms[count - i] = this->terms[0];

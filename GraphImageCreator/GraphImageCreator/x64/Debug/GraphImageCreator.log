@@ -1,5 +1,5 @@
 ﻿  DumbFuncsNClasses.cpp
-C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\DumbFuncsNClasses.cpp(302,14): warning C4552: '<<': result of expression not used
-C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\DumbFuncsNClasses.cpp(296): warning C4715: 'byteWritter::write': not all control paths return a value
+C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\DumbFuncsNClasses.cpp(293,14): warning C4552: '<<': result of expression not used
+C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\DumbFuncsNClasses.cpp(287): warning C4715: 'byteWritter::write': not all control paths return a value
 x64\Debug\RGBtoYCrCb.obj : warning LNK4042: object specified more than once; extras ignored
   GraphImageCreator.vcxproj -> C:\Users\bjupf\JpgEncoder\GraphImageCreator\x64\Debug\GraphImageCreator.exe
