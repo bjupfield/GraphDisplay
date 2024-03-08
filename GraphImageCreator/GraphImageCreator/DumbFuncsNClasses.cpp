@@ -101,23 +101,31 @@ int fakeDictionary<Key, Term>::sortByTerm(CompFunc func)
 				else break;
 			}
 			else i += (adder > 0 && adder + i > bologoSort) ? adder : 1;
+			//if (i >= count) i = count - 1;
 		}
 
-
+		if (bologoSort > 5) {
+			std::cout << " Inside Bologo: " << bologoSort << " || I: " << i << " || Term[count - i]" << terms[count - i] << " || Terms[0]" << terms[0] << "\n";
+		}
 		if(i > bologoSort)
 		{
 			if (i > bologoSort + 1) i = bologoSort + 1;
-			bufferTerm = this->terms[count - i];
-			this->terms[count - i] = this->terms[0];
-			this->terms[0] = bufferTerm;
+			if(bologoSort == 1)
+			{}
+			else
+			{
+				bufferTerm = this->terms[count - i];
+				this->terms[count - i] = this->terms[0];
+				this->terms[0] = bufferTerm;
 
-			bufferKey = this->keys[count - i];
-			this->keys[count - i] = this->keys[0];
-			this->keys[0] = bufferKey;
+				bufferKey = this->keys[count - i];
+				this->keys[count - i] = this->keys[0];
+				this->keys[0] = bufferKey;
+			}
 		}
 		else
 		{
-			for (i; i <= bologoSort + 1; i++)
+			for (i; i < bologoSort + 1; i++)
 			{
 				bufferTerm = this->terms[count - i];
 				this->terms[count - i] = this->terms[0];
@@ -236,7 +244,7 @@ int byteWritter::write(uint8_t bits, uint8_t bitLength)
 	//adjust leading zero to account for hanging bits
 	if (leadingZeroBits > nonHangingBits) {
 		leadingZeroBits = nonHangingBits;
-		if (inScan) std::cout << "HMMMM\n";
+		//if (inScan) std::cout << "HMMMM\n";
 	}
 
 	//write bits to byte
@@ -247,7 +255,7 @@ int byteWritter::write(uint8_t bits, uint8_t bitLength)
 	this->currentBit -= nonHangingBits;
 	if (inScan && ((int)bits == 18 || (int)bits == 3 || true))
 	{
-		std::cout << "In ByteWritter: || CurrentBit: " << currentBit << "" << " || Non-HangingBits: " << (int)nonHangingBits << " ||LeadingZeroes: " << leadingZeroBits << " || bitsToAdd: " << (int)bitsToAdd << " || BitLength: " << (int)bitLength << " || Bits: " << (int)bits << " || Finalized Byte" << (int)byte << std::endl;
+		//std::cout << "In ByteWritter: || CurrentBit: " << currentBit << "" << " || Non-HangingBits: " << (int)nonHangingBits << " ||LeadingZeroes: " << leadingZeroBits << " || bitsToAdd: " << (int)bitsToAdd << " || BitLength: " << (int)bitLength << " || Bits: " << (int)bits << " || Finalized Byte" << (int)byte << std::endl;
 	}
 
 	if(currentBit == 0)
@@ -255,7 +263,7 @@ int byteWritter::write(uint8_t bits, uint8_t bitLength)
 		//turn byte to char
 		char buffer = this->byte;
 		this->outFile.write(&buffer, 1);
-		if (inScan) std::cout << "Sent Value: " << (int)byte << std::endl;
+		//if (inScan) std::cout << "Sent Value: " << (int)byte << std::endl;
 		if(inScan && buffer == char(255))//funny condition needed to prevent ff in scan for jpg, writes 00 after any ff that appears in scan to prevent marker readings
 		{
 			char buffer = (char)0;

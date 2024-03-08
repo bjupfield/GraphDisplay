@@ -8,7 +8,7 @@ struct dimensions {
 	int Y = 8;
 	int Cb = 4;
 	int Cr = 4;
-	int& operator[](int i)
+	int operator[](int i)
 	{
 		switch (i)
 		{
@@ -29,18 +29,18 @@ struct YCBCR {
 	uint8_t* Cb;
 	uint8_t* Cr;
 
-	uint8_t& operator[](int i)
+	uint8_t* operator[](int i)
 	{
 		switch (i)
 		{
 		case 0:
-			return *Y;
+			return Y;
 		case 1:
-			return *Cb;
+			return Cb;
 		case 2:
-			return *Cr;
+			return Cr;
 		default:
-			return *Y;
+			return Y;
 		}
 	}
 };

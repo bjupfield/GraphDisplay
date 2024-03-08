@@ -125,14 +125,27 @@ int main()
 
     std::cout << "BlockHeight: " << mine.retrieveHeight() << " || BlockWdith: " << mine.retrieveLength() << " || Size: " << mine2.size() << std::endl;
     std::cout << "Last Block: \n";
-    for (int i = 0; i < 8; i++)
+    for (int n = 0; n < 10; n++) 
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            for (int j = 0; j < 8; j++)
+            {
+                std::cout << (int)mine2.mcus[n].yCbCr[0][i * 8 + j] << ", ";
+            }
+            std::cout << std::endl;
+        }
+    }
+    std::cout << "Source Mcus\n";
+    for(int i = 0; i < 8; i++)
     {
         for (int j = 0; j < 8; j++)
         {
-            std::cout << (int)mine2.mcus[50].yCbCr[0][i * 8 + j] << ", ";
+            std::cout << (int)mine.mcuList[0].ycbcr.Cr[i * 8 + j] << ", ";
         }
-        std::cout << std::endl;
+        std::cout << "\n";
     }
+    std::cout << "Source Mcus\n";
 
     ifstream image;
     image.open("../../Funny.jpg", ios::in | ios::binary | ios::ate);

@@ -553,7 +553,7 @@ int* test_8x8_int_DCT(uint8_t *source_mcu, int previousCoefficient)
 }
 int* test2_dct(uint8_t* source_mcu, int previousCoefficient)
 {
-    int* mcu = new int[64];
+    int* mcu = new int[65];
     //row DCT
     for (int i = 0; i < 8; i++)
     {
@@ -764,7 +764,190 @@ int* test2_dct(uint8_t* source_mcu, int previousCoefficient)
         mcu[i + 56] = (int)v6 >> 4;
         mcu[i + 24] = (int)v7 >> 4;
     }
+    return mcu;
+}
+static const float mp0 = 0.7071;
+static const float mp1 = 0.9239;
+static const float mp2 = 0.3827;
+static const float mp3 = 1.4142;
+int* dct_II_uint_8t_int_8x8_Version3(uint8_t* source_mcu)
+{
+    int* mcu = new int[65];
+    for (int i = 0; i < 64; i++) mcu[i] = (int)source_mcu[i];
+    //column DCT
+    if (testVar)
+    {
+        std::cout << "HERE IS THE SOURCE MCU\n";
+        for (int i = 0; i < 8; i++)
+        {
+            for (int j = 0; j < 8; j++)
+            {
+                std::cout << (int)source_mcu[i * 8 + j] << ", ";
+            }
+            std::cout << "\n";
+        }
+        std::cout << "\n";
+    }
+    for (int i = 0; i < 8; i++)
+    {
+
+        //initialization
+        int a0, a1, a2, a3, a4, a5, a6, a7;
+        a0 = mcu[i];
+        a1 = mcu[i + 8];
+        a2 = mcu[i + 16];
+        a3 = mcu[i + 24];
+        a4 = mcu[i + 32];
+        a5 = mcu[i + 40];
+        a6 = mcu[6 + 48];
+        a7 = mcu[7 + 56];
+
+        int b0, b1, b2, b3, b4, b5, b6, b7;
+        b0 = a0 + a7;
+        b1 = a1 + a6;
+        b2 = a2 + a5;
+        b3 = a3 + a4;
+
+        b4 = a3 - a4;
+        b5 = a2 - a5;
+        b6 = a1 - a6;
+        b7 = a0 - a7;
+
+        int c0, c1, c2, c3, c4, c5, c6, c7;
+        c0 = b0 + b3;
+        c1 = b1 + b2;
+        c2 = b1 - b2;
+        c3 = b0 - b3;
+
+        c4 = -b4 - b5;
+        c5 = b5 + b6;
+        c6 = b6 + b7;
+        c7 = b7;
+
+        float d0, d1, d2, d3, d4, d5, d6, d7;
+        d0 = c0 + c1;
+        d1 = c0 - c1;
+        d2 = (float)(c2 + c3) * mp0;
+        d3 = c3;
+
+        d4 = ((float)c4 * mp1) + ((float)c6 * mp2);
+        d5 = (float)c5 * mp0;
+        d6 = ((float)c6 * mp1) - ((float)c4 * mp2);
+        d7 = c7;
+
+        float e0, e1, e2, e3, e4, e5, e6, e7;
+        e0 = d0;
+        e1 = d1;
+        e2 = d2 + d3;
+        e3 = d3 - d2;
+
+        e4 = -d4;
+        e5 = d5 + d7;
+        e6 = d6;
+        e7 = d7 - d5;
+
+        float f0, f1, f2, f3, f4, f5, f6, f7;
+        f0 = e0 / mp3;
+        f1 = e1 / mp3;
+        f2 = e2;
+        f3 = e3;
+
+        f4 = e4 + e7;
+        f5 = e5 + e6;
+        f6 = e5 - e6;
+        f7 = e7 - e4;
+
+        mcu[i] = ((int)f0);
+        mcu[i + 32] = ((int)f1);
+        mcu[i + 16] = ((int)f2) >> 2;
+        mcu[i + 48] = ((int)f3) >> 2;
+        mcu[i + 40] = ((int)f4) >> 2;
+        mcu[i + 8] = ((int)f5) >> 2;
+        mcu[i + 56] = ((int)f6) >> 2;
+        mcu[i + 24] = ((int)f7) >> 2;
+
+    }
     
+    //row DCT
+    for (int i = 0; i < 8; i++)
+    {
+
+        //initialization
+        int a0, a1, a2, a3, a4, a5, a6, a7;
+        a0 = mcu[i * 8];
+        a1 = mcu[1 + i * 8];
+        a2 = mcu[2 + i * 8];
+        a3 = mcu[3 + i * 8];
+        a4 = mcu[4 + i * 8];
+        a5 = mcu[5 + i * 8];
+        a6 = mcu[6 + i * 8];
+        a7 = mcu[7 + i * 8];
+
+        int b0, b1, b2, b3, b4, b5, b6, b7;
+        b0 = a0 + a7;
+        b1 = a1 + a6;
+        b2 = a2 + a5;
+        b3 = a3 + a4;
+
+        b4 = a3 - a4;
+        b5 = a2 - a5;
+        b6 = a1 - a6;
+        b7 = a0 - a7;
+
+        int c0, c1, c2, c3, c4, c5, c6, c7;
+        c0 = b0 + b3;
+        c1 = b1 + b2;
+        c2 = b1 - b2;
+        c3 = b0 - b3;
+
+        c4 = -b4 - b5;
+        c5 = b5 + b6;
+        c6 = b6 + b7;
+        c7 = b7;
+
+        float d0, d1, d2, d3, d4, d5, d6, d7;
+        d0 = c0 + c1;
+        d1 = c0 - c1;
+        d2 = (float)(c2 + c3) * mp0;
+        d3 = c3;
+
+        d4 = ((float)c4 * mp1) + ((float)c6 * mp2);
+        d5 = (float)c5 * mp0;
+        d6 = ((float)c6 * mp1) - ((float)c4 * mp2);
+        d7 = c7;
+
+        float e0, e1, e2, e3, e4, e5, e6, e7;
+        e0 = d0;
+        e1 = d1;
+        e2 = d2 + d3;
+        e3 = d3 - d2;
+
+        e4 = -d4;
+        e5 = d5 + d7;
+        e6 = d6;
+        e7 = d7 - d5;
+
+        float f0, f1, f2, f3, f4, f5, f6, f7;
+        f0 = e0 / mp3;
+        f1 = e1 / mp3;
+        f2 = e2;
+        f3 = e3;
+
+        f4 = e4 + e7;
+        f5 = e5 + e6;
+        f6 = e5 - e6;
+        f7 = e7 - e4;
+
+        mcu[i * 8] = ((int)f0);
+        mcu[i * 8 + 4] = ((int)f1);
+        mcu[i * 8 + 2] = ((int)f2) >> 2;
+        mcu[i * 8 + 6] = ((int)f3) >> 2;
+        mcu[i * 8 + 5] = ((int)f4) >> 2;
+        mcu[i * 8 + 1] = ((int)f5) >> 2;
+        mcu[i * 8 + 7] = ((int)f6) >> 2;
+        mcu[i * 8 + 3] = ((int)f7) >> 2;
+
+    }
     return mcu;
 }
 int* dct_II_uint_8t_int_4x4_TEST(uint8_t* source_mcu, int previousCoefficient)
@@ -872,10 +1055,12 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
         {
             int pos = i * mcuLength + j;
             mcus[pos] = intMcus();
-            for(int i = 0; i < 3; i++)//if we ever want to make it monochrome...
+            for(int n = 0; n < 3; n++)//if we ever want to make it monochrome...
             {
-                mcus[pos].yCbCr(i) = dctQuantizer(&origin.mcuList[pos].ycbcr[i], this->dim[i], ((pos == 0) ? 0 : mcus[pos - 1].yCbCr[i][0]), i);
-                yCHuffman[i == 0 ? 0 : 1].frequency(this->dim[i], this->mcus[pos].yCbCr[i]);
+                //if (n == 0 && dim[n] == 8 && pos < 10) std::cout << "HMMM\n";
+                mcus[pos].yCbCr(n) = dctQuantizer(origin.mcuList[pos].ycbcr[n], this->dim[n], ((pos == 0) ? 0 : mcus[pos - 1].yCbCr[n][(dim[n] == 8 ? 64 : 16)]), n);
+                //if (n == 0 && dim[n] == 8 && pos < 10) std::cout << "HMMM << " << mcus[pos].yCbCr[0][64] << " << " << pos << std::endl;
+                yCHuffman[n == 0 ? 0 : 1].frequency(this->dim[n], mcus[pos].yCbCr[n]);
             }
             //mcus[pos - 1].Y[0]
             //im throwing the previous mcus DC coefficient, as this is what jpg does. Jpg standard says that DC coefficient are dependent on previous DC cocefficients, where the DC Coefficient = current coefficient - previous coefficient
@@ -895,45 +1080,46 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
         }
     }*/
 
-    int* keys = yCHuffman[0].ACcodeLength.retrieveAllKeys();
-    std::cout << "Y AC" << std::endl;
-    for (int i = 0; i < yCHuffman[0].ACcodeLength.returnCount(); i++)
-    {
-        std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[0].ACcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[0].ACcode.retrieveTerm(keys[i]) << std::endl;
-    }
+    //int* keys = yCHuffman[0].ACcodeLength.retrieveAllKeys();
+    //std::cout << "Y AC" << std::endl;
+    //for (int i = 0; i < yCHuffman[0].ACcodeLength.returnCount(); i++)
+    //{
+    //    std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[0].ACcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[0].ACcode.retrieveTerm(keys[i]) << std::endl;
+    //}
 
-    std::cout << "Y DC" << std::endl;
-    keys = yCHuffman[0].DCcodeLength.retrieveAllKeys();
-    for (int i = 0; i < yCHuffman[0].DCcodeLength.returnCount(); i++)
-    {
-        std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[0].DCcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[0].DCcode.retrieveTerm(keys[i]) << std::endl;
-    }
+    //std::cout << "Y DC" << std::endl;
+    //keys = yCHuffman[0].DCcodeLength.retrieveAllKeys();
+    //for (int i = 0; i < yCHuffman[0].DCcodeLength.returnCount(); i++)
+    //{
+    //    std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[0].DCcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[0].DCcode.retrieveTerm(keys[i]) << std::endl;
+    //}
 
 
     yCHuffman[0].huffmanCodes();
     yCHuffman[1].huffmanCodes();
 
 
-    std::cout << " ||||||||||||||||||| " << std::endl;
-    //print huffman values
+    //std::cout << " ||||||||||||||||||| " << std::endl;
+    ////print huffman values
 
-    std::cout << " ||| Y AC ||| " << std::endl;
-    //print huffman values
+    //std::cout << " ||| Y AC ||| " << std::endl;
+    ////print huffman values
 
-    keys = yCHuffman[0].ACcodeLength.retrieveAllKeys();
-    for (int i = 0; i < yCHuffman[0].ACcodeLength.returnCount(); i++)
-    {
-        std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[0].ACcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[0].ACcode.retrieveTerm(keys[i]) << std::endl;
-    }
+    //keys = yCHuffman[0].ACcodeLength.retrieveAllKeys();
+    //for (int i = 0; i < yCHuffman[0].ACcodeLength.returnCount(); i++)
+    //{
+    //    std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[0].ACcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[0].ACcode.retrieveTerm(keys[i]) << std::endl;
+    //}
 
-    std::cout << " ||| Y DC ||| " << std::endl;
+    //std::cout << " ||| Y DC ||| " << std::endl;
 
 
-    keys = yCHuffman[0].DCcodeLength.retrieveAllKeys();
-    for (int i = 0; i < yCHuffman[0].DCcodeLength.returnCount(); i++)
-    {
-        std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[0].DCcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[0].DCcode.retrieveTerm(keys[i]) << std::endl;
-    }
+    //keys = yCHuffman[0].DCcodeLength.retrieveAllKeys();
+    //for (int i = 0; i < yCHuffman[0].DCcodeLength.returnCount(); i++)
+    //{
+    //    std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[0].DCcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[0].DCcode.retrieveTerm(keys[i]) << std::endl;
+    //}
+
 }
 int mcuHuffmanContainer::size()
 {
@@ -951,7 +1137,35 @@ void mcuHuffmanContainer::actualJpg(hInfoStruct hInfo, mcuHuffmanContainer mcuHu
         if (hInfo.chromaTableType != 0) DQT_M(bW, hInfo.chromaTableType == 64 ? chromaTable : chromaTable, 64, 1);//check if chromatable exist (will not if monochrome image)
         SOF_M(bW, hInfo.chromaTableType, hInfo.samplingY, hInfo.samplingC, hInfo.pixelHeight, hInfo.pixelLength);
         DHT_M(bW, 0, 0, mcuHuffman.yCHuffman[0].DCcodeLength);
+        std::cout << "\nDC HUffValue: ";
+        int* keys = mcuHuffman.yCHuffman[0].DCcode.retrieveAllKeys();
+        for (int i = 0; i < mcuHuffman.yCHuffman[0].DCcode.returnCount();i++)
+        {
+            std::cout << keys[i] << ", ";
+        }
+        std::cout << "\nDC code: ";
+        for (int i = 0; i < mcuHuffman.yCHuffman[0].DCcode.returnCount(); i++)
+        {
+            std::cout << (int)mcuHuffman.yCHuffman[0].DCcode.retrieveTerm(keys[i]) << ", ";
+        }
         DHT_M(bW, 1, 0, mcuHuffman.yCHuffman[0].ACcodeLength);
+        std::cout << "\nAC HuffValue: ";
+        keys = mcuHuffman.yCHuffman[0].ACcode.retrieveAllKeys();
+        for (int i = 0; i < mcuHuffman.yCHuffman[0].ACcode.returnCount(); i++)
+        {
+            std::cout << keys[i] << ", ";
+        }
+        std::cout << "\nAC code: ";
+        for (int i = 0; i < mcuHuffman.yCHuffman[0].ACcode.returnCount(); i++)
+        {
+            std::cout << (int)mcuHuffman.yCHuffman[0].ACcode.retrieveTerm(keys[i]) << ", ";
+        }
+        std::cout << "\nAC CodeLength: ";
+        for (int i = 0; i < mcuHuffman.yCHuffman[0].ACcode.returnCount(); i++)
+        {
+            std::cout << (int)mcuHuffman.yCHuffman[0].ACcodeLength.retrieveTerm(keys[i]) << ", ";
+        }
+        std::cout << std::endl;
         if (hInfo.chromaTableType != 0)
         {
             DHT_M(bW, 0, 1, mcuHuffman.yCHuffman[1].DCcodeLength);
@@ -959,20 +1173,20 @@ void mcuHuffmanContainer::actualJpg(hInfoStruct hInfo, mcuHuffmanContainer mcuHu
         }
         int chromad = hInfo.chromaTableType != 0 ? 3 : 1;
         SOS_M(bW, chromad, hInfo.lumaTableType);
-        //bW.inScanFlip(); //decoment this after testing
+        bW.inScanFlip(); //decoment this after testing
         for (int i = 0; i < mcuHuffman.size(); i++)
         {
+            if (i == 0)testVar = true;
             MCU_W(bW, mcuHuffman.yCHuffman[0].DCcode, mcuHuffman.yCHuffman[0].DCcodeLength, mcuHuffman.yCHuffman[0].ACcode, mcuHuffman.yCHuffman[0].ACcodeLength, hInfo.lumaTableType, mcuHuffman.mcus[i].yCbCr[0]);
+            testVar = false;
             if (chromad == 3)
             {
-                if (i == 0)testVar = true;
                 MCU_W(bW, mcuHuffman.yCHuffman[1].DCcode, mcuHuffman.yCHuffman[1].DCcodeLength, mcuHuffman.yCHuffman[1].ACcode, mcuHuffman.yCHuffman[1].ACcodeLength, hInfo.chromaTableType, mcuHuffman.mcus[i].yCbCr[1]);
-                testVar = false;
                 MCU_W(bW, mcuHuffman.yCHuffman[1].DCcode, mcuHuffman.yCHuffman[1].DCcodeLength, mcuHuffman.yCHuffman[1].ACcode, mcuHuffman.yCHuffman[1].ACcodeLength, hInfo.chromaTableType, mcuHuffman.mcus[i].yCbCr[2]);
             }
         }
         std::cout << "Huffman Size: " << mcuHuffman.size() << std::endl;
-        //bW.inScanFlip(); //decoment this after testing
+        bW.inScanFlip(); //decoment this after testing
         EOI_M(bW);
     }
 }
@@ -989,27 +1203,32 @@ void testIntMcus(mcuHuffmanContainer mine, int num)
 }
 int* dctQuantizer(uint8_t* table,int dim, int previousDC, int num) 
 {
-    int* returnTable = (int*)malloc(dim * dim * sizeof(int));
+    int* returnTable;
+
+    //int* returnTable = (int*)malloc((dim * dim + 1) * sizeof(int));
     if (dim == 8)
     {
         //this->Y = dct_II_uint_8t_int_8x8(uintMcu.Y);
         //testing
         //this->Y = test_8x8_int_DCT(uintMcu.Y, previousCoefficient);
-        returnTable = test2_dct(table, previousDC);
-        quantizer_8x8_int(returnTable, quantTables8x8[num]);;
+        //returnTable = test2_dct(table, previousDC);
+        returnTable = dct_II_uint_8t_int_8x8_Version3(table);
+        quantizer_8x8_int(returnTable, quantTables8x8[num]);
     }
-    else if (dim == 4)
+    else
     {
         //returnTable = dct_II_uint_8t_int_4x4(table, previousDC);
         returnTable = dct_II_uint_8t_int_4x4_TEST(table, previousDC);
         quantizer_4x4_int(returnTable, quantTables4x4[num]);
     }
+    returnTable[dim * dim] = returnTable[0] + 0;
     returnTable[0] = returnTable[0] - previousDC;
     return returnTable;
 }
 void huffmanTable::frequency(int dim, int* table)
 {
     //dc
+    //std::cout << "\n << " << table[0];
     int coeffLength = bitLength(table[0] > 0 ? table[0] : -table[0]);
     if (DCcodeLength.addPair(coeffLength, 1) == -1) 
     {
@@ -1068,12 +1287,17 @@ void huffmanTable::huffmanCodes()
     {
         this->ACcodeLength.changeTerm(keysAC[i], huffmanAC[i]);
     }
+    
+    std::cout << "PreBologoing: " << std::endl;
+    for (int i = 0; i < this->ACcodeLength.returnCount(); i++)
+    {
+        std::cout << this->ACcodeLength.retrieveTerm(keysAC[i]) << ", ";
+    }
+    std::cout << std::endl;
 
     this->DCcodeLength.sortByTerm(intReverseSorter);
     this->ACcodeLength.sortByTerm(intReverseSorter);
-    this->DCcodeLength.sortByTerm(intReverseSorter);
-    this->ACcodeLength.sortByTerm(intReverseSorter);
-    //doesnt work sometimes just do it twice lol
+    //doesnt work sometimes just do it eight times lol
 
     huffManReferenceTable(this->DCcodeLength, this->DCcode);
     huffManReferenceTable(this->ACcodeLength, this->ACcode, true);
@@ -1157,18 +1381,12 @@ void huffManReferenceTable(fakeDictionary<int, int>& huffmanCodeLength, fakeDict
     {
         if (i != 0 && codeLength != funnyPtr2[i])
         {
-            std::cout << "DOes this occur\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
             code = code << (funnyPtr2[i] - codeLength);
             codeLength = funnyPtr2[i];
         }
-        if (code == 0) std::cout << "Code == 0: " << i << "Bit addition" << funnyPtr2[i] - codeLength << std::endl;
+        //if (code == 0) std::cout << "Code == 0: " << i << "Bit addition" << funnyPtr2[i] - codeLength << std::endl;
         target.addPair(funnyPtr[i], code);
         ++code;
-    }
-    std::cout << "Code Values: " << std::endl;
-    for (int i = 0; i < count; i++)
-    {
-        std::cout << (int)target.retrieveTerm(funnyPtr[i]) << std::endl;
     }
 }
 int intSorter(int a, int b)
@@ -1250,7 +1468,6 @@ void DHT_M(byteWritter& bw, int ACDC /*1 = AC 0 = DC*/, int tableNum /*tablenum 
     std::cout << "HuffValues List" << ((tableNum == 0) ? " Luma " : " Chroma ") << ((ACDC == 1) ? " AC: " : " DC: ") << codeFreq.returnCount() << std::endl;
     for (int i = 0; i < codeFreq.returnCount(); i++)
     {
-        //std::cout << huffValues[i] << std::endl;
         bw.write((uint8_t)huffValues[i]);
     }
 
@@ -1275,11 +1492,11 @@ void MCU_W(byteWritter& bw, fakeDictionary<int, uint8_t>& huffmanDcValueCodes, f
 {
     //write dc
     int coeffLength = bitLength(table[0] > 0 ? table[0] : -table[0]);
-    if(testVar)bw.inScanFlip();
+    //if(testVar)bw.inScanFlip();
     bw.write(huffmanDcValueCodes.retrieveTerm(coeffLength), huffmanDcValueLength.retrieveTerm(coeffLength));//write dchuffman value
     bw.write(table[0] > 0 ? (uint8_t)table[0] : ~(uint8_t)(table[0]), coeffLength);//flip bits if negative, write coefficient value
 
-    if (testVar) {
+    /*if (testVar) {
         std::cout << "TESTING\n";
         int* KEYS = huffmanAcValueCodes.retrieveAllKeys();
         std::cout << "Keys:";
@@ -1301,10 +1518,10 @@ void MCU_W(byteWritter& bw, fakeDictionary<int, uint8_t>& huffmanDcValueCodes, f
         }
         std::cout << std::endl;
         std::cout << "DC: " << (int)table[0] << std::endl;
-    }
+    }*/
     //write ac
     int zeroes = 0;
-    if (testVar) std::cout << int(dim) << std::endl;
+    //if (testVar) std::cout << int(dim) << std::endl;
     for (int i = 1; i < dim; i++, zeroes++)
     {
         int coeff = table[dim == 64 ? zigging[i] : zigging2[i]];
@@ -1332,8 +1549,18 @@ void MCU_W(byteWritter& bw, fakeDictionary<int, uint8_t>& huffmanDcValueCodes, f
                 std::cout << "Code is: " << (int)huffValue << " || CodeValue is: " << (int)huffmanAcValueCodes.retrieveTerm(huffValue) << " || Coeff is: " << coeff << " || Sent Coeff: " << (coeff > 0 ? (uint8_t)coeff : ~(uint8_t)(coeff)) << " || Coeff Length: " << coeffLength << std::endl;
             }*/
             bw.write(huffmanAcValueCodes.retrieveTerm(huffValue), huffmanAcValueLength.retrieveTerm(huffValue));
-            bw.write(coeff > 0 ? (uint8_t)coeff : ~(uint8_t)(coeff), coeffLength);
-            if (testVar) std::cout << "COEFF?!?!?!?!!?" << (int)coeff << " || I: " << i << " || Weird I: " << zigging2[i] << std::endl;
+            unsigned funny = 1;
+            for (int two = 0; two < coeffLength; two++) 
+            {
+                funny <<= 1;
+            }
+            if (funny > 256) funny = 256;
+            if (testVar && (coeff < 0))
+            {
+                std::cout << "Og Negative Value" << coeff << " || Possible negative value" << (int)((~((uint8_t)(-coeff))) & (funny - 1)) << " || Funny: " << funny << std::endl;
+            }
+            bw.write(coeff > 0 ? (uint8_t)coeff : ((~((uint8_t)(-coeff))) & (funny - 1)), coeffLength);
+            //if (testVar) std::cout << "COEFF?!?!?!?!!?" << (int)coeff << " || I: " << i << " || Weird I: " << zigging2[i] << std::endl;
             /*if (testVar) 
             {
                 if (huffmanAcValueCodes.retrieveTerm(huffValue) == NULL) std::cout << "Failed to Pull with Key: " << huffValue << std::endl;
@@ -1353,7 +1580,7 @@ void MCU_W(byteWritter& bw, fakeDictionary<int, uint8_t>& huffmanDcValueCodes, f
     }
     if (testVar) 
     {
-        bw.inScanFlip();
+        //bw.inScanFlip();
         std::cout << "TESTING\n";
     }
 }

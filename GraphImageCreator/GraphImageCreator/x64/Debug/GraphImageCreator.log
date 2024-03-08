@@ -1,6 +1,5 @@
-﻿  GraphImageCreator.cpp
-C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(35,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
-  (compiling source file 'GraphImageCreator.cpp')
-  
-C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphImageCreator.cpp(146,23): warning C4244: 'initializing': conversion from 'std::streamoff' to 'int', possible loss of data
-  GraphImageCreator.vcxproj -> C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\x64\Debug\GraphImageCreator.exe
+﻿  DumbFuncsNClasses.cpp
+C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\DumbFuncsNClasses.cpp(302,14): warning C4552: '<<': result of expression not used
+C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\DumbFuncsNClasses.cpp(296): warning C4715: 'byteWritter::write': not all control paths return a value
+x64\Debug\RGBtoYCrCb.obj : warning LNK4042: object specified more than once; extras ignored
+  GraphImageCreator.vcxproj -> C:\Users\bjupf\JpgEncoder\GraphImageCreator\x64\Debug\GraphImageCreator.exe

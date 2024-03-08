@@ -46,11 +46,41 @@ MCUS graphPresetToMcus(graphMap Map) {
 
 
 			myMcus.mcuList[j * mcuLength + i].fillMcu(Yvalue, Cbvalue, Crvalue);
+			if (j * mcuLength + i == 0)
+			{
+				std::cout << "PLZZZZ\n";
+
+				for(int c = 0; c < 8; c++)
+				{
+					for (int d = 0; d < 8; d++)
+					{
+						std::cout << "(" << (int)Yvalue[c * 8 + d] << ", " << (int)myMcus.mcuList[0].ycbcr[0][c * 8 + d] << "), ";
+					}
+					std::cout << std::endl;
+				}
+
+				std::cout << "PLZZZZ\n";
+			}
 			delete[] buffer;
 			delete[] undivided;
-			delete[] Yvalue;
-			delete[] Cbvalue;
-			delete[] Crvalue;
+			//delete[] Yvalue;
+			//delete[] Cbvalue;
+			//delete[] Crvalue;
+			if (j * mcuLength + i == 0)
+			{
+				std::cout << "PLZZZZ\n";
+
+				for (int c = 0; c < 8; c++)
+				{
+					for (int d = 0; d < 8; d++)
+					{
+						std::cout << "(" << (int)myMcus.mcuList[0].ycbcr[0][c * 8 + d] << "), ";
+					}
+					std::cout << std::endl;
+				}
+
+				std::cout << "PLZZZZ\n";
+			}
 		}
 	}
 	return myMcus;
@@ -102,9 +132,9 @@ dimensions MCUS::retrieveDim()
 	return this->dim;
 }
 MCU::MCU(int YDim, int CbDim, int CrDm) {
-	this->ycbcr.Y = new uint8_t[YDim * YDim];
-	this->ycbcr.Cb = new uint8_t[CbDim * CbDim];
-	this->ycbcr.Cr = new uint8_t[CrDm * CrDm];
+	//this->ycbcr.Y = new uint8_t[YDim * YDim];
+	//this->ycbcr.Cb = new uint8_t[CbDim * CbDim];
+	//this->ycbcr.Cr = new uint8_t[CrDm * CrDm];
 }
 void MCU::fillMcu(uint8_t* y, uint8_t* cb, uint8_t* cr)
 {
