@@ -39,6 +39,7 @@ public:
 	byteWritter(const char* fileName);
 	int write(uint8_t bits, uint8_t bitLength);
 	int write(uint8_t bits);
+	int write(uint16_t bits, uint8_t bitLength);
 	bool open();
 	void inScanFlip();
 	int bitPosition();

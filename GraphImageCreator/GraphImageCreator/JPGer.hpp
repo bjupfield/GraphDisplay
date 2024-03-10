@@ -49,10 +49,10 @@ public:
 class huffmanTable {
 public:
 	fakeDictionary<int, int> DCcodeLength;
-	fakeDictionary<int, uint8_t> DCcode;
+	fakeDictionary<int, uint16_t> DCcode;
 	fakeDictionary<int, int> ACcodeLength;
-	fakeDictionary<int, uint8_t> ACcode;
-	huffmanTable() : DCcodeLength(fakeDictionary<int, int>()), ACcodeLength(fakeDictionary<int, int>()), DCcode(fakeDictionary<int, uint8_t>()), ACcode(fakeDictionary<int, uint8_t>()) {}
+	fakeDictionary<int, uint16_t> ACcode;
+	huffmanTable() : DCcodeLength(fakeDictionary<int, int>()), ACcodeLength(fakeDictionary<int, int>()), DCcode(fakeDictionary<int, uint16_t>()), ACcode(fakeDictionary<int, uint16_t>()) {}
 	void frequency(int dim, int* table);
 	void huffmanCodes();
 };

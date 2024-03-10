@@ -78,13 +78,13 @@ int customSorter(uint8_t a, uint8_t b);
 int bitLength(int bits);
 int* dctQuantizer(uint8_t* table, int dim, int previousDC, int num);
 int* huffmanCodeCountArray(int *a, int arraySize);
-void huffManReferenceTable(fakeDictionary<int, int>& huffmanCodeLength, fakeDictionary<int, uint8_t>& target, bool b = false);
+void huffManReferenceTable(fakeDictionary<int, int>& huffmanCodeLength, fakeDictionary<int, uint16_t>& target, bool b = false);
 void SOI_APPO_M(byteWritter& bw, int densityY, int densityX, int density);
 void DQT_M(byteWritter& bw, const int* table, int tableNum, int num);
 void SOF_M(byteWritter& bw, int chromaExist, int ySamplingSize, int cSamplingSize, int pixelHeight, int pixelWidth);
 void DHT_M(byteWritter& bw, int ACDC, int tableNum, fakeDictionary<int, int>& codeFreq);
 void SOS_M(byteWritter& bw, int components, int firstComponentLength);
-void MCU_W(byteWritter& bw, fakeDictionary<int, uint8_t>& huffmanDcValueCodes, fakeDictionary<int, int>& huffmanDcValueLength, fakeDictionary<int, uint8_t>& huffmanAcValueCodes, fakeDictionary<int, int>& huffmanAcValueLength, int dim, int* table);
+void MCU_W(byteWritter& bw, fakeDictionary<int, uint16_t>& huffmanDcValueCodes, fakeDictionary<int, int>& huffmanDcValueLength, fakeDictionary<int, uint16_t>& huffmanAcValueCodes, fakeDictionary<int, int>& huffmanAcValueLength, int dim, int* table);
 void EOI_M(byteWritter& bw);
 
 void graphMaptoJPG(graphMap map)
@@ -1148,6 +1148,11 @@ void mcuHuffmanContainer::actualJpg(hInfoStruct hInfo, mcuHuffmanContainer mcuHu
         {
             std::cout << (int)mcuHuffman.yCHuffman[0].DCcode.retrieveTerm(keys[i]) << ", ";
         }
+        std::cout << "\nDC CodeLength: ";
+        for (int i = 0; i < mcuHuffman.yCHuffman[0].DCcode.returnCount(); i++)
+        {
+            std::cout << (int)mcuHuffman.yCHuffman[0].DCcodeLength.retrieveTerm(keys[i]) << ", ";
+        }
         DHT_M(bW, 1, 0, mcuHuffman.yCHuffman[0].ACcodeLength);
         std::cout << "\nAC HuffValue: ";
         keys = mcuHuffman.yCHuffman[0].ACcode.retrieveAllKeys();
@@ -1229,7 +1234,7 @@ void huffmanTable::frequency(int dim, int* table)
 {
     //dc
     //std::cout << "\n << " << table[0];
-    int coeffLength = bitLength(table[0] > 0 ? table[0] : -table[0]);
+    int coeffLength = bitLength(table[0] >= 0 ? table[0] : -table[0]);
     if (DCcodeLength.addPair(coeffLength, 1) == -1) 
     {
         DCcodeLength.changeTerm(coeffLength, DCcodeLength.retrieveTerm(coeffLength) + 1);
@@ -1361,7 +1366,7 @@ int* huffmanCodeCountArray(int* a, int arraySize) //okay this function accepts a
         return new int[1] {0};//all codes have a minimum code length of 1, but the start node is 0
     }
 }
-void huffManReferenceTable(fakeDictionary<int, int>& huffmanCodeLength, fakeDictionary<int, uint8_t> &target,bool b)//this creates a dictionary for referencing the code values later
+void huffManReferenceTable(fakeDictionary<int, int>& huffmanCodeLength, fakeDictionary<int, uint16_t> &target,bool b)//this creates a dictionary for referencing the code values later
 {
     int count = huffmanCodeLength.returnCount();
 
@@ -1375,7 +1380,7 @@ void huffManReferenceTable(fakeDictionary<int, int>& huffmanCodeLength, fakeDict
 
     //code starts at zero, add 1 for every iteration
     //when code lenght changes bit shift to the left by newcodelength - curcodelength 
-    uint8_t code = 0;
+    uint16_t code = 0;
     uint8_t codeLength = funnyPtr2[0];
     for (int i = 0; i < count; i++)
     {
@@ -1419,16 +1424,16 @@ void SOI_APPO_M(byteWritter& bw, int densityY, int densityX, int density)
     bw.write(74); bw.write(70); bw.write(73); bw.write(70); bw.write(0);//JFIF indentifier string, this constant identifies the jpeg as a jfif type, which is standard
     bw.write(1); bw.write(1);//JFIF version, 1.01
     bw.write((uint8_t)density);//these next three are the resoultuion density of the image. say that the resolution is 3 by 2, so every inch there is three pixels y and 2 pixels x
-    bw.write((uint8_t)densityY, 16);//this means we would set density to 3
-    bw.write((uint8_t)densityX, 16);//and y density to 2 x density to 2...... however it is almost always zero density and 1, 1 for y density and x density, because no one uses different density images
+    bw.write((uint16_t)densityY, 16);//this means we would set density to 3
+    bw.write((uint16_t)densityX, 16);//and y density to 2 x density to 2...... however it is almost always zero density and 1, 1 for y density and x density, because no one uses different density images
     bw.write(0);//thumbnailsize
     bw.write(0);//thumbnailsizey
 }
 void DQT_M(byteWritter& bw, const int* table, int tableNum, int num)
 {
     bw.write(ff); bw.write(219);//DQT header, Data Quantization Table Header
-    bw.write((uint8_t)(tableNum + 3), 16);//Header length, table length + 3 bits written here not including marker
-    bw.write(0, 4); bw.write(num, 4);// this byte here contains two bits (lol not actually bits) of information, the table integer size either 8 bit or 16 bit and the table id number. We will only be using 8 bit which is 0000 (16 is 0001)m abd the second bit contains the id, possible nums 0-3
+    bw.write((uint16_t)(tableNum + 3), 16);//Header length, table length + 3 bits written here not including marker
+    bw.write((uint8_t)0, 4); bw.write((uint8_t)num, 4);// this byte here contains two bits (lol not actually bits) of information, the table integer size either 8 bit or 16 bit and the table id number. We will only be using 8 bit which is 0000 (16 is 0001)m abd the second bit contains the id, possible nums 0-3
     for (int i = 0; i < tableNum; i++)
     {
         bw.write(table[tableNum == 64 ? zigging[i] : zigging2[i]] > 254 ? 254 : table[tableNum == 64 ? zigging[i] : zigging2[i]]);
@@ -1437,11 +1442,11 @@ void DQT_M(byteWritter& bw, const int* table, int tableNum, int num)
 void SOF_M(byteWritter& bw, int chromaExist, int ySamplingSize, int cSamplingSize, int pixelHeight, int pixelWidth) 
 {
     bw.write(ff); bw.write(192);//S0F header, start of frame header type 0
-    bw.write(chromaExist != 0 ? 17 : 11, 16);//length of segment, if monochrome only 11 bytes if not 17 
+    bw.write((uint8_t)(chromaExist != 0 ? 17 : 11), 16);//length of segment, if monochrome only 11 bytes if not 17 
     bw.write(8);//jpg pixel precision, jpg only supports 8bit precision but it must be included anyway lol
     std::cout << "Height: " << pixelHeight << "  || Width: " << pixelWidth << std::endl;
-    bw.write(pixelHeight, 16);//jpg pixel height, stored in two bits maxinum size of 256 x 256
-    bw.write(pixelWidth, 16);//jpg pixel length
+    bw.write((uint16_t)pixelHeight, 16);//jpg pixel height, stored in two bits maxinum size of 256 x 256
+    bw.write((uint16_t)pixelWidth, 16);//jpg pixel length
     bw.write((chromaExist ? 3 : 1));
     bw.write(1); bw.write(ySamplingSize == 1 ? 34 : 17); bw.write(0);//y component or monochrome component data, sampling size will either by 1 or 2, should almost always be 1 for the y component
     if (chromaExist != 0)
@@ -1454,7 +1459,7 @@ void SOF_M(byteWritter& bw, int chromaExist, int ySamplingSize, int cSamplingSiz
 void DHT_M(byteWritter& bw, int ACDC /*1 = AC 0 = DC*/, int tableNum /*tablenum 0-3*/, fakeDictionary<int, int>& codeFreq)
 {
     bw.write(ff); bw.write(196);//DHT Header, define huffman table header
-    bw.write(19 + codeFreq.returnCount(), 16);//code length, codelength (2) + tableinfo(1) + number codeLengths(16) + symbols(variable)
+    bw.write((uint16_t)(19 + codeFreq.returnCount()), 16);//code length, codelength (2) + tableinfo(1) + number codeLengths(16) + symbols(variable)
     bw.write(16 * ACDC + tableNum);//table info, first 4 bits are 0 if dc 1 is ac, last 4 bits are tablenum 0 is going to be y and 1 is going to be the chrominance
     //below is the # of code lengths, which is stored instead ofthe codes as you can just reconstruct the codes...
     std::cout << (tableNum == 0 ? "Y" : "C") << (ACDC == 1 ? " AC" : "DC") << std::endl;
@@ -1476,7 +1481,7 @@ void SOS_M(byteWritter& bw, int components, int firstComponentLength)
 {
     //EOI_M(bw);
     bw.write(ff); bw.write(218);//SOS marker, start of scan marker
-    bw.write(components * 2 + 6, 16);//length of marker, variable
+    bw.write((uint16_t)(components * 2 + 6), 16);//length of marker, variable
     bw.write(components);
     for (int i = 0; i < 3; i++)
     {
@@ -1488,13 +1493,15 @@ void SOS_M(byteWritter& bw, int components, int firstComponentLength)
     bw.write(firstComponentLength - 1);//length of mcus...
     bw.write(0);//hurrr
 }
-void MCU_W(byteWritter& bw, fakeDictionary<int, uint8_t>& huffmanDcValueCodes, fakeDictionary<int, int>& huffmanDcValueLength, fakeDictionary<int, uint8_t>& huffmanAcValueCodes, fakeDictionary<int, int>& huffmanAcValueLength, int dim, int* table)
+void MCU_W(byteWritter& bw, fakeDictionary<int, uint16_t>& huffmanDcValueCodes, fakeDictionary<int, int>& huffmanDcValueLength, fakeDictionary<int, uint16_t>& huffmanAcValueCodes, fakeDictionary<int, int>& huffmanAcValueLength, int dim, int* table)
 {
     //write dc
-    int coeffLength = bitLength(table[0] > 0 ? table[0] : -table[0]);
+    int coeffLength = bitLength(table[0] >= 0 ? table[0] : -table[0]);
     //if(testVar)bw.inScanFlip();
-    bw.write(huffmanDcValueCodes.retrieveTerm(coeffLength), huffmanDcValueLength.retrieveTerm(coeffLength));//write dchuffman value
-    bw.write(table[0] > 0 ? (uint8_t)table[0] : ~(uint8_t)(table[0]), coeffLength);//flip bits if negative, write coefficient value
+    //bw.write(huffmanDcValueCodes.retrieveTerm(coeffLength), huffmanDcValueLength.retrieveTerm(coeffLength));//write dchuffman value
+    bw.write(huffmanDcValueCodes.retrieveTerm(coeffLength), 4);//write dchuffman value
+
+    bw.write((uint16_t)(table[0] >= 0 ? (uint16_t)table[0] : ~(uint16_t)(table[0])), coeffLength);//flip bits if negative, write coefficient value
 
     /*if (testVar) {
         std::cout << "TESTING\n";
@@ -1557,9 +1564,9 @@ void MCU_W(byteWritter& bw, fakeDictionary<int, uint8_t>& huffmanDcValueCodes, f
             if (funny > 256) funny = 256;
             if (testVar && (coeff < 0))
             {
-                std::cout << "Og Negative Value" << coeff << " || Possible negative value" << (int)((~((uint8_t)(-coeff))) & (funny - 1)) << " || Funny: " << funny << std::endl;
+                std::cout << "Og Negative Value" << coeff << " || Possible negative value" << (int)((~((uint16_t)(-coeff))) & (funny - 1)) << " || Funny: " << funny << std::endl;
             }
-            bw.write(coeff > 0 ? (uint8_t)coeff : ((~((uint8_t)(-coeff))) & (funny - 1)), coeffLength);
+            bw.write((uint16_t)(coeff > 0 ? (uint16_t)coeff : ((~((uint16_t)(-coeff))) & (funny - 1))), coeffLength);
             //if (testVar) std::cout << "COEFF?!?!?!?!!?" << (int)coeff << " || I: " << i << " || Weird I: " << zigging2[i] << std::endl;
             /*if (testVar) 
             {
@@ -1571,10 +1578,6 @@ void MCU_W(byteWritter& bw, fakeDictionary<int, uint8_t>& huffmanDcValueCodes, f
         }
         else if (i == 63)
         {
-            if (testVar)
-            {
-                std::cout << "end of the line\n";
-            }
             bw.write(huffmanAcValueCodes.retrieveTerm(x00), huffmanAcValueLength.retrieveTerm(x00));
         }
     }
@@ -1588,7 +1591,7 @@ void EOI_M(byteWritter& bw)
 {
     if(bw.bitPosition() != 8)//stuff remaining values with 1 if the byte is not complete and than do the end of image marker
     {
-        bw.write((uint8_t)255 >> (8 - bw.bitPosition()), bw.bitPosition());
+        bw.write((uint8_t)((uint8_t)255 >> (8 - bw.bitPosition())), bw.bitPosition());
     }
     bw.write(ff); bw.write(217);//EOI marker, end of image marker
 }

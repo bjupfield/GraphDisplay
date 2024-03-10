@@ -85,6 +85,7 @@ int main()
     MCUS mine = graphPresetToMcus(myGraph);
     printMcus(mine);
     mcuHuffmanContainer mine2 = mcuHuffmanContainer(mine);
+
     
     //byteWritter writer = byteWritter("../../heyJerry.txt");
     //std::cout << writer.write(104, 8) << std::endl;
@@ -113,9 +114,18 @@ int main()
     //std::cout << writer.write(3, 4) << std::endl;
     //std::cout << writer.write(0, 6) << std::endl;
     //std::cout << writer.write(48, 6) << std::endl;
-    int b = -12;
-    uint32_t c = (uint32_t)b;
-    cout << "Int Converted: " << (int)c << endl;
+    uint8_t testInt = 255;
+    std::cout << "Int Pre Conversion Test: " << (int)testInt << "\n";
+    uint16_t c = (uint16_t)testInt;
+    std::cout << "Int Converted Test: " << (int)c << "\n";
+    c += 2;
+    std::cout << "+ 2: " << (int)c << "\n";
+    testInt = (uint8_t)c;
+    std::cout << "Converted after +2: " << (int)testInt << "\n";
+
+    std::cout << "Size of uint8_t: " << sizeof(uint8_t) << " || Size of uint16_t: " << sizeof(uint16_t) << " || Z / 2: " << ('A' / 2) << "\n";
+
+
 
     hInfoStruct hINFO = {mine.retrieveHeight() * 8, mine.retrieveLength() * 8, 2, 2, 0, 1, 1, 64, 64};
 
@@ -124,8 +134,8 @@ int main()
     mine2.actualJpg(hINFO, mine2, fileNAMES);
 
     std::cout << "BlockHeight: " << mine.retrieveHeight() << " || BlockWdith: " << mine.retrieveLength() << " || Size: " << mine2.size() << std::endl;
-    std::cout << "Last Block: \n";
-    for (int n = 0; n < 10; n++) 
+    std::cout << "Y Block: \n";
+    for (int n = 0; n < 3; n++) 
     {
         for (int i = 0; i < 8; i++)
         {
@@ -135,6 +145,33 @@ int main()
             }
             std::cout << std::endl;
         }
+        std::cout << std::endl;
+    }
+    std::cout << "cb Block: \n";
+    for (int n = 0; n < 3; n++)
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            for (int j = 0; j < 8; j++)
+            {
+                std::cout << (int)mine2.mcus[n].yCbCr[1][i * 8 + j] << ", ";
+            }
+            std::cout << std::endl;
+        }
+        std::cout << std::endl;
+    }
+    std::cout << "cr Block: \n";
+    for (int n = 0; n < 3; n++)
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            for (int j = 0; j < 8; j++)
+            {
+                std::cout << (int)mine2.mcus[n].yCbCr[2][i * 8 + j] << ", ";
+            }
+            std::cout << std::endl;
+        }
+        std::cout << std::endl;
     }
     std::cout << "Source Mcus\n";
     for(int i = 0; i < 8; i++)

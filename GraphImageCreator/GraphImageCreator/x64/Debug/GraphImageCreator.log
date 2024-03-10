@@ -1,5 +1,18 @@
-﻿  DumbFuncsNClasses.cpp
-C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\DumbFuncsNClasses.cpp(293,14): warning C4552: '<<': result of expression not used
-C:\Users\bjupf\JpgEncoder\GraphImageCreator\GraphImageCreator\DumbFuncsNClasses.cpp(287): warning C4715: 'byteWritter::write': not all control paths return a value
-x64\Debug\RGBtoYCrCb.obj : warning LNK4042: object specified more than once; extras ignored
-  GraphImageCreator.vcxproj -> C:\Users\bjupf\JpgEncoder\GraphImageCreator\x64\Debug\GraphImageCreator.exe
+﻿  JPGer.cpp
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(35,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
+  (compiling source file 'JPGer.cpp')
+  
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(419,9): warning C4101: 'iter': unreferenced local variable
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(769,26): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(770,26): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(771,26): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(772,26): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(828,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(829,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(831,14): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(836,14): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(909,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(910,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(912,14): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(917,14): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  GraphImageCreator.vcxproj -> C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\x64\Debug\GraphImageCreator.exe

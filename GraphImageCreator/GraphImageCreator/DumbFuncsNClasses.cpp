@@ -192,7 +192,7 @@ int fakeDictionary<Key,Term>::returnCount()
 	return this->count;
 }
 template class fakeDictionary<int, int>;
-template class fakeDictionary<int, uint8_t>;
+template class fakeDictionary<int, uint16_t>;
 byteWritter::byteWritter(const char* fileName)
 {
 	this->byte = 0;
@@ -268,7 +268,7 @@ int byteWritter::write(uint8_t bits, uint8_t bitLength)
 			//bit mask and recursion
 			bitsToAdd = 1;
 			for (nonHangingBits = 1; nonHangingBits < hangingBits; nonHangingBits++) bitsToAdd = bitsToAdd << 1 | 1;
-			return this->write(bits & bitsToAdd, hangingBits);
+			return this->write((uint8_t)(bits & bitsToAdd), hangingBits);
 		}
 		return 0;
 	}
@@ -297,6 +297,20 @@ int byteWritter::write(uint8_t bits)//this func writes a single byte, no matter 
 	buffer = bits;
 	this->outFile.write(&buffer, 1);
 	return 0;
+}
+int byteWritter::write(uint16_t bits, uint8_t bitLength)
+{
+	int check = this->write((uint8_t)(bits >> 8), ((bitLength - 8) > 0 ? (bitLength - 8) : 0));
+	/*if (bitLength == 4)
+	{
+		std::cout << "\n\n" << bits << "\n\n\n" << check << "\n\n\n\n\n\n"<< (int)(uint8_t)(bits) << "\n\n\n\n\n\n\n";
+		exit(4);
+	}*/
+	if (check == -1 || check == 0)
+	{
+		return this->write((uint8_t)bits, (bitLength > 8 ? 8 : bitLength));
+	}
+	return check;
 }
 bool byteWritter::open()
 {

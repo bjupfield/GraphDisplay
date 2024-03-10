@@ -249,3 +249,9 @@ Okay what is currently messing us up is we are using a code value of 3, which in
 and the problem is that code values comprised of only 1 bit values are not allowed... I'm currently trying
 to find how these code values are coded out, and the ITU paper defines it on pg 148 section K.2 FIGURE K.2
 but I'm currently not seeing how it works.
+
+okay the current problem is that our jpg values can have all bits = 1,
+the reason this is happening is because we are allowing bit values of length 0, and when there is a bit length of zero there will necesarilly be a code 
+comprised of 1 bits afterwards
+the task is to find a way that if the huffman table outputs a value of length 1 change that value to two and rearrange the entire table with the extra 2 value that we recieve from setting this value from 2
+we could just ignore this becaues just placing he value from 1 to 2 solves the issue, but it is not perfectly efficient
