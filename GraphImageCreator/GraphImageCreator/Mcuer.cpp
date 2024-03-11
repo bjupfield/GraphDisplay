@@ -46,41 +46,41 @@ MCUS graphPresetToMcus(graphMap Map) {
 
 
 			myMcus.mcuList[j * mcuLength + i].fillMcu(Yvalue, Cbvalue, Crvalue);
-			if (j * mcuLength + i == 0)
-			{
-				std::cout << "PLZZZZ\n";
+			//if (j * mcuLength + i == 0)
+			//{
+			//	std::cout << "PLZZZZ\n";
 
-				for(int c = 0; c < 8; c++)
-				{
-					for (int d = 0; d < 8; d++)
-					{
-						std::cout << "(" << (int)Yvalue[c * 8 + d] << ", " << (int)myMcus.mcuList[0].ycbcr[0][c * 8 + d] << "), ";
-					}
-					std::cout << std::endl;
-				}
+			//	for(int c = 0; c < 8; c++)
+			//	{
+			//		for (int d = 0; d < 8; d++)
+			//		{
+			//			std::cout << "(" << (int)Yvalue[c * 8 + d] << ", " << (int)myMcus.mcuList[0].ycbcr[0][c * 8 + d] << "), ";
+			//		}
+			//		std::cout << std::endl;
+			//	}
 
-				std::cout << "PLZZZZ\n";
-			}
+			//	std::cout << "PLZZZZ\n";
+			//}
 			delete[] buffer;
 			delete[] undivided;
 			//delete[] Yvalue;
 			//delete[] Cbvalue;
 			//delete[] Crvalue;
-			if (j * mcuLength + i == 0)
-			{
-				std::cout << "PLZZZZ\n";
+			//if (j * mcuLength + i == 0)
+			//{
+			//	std::cout << "PLZZZZ\n";
 
-				for (int c = 0; c < 8; c++)
-				{
-					for (int d = 0; d < 8; d++)
-					{
-						std::cout << "(" << (int)myMcus.mcuList[0].ycbcr[0][c * 8 + d] << "), ";
-					}
-					std::cout << std::endl;
-				}
+			//	for (int c = 0; c < 8; c++)
+			//	{
+			//		for (int d = 0; d < 8; d++)
+			//		{
+			//			std::cout << "(" << (int)myMcus.mcuList[0].ycbcr[0][c * 8 + d] << "), ";
+			//		}
+			//		std::cout << std::endl;
+			//	}
 
-				std::cout << "PLZZZZ\n";
-			}
+			//	std::cout << "PLZZZZ\n";
+			//}
 		}
 	}
 	return myMcus;

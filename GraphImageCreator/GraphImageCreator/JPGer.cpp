@@ -76,6 +76,7 @@ int intSorter(int a, int b);
 int intReverseSorter(int a, int b);
 int customSorter(uint8_t a, uint8_t b);
 int bitLength(int bits);
+int bitsAllOne(uint16_t bits, int length);
 int* dctQuantizer(uint8_t* table, int dim, int previousDC, int num);
 int* huffmanCodeCountArray(int *a, int arraySize);
 void huffManReferenceTable(fakeDictionary<int, int>& huffmanCodeLength, fakeDictionary<int, uint16_t>& target, bool b = false);
@@ -1138,20 +1139,20 @@ void mcuHuffmanContainer::actualJpg(hInfoStruct hInfo, mcuHuffmanContainer mcuHu
         SOF_M(bW, hInfo.chromaTableType, hInfo.samplingY, hInfo.samplingC, hInfo.pixelHeight, hInfo.pixelLength);
         DHT_M(bW, 0, 0, mcuHuffman.yCHuffman[0].DCcodeLength);
         std::cout << "\nDC HUffValue: ";
-        int* keys = mcuHuffman.yCHuffman[0].DCcode.retrieveAllKeys();
-        for (int i = 0; i < mcuHuffman.yCHuffman[0].DCcode.returnCount();i++)
+        int* keys = mcuHuffman.yCHuffman[1].DCcode.retrieveAllKeys();
+        for (int i = 0; i < mcuHuffman.yCHuffman[1].DCcode.returnCount();i++)
         {
             std::cout << keys[i] << ", ";
         }
         std::cout << "\nDC code: ";
-        for (int i = 0; i < mcuHuffman.yCHuffman[0].DCcode.returnCount(); i++)
+        for (int i = 0; i < mcuHuffman.yCHuffman[1].DCcode.returnCount(); i++)
         {
-            std::cout << (int)mcuHuffman.yCHuffman[0].DCcode.retrieveTerm(keys[i]) << ", ";
+            std::cout << (int)mcuHuffman.yCHuffman[1].DCcode.retrieveTerm(keys[i]) << ", ";
         }
         std::cout << "\nDC CodeLength: ";
-        for (int i = 0; i < mcuHuffman.yCHuffman[0].DCcode.returnCount(); i++)
+        for (int i = 0; i < mcuHuffman.yCHuffman[1].DCcode.returnCount(); i++)
         {
-            std::cout << (int)mcuHuffman.yCHuffman[0].DCcodeLength.retrieveTerm(keys[i]) << ", ";
+            std::cout << (int)mcuHuffman.yCHuffman[1].DCcodeLength.retrieveTerm(keys[i]) << ", ";
         }
         DHT_M(bW, 1, 0, mcuHuffman.yCHuffman[0].ACcodeLength);
         std::cout << "\nAC HuffValue: ";
@@ -1283,6 +1284,20 @@ void huffmanTable::huffmanCodes()
 
     int* keysDC = this->DCcodeLength.retrieveAllKeys();
     int* keysAC = this->ACcodeLength.retrieveAllKeys();
+    
+    //if there is a 1 key it messses up the entire thing... so just add 1 to it and think it works, at least im pretty sure thats what the itu is saying... also if there are just two just add 1 to the second one instead... for obvious reasons
+    //also it messes it up because it is illegal to have values of only 1 bits, and if it starts at 1 I think it necessarily will have values of 1 bits only at a length past like 5
+    //if(keysDC[0] == 1)
+    //{
+    //    if (keysDC[1] == 1) keysDC[1] += 1;
+    //    else keysDC[0] +=1;
+    //}
+    //if (keysAC[0] == 1)
+    //{
+    //    if (keysAC[1] == 1) keysAC[1] += 1;
+    //    else keysAC[0] += 1;
+    //}
+
     for (int i = 0; i < this->DCcodeLength.returnCount(); i++)
     {
         this->DCcodeLength.changeTerm(keysDC[i], huffmanDC[i]);
@@ -1293,12 +1308,6 @@ void huffmanTable::huffmanCodes()
         this->ACcodeLength.changeTerm(keysAC[i], huffmanAC[i]);
     }
     
-    std::cout << "PreBologoing: " << std::endl;
-    for (int i = 0; i < this->ACcodeLength.returnCount(); i++)
-    {
-        std::cout << this->ACcodeLength.retrieveTerm(keysAC[i]) << ", ";
-    }
-    std::cout << std::endl;
 
     this->DCcodeLength.sortByTerm(intReverseSorter);
     this->ACcodeLength.sortByTerm(intReverseSorter);
@@ -1307,10 +1316,28 @@ void huffmanTable::huffmanCodes()
     huffManReferenceTable(this->DCcodeLength, this->DCcode);
     huffManReferenceTable(this->ACcodeLength, this->ACcode, true);
 
-    //this->DCcodeLength.sortByTerm(intReverseSorter);
-    //this->ACcodeLength.sortByTerm(intReverseSorter);
-    //this->DCcode.sortByTerm(customSorter);
-    //this->ACcode.sortByTerm(customSorter);
+    uint16_t* dcs = this->DCcode.retrieveAllTerms();
+    uint16_t* acs = this->ACcode.retrieveAllTerms();
+
+    int* acsL = this->ACcodeLength.retrieveAllTerms();
+    int* dcsL = this->DCcodeLength.retrieveAllTerms();
+
+    int acC = this->ACcodeLength.returnCount() - 1;
+    int dcC = this->DCcodeLength.returnCount() - 1;
+
+
+    //okay I think the bits being all equal to 1 only occurs in the final code... or at least I think thats how it works... I think?... I don't know we'll see
+    if(bitsAllOne(dcs[dcC], dcsL[dcC]) == 1)
+    {
+        dcs[dcC] <<= 1;
+        dcsL[dcC] += 1;
+    }
+    if (bitsAllOne(acs[acC], acsL[acC]) == 1)
+    {
+        acs[acC] <<= 1;
+        acsL[acC] += 1;
+    }
+    
 
 }
 int* huffmanCodeCountArray(int* a, int arraySize) //okay this function accepts a frequenc array and returns a huffman tree arrray. The array it returns is equal in size to the array it enters and has the huffman positions of the frequencies stored where the frequencies were.
@@ -1416,6 +1443,19 @@ int bitLength(int bits)//gives the position of the most significant bit
     for (bitLength = 0; bitDestroyer != 0; ++bitLength) bitDestroyer >>= 1;
     return bitLength;
 }
+int bitsAllOne(uint16_t bits, int length)//if bits are all 1 return 1, if not return 0
+{
+    uint16_t bitMx = 1;
+    for (int i = 0; i < length; i++)
+    {
+        bitMx *= 2;
+    }
+    if (bitMx - 1 == bits)
+    {
+        return 1;
+    }
+    return 0;
+}
 void SOI_APPO_M(byteWritter& bw, int densityY, int densityX, int density)
 {
     bw.write(ff); bw.write(216);//SOI Marker, START OF IMAGE MARKER
@@ -1462,9 +1502,9 @@ void DHT_M(byteWritter& bw, int ACDC /*1 = AC 0 = DC*/, int tableNum /*tablenum 
     bw.write((uint16_t)(19 + codeFreq.returnCount()), 16);//code length, codelength (2) + tableinfo(1) + number codeLengths(16) + symbols(variable)
     bw.write(16 * ACDC + tableNum);//table info, first 4 bits are 0 if dc 1 is ac, last 4 bits are tablenum 0 is going to be y and 1 is going to be the chrominance
     //below is the # of code lengths, which is stored instead ofthe codes as you can just reconstruct the codes...
-    std::cout << (tableNum == 0 ? "Y" : "C") << (ACDC == 1 ? " AC" : "DC") << std::endl;
+    //std::cout << (tableNum == 0 ? "Y" : "C") << (ACDC == 1 ? " AC" : "DC") << std::endl;
     for (int i = 1; i < 17; i++) {
-        std::cout << codeFreq.retrieveTermCount(i) << std::endl;
+        //std::cout << codeFreq.retrieveTermCount(i) << std::endl;
         bw.write(codeFreq.retrieveTermCount(i));
     }
     //below are the symbols, our dictionary is already sorted into the proper format so we just use that
@@ -1473,8 +1513,10 @@ void DHT_M(byteWritter& bw, int ACDC /*1 = AC 0 = DC*/, int tableNum /*tablenum 
     std::cout << "HuffValues List" << ((tableNum == 0) ? " Luma " : " Chroma ") << ((ACDC == 1) ? " AC: " : " DC: ") << codeFreq.returnCount() << std::endl;
     for (int i = 0; i < codeFreq.returnCount(); i++)
     {
+        std::cout << (int)((uint8_t)huffValues[i]) << ", ";
         bw.write((uint8_t)huffValues[i]);
     }
+    std::cout << std::endl;
 
 }
 void SOS_M(byteWritter& bw, int components, int firstComponentLength)
@@ -1497,11 +1539,16 @@ void MCU_W(byteWritter& bw, fakeDictionary<int, uint16_t>& huffmanDcValueCodes, 
 {
     //write dc
     int coeffLength = bitLength(table[0] >= 0 ? table[0] : -table[0]);
-    //if(testVar)bw.inScanFlip();
-    //bw.write(huffmanDcValueCodes.retrieveTerm(coeffLength), huffmanDcValueLength.retrieveTerm(coeffLength));//write dchuffman value
-    bw.write(huffmanDcValueCodes.retrieveTerm(coeffLength), 4);//write dchuffman value
+    bw.write(huffmanDcValueCodes.retrieveTerm(coeffLength), huffmanDcValueLength.retrieveTerm(coeffLength));//write dchuffman value
+    //bw.write(huffmanDcValueCodes.retrieveTerm(coeffLength), 4);//write dchuffman value
 
-    bw.write((uint16_t)(table[0] >= 0 ? (uint16_t)table[0] : ~(uint16_t)(table[0])), coeffLength);//flip bits if negative, write coefficient value
+    unsigned funny = 1;
+    for (int two = 0; two < coeffLength; two++)
+    {
+        funny <<= 1;
+    }
+    if (funny > 256) funny = 256;
+    bw.write((uint16_t)(table[0] >= 0 ? (uint16_t)table[0] : ((~((uint16_t)(-table[0]))) & (funny - 1))), coeffLength);//flip bits if negative, write coefficient value
 
     /*if (testVar) {
         std::cout << "TESTING\n";
@@ -1562,10 +1609,6 @@ void MCU_W(byteWritter& bw, fakeDictionary<int, uint16_t>& huffmanDcValueCodes, 
                 funny <<= 1;
             }
             if (funny > 256) funny = 256;
-            if (testVar && (coeff < 0))
-            {
-                std::cout << "Og Negative Value" << coeff << " || Possible negative value" << (int)((~((uint16_t)(-coeff))) & (funny - 1)) << " || Funny: " << funny << std::endl;
-            }
             bw.write((uint16_t)(coeff > 0 ? (uint16_t)coeff : ((~((uint16_t)(-coeff))) & (funny - 1))), coeffLength);
             //if (testVar) std::cout << "COEFF?!?!?!?!!?" << (int)coeff << " || I: " << i << " || Weird I: " << zigging2[i] << std::endl;
             /*if (testVar) 

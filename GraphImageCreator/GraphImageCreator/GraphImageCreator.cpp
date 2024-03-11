@@ -16,7 +16,7 @@ using namespace std;
 int main()
 {
     std::cout << "Hello World!\n";
-    
+
     char fileName[] = "../../ImageTxtFiles/blank.txt";
     char fileName2[] = "../../ImageTxtFiles/Arrow.txt";
     //../../ImageTxtFiles/Arrow.txt
@@ -53,9 +53,9 @@ int main()
     //int* dimensions = myPath.retrieveDimensions();
     //cout << "Map Length: " << dimensions[0] << endl;
     //cout << "Map Height: " << dimensions[1] << endl;
-    
+
     //graphPresets b = accessImage::recieveOrCreate(fileName);
-    
+
 
     //seed random graphmap
     random_device rd;
@@ -65,11 +65,11 @@ int main()
     int label1 = myGraph.pathToLabel(fileName);
     int label2 = myGraph.pathToLabel(fileName2);
 
-    int *map = new int[4 * 6];
+    int* map = new int[4 * 6];
 
-    for(int i = 0; i < 4* 6; i++)
+    for (int i = 0; i < 4 * 6; i++)
     {
-        if (distribution(rng) == 1) 
+        if (distribution(rng) == 1)
         {
             map[i] = label1;
         }
@@ -81,12 +81,12 @@ int main()
     myGraph.labelMap(map);
 
     //send randomseeded graphmap to jpger
-    
+
     MCUS mine = graphPresetToMcus(myGraph);
     printMcus(mine);
     mcuHuffmanContainer mine2 = mcuHuffmanContainer(mine);
 
-    
+
     //byteWritter writer = byteWritter("../../heyJerry.txt");
     //std::cout << writer.write(104, 8) << std::endl;
     //std::cout << writer.write(101, 8) << std::endl;
@@ -114,64 +114,31 @@ int main()
     //std::cout << writer.write(3, 4) << std::endl;
     //std::cout << writer.write(0, 6) << std::endl;
     //std::cout << writer.write(48, 6) << std::endl;
-    uint8_t testInt = 255;
-    std::cout << "Int Pre Conversion Test: " << (int)testInt << "\n";
-    uint16_t c = (uint16_t)testInt;
-    std::cout << "Int Converted Test: " << (int)c << "\n";
-    c += 2;
-    std::cout << "+ 2: " << (int)c << "\n";
-    testInt = (uint8_t)c;
-    std::cout << "Converted after +2: " << (int)testInt << "\n";
-
-    std::cout << "Size of uint8_t: " << sizeof(uint8_t) << " || Size of uint16_t: " << sizeof(uint16_t) << " || Z / 2: " << ('A' / 2) << "\n";
 
 
 
-    hInfoStruct hINFO = {mine.retrieveHeight() * 8, mine.retrieveLength() * 8, 2, 2, 0, 1, 1, 64, 64};
+    hInfoStruct hINFO = { mine.retrieveHeight() * 8, mine.retrieveLength() * 8, 2, 2, 0, 1, 1, 64, 64 };
 
     char fileNAMES[] = "../../Funny.jpg";
 
     mine2.actualJpg(hINFO, mine2, fileNAMES);
 
     std::cout << "BlockHeight: " << mine.retrieveHeight() << " || BlockWdith: " << mine.retrieveLength() << " || Size: " << mine2.size() << std::endl;
-    std::cout << "Y Block: \n";
-    for (int n = 0; n < 3; n++) 
+    for (int k = 0; k < 3; k++)
     {
-        for (int i = 0; i < 8; i++)
+        std::cout << (k == 0 ? "Y " : k == 1 ? "Cb " : "Cr ") << " Block: \n";
+        for (int n = 23; n < 26; n++)
         {
-            for (int j = 0; j < 8; j++)
+            for (int i = 0; i < 8; i++)
             {
-                std::cout << (int)mine2.mcus[n].yCbCr[0][i * 8 + j] << ", ";
+                for (int j = 0; j < 8; j++)
+                {
+                    std::cout << (int)mine2.mcus[n].yCbCr[k][i * 8 + j] << ", ";
+                }
+                std::cout << std::endl;
             }
             std::cout << std::endl;
         }
-        std::cout << std::endl;
-    }
-    std::cout << "cb Block: \n";
-    for (int n = 0; n < 3; n++)
-    {
-        for (int i = 0; i < 8; i++)
-        {
-            for (int j = 0; j < 8; j++)
-            {
-                std::cout << (int)mine2.mcus[n].yCbCr[1][i * 8 + j] << ", ";
-            }
-            std::cout << std::endl;
-        }
-        std::cout << std::endl;
-    }
-    std::cout << "cr Block: \n";
-    for (int n = 0; n < 3; n++)
-    {
-        for (int i = 0; i < 8; i++)
-        {
-            for (int j = 0; j < 8; j++)
-            {
-                std::cout << (int)mine2.mcus[n].yCbCr[2][i * 8 + j] << ", ";
-            }
-            std::cout << std::endl;
-        }
-        std::cout << std::endl;
     }
     std::cout << "Source Mcus\n";
     for(int i = 0; i < 8; i++)
