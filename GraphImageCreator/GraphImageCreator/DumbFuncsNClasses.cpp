@@ -4,6 +4,8 @@
 
 using namespace std;
 
+uint32_t bitMasker(int length);
+
 template <typename Key, typename Term>
 fakeDictionary<Key,Term>::fakeDictionary()
 {
@@ -197,7 +199,7 @@ byteWritter::byteWritter(const char* fileName)
 {
 	this->byte = 0;
 	this->currentBit = 8;
-	this->outFile.open(fileName, std::ios::out);
+	this->outFile.open(fileName, std::ios::out | std::ios::binary);//the ios binary is essential to prevent thew indows newline character of \r being written before any byte values of \n... i dont know why windows does this but this is how you prevent it
 	if(!this->outFile.is_open())
 	{
 		delete this;
@@ -244,20 +246,14 @@ int byteWritter::write(uint8_t bits, uint8_t bitLength)
 	//this->byte = this->byte << leadingZeroBits;//first add leading zero bits
 	this->byte += bitsToAdd;//than add bits
 	this->currentBit -= nonHangingBits;
-	if (inScan && ((int)bits == 18 || (int)bits == 3 || true))
-	{
-		//std::cout << "In ByteWritter: || CurrentBit: " << currentBit << "" << " || Non-HangingBits: " << (int)nonHangingBits << " ||LeadingZeroes: " << leadingZeroBits << " || bitsToAdd: " << (int)bitsToAdd << " || BitLength: " << (int)bitLength << " || Bits: " << (int)bits << " || Finalized Byte" << (int)byte << std::endl;
-	}
-
 	if(currentBit == 0)
 	{
 		//turn byte to char
 		char buffer = this->byte;
 		this->outFile.write(&buffer, 1);
-		//if (inScan) std::cout << "Sent Value: " << (int)byte << std::endl;
 		if(inScan && buffer == char(255))//funny condition needed to prevent ff in scan for jpg, writes 00 after any ff that appears in scan to prevent marker readings
 		{
-			char buffer = (char)0;
+			buffer = (char)0;
 			this->outFile.write(&buffer, 1);
 		}
 		//reset byte
@@ -290,9 +286,12 @@ int byteWritter::write(uint8_t bits)//this func writes a single byte, no matter 
 	char buffer;
 	if (currentBit != 8)
 	{
-		this->byte << (currentBit);
+		this->byte <<= (currentBit);
 		buffer = this->byte;
+		std::cout << "Current Bit: " << currentBit << " || Weird Buffer: " << (int)this->byte << "\n";
 		this->outFile.write(&buffer, 1);
+		this->byte = 0;
+		this->currentBit = 8;
 	}
 	buffer = bits;
 	this->outFile.write(&buffer, 1);
@@ -302,14 +301,9 @@ int byteWritter::write(uint16_t bits, uint8_t bitLength)
 {
 	if (bitLength <= 0) return -1;
 	int check = this->write((uint8_t)(bits >> 8), ((bitLength - 8) > 0 ? (bitLength - 8) : 0));
-	/*if (bitLength == 4)
-	{
-		std::cout << "\n\n" << bits << "\n\n\n" << check << "\n\n\n\n\n\n"<< (int)(uint8_t)(bits) << "\n\n\n\n\n\n\n";
-		exit(4);
-	}*/
 	if (check == -1 || check == 0)
 	{
-		return this->write((uint8_t)bits, (bitLength > 8 ? 8 : bitLength));
+		return this->write((uint8_t)(bits & bitMasker(bitLength)), (bitLength > 8 ? 8 : bitLength));
 	}
 	return check;
 }
@@ -328,4 +322,10 @@ void byteWritter::inScanFlip()
 int byteWritter::bitPosition()
 {
 	return this->currentBit;
+}
+uint32_t bitMasker(int length)
+{
+	uint32_t bitMask = 1;
+	for (int i = 1; i < length; i++) bitMask = bitMask << 1 | 1;
+	return bitMask;
 }

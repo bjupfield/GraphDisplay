@@ -86,6 +86,8 @@ int main()
             map[i] = label2;
         }
     }
+    //decoment below to do anything
+
     myGraph.labelMap(map);
 
     //send randomseeded graphmap to jpger
@@ -93,35 +95,6 @@ int main()
     MCUS mine = graphPresetToMcus(myGraph);
     printMcus(mine);
     mcuHuffmanContainer mine2 = mcuHuffmanContainer(mine);
-
-
-    //byteWritter writer = byteWritter("../../heyJerry.txt");
-    //std::cout << writer.write(104, 8) << std::endl;
-    //std::cout << writer.write(101, 8) << std::endl;
-    //std::cout << writer.write(121, 8) << std::endl;
-    //std::cout << writer.write(74, 8) << std::endl;
-    //std::cout << writer.write(101, 8) << std::endl;
-    //std::cout << writer.write(114, 8) << std::endl;
-    //std::cout << writer.write(114, 8) << std::endl;
-    //std::cout << writer.write(121, 8) << std::endl;
-    //std::cout << writer.write(0, 2) << std::endl;
-    //std::cout << writer.write(32, 6) << std::endl;
-    //std::cout << writer.write(0, 2) << std::endl;
-    //std::cout << writer.write(48, 6) << std::endl;
-    //std::cout << writer.write(0, 1) << std::endl;
-    //std::cout << writer.write(120, 7) << std::endl;
-    //std::cout << writer.write(0, 2) << std::endl;
-    //std::cout << writer.write(48, 6) << std::endl;
-    //std::cout << writer.write(0, 2) << std::endl;
-    //std::cout << writer.write(48, 6) << std::endl;
-    //std::cout << writer.write(0, 2) << std::endl;
-    //std::cout << writer.write(32, 6) << std::endl;
-    //std::cout << writer.write(0, 2) << std::endl;
-    //std::cout << writer.write(96, 7) << std::endl;
-    //std::cout << writer.write(120, 7) << std::endl;
-    //std::cout << writer.write(3, 4) << std::endl;
-    //std::cout << writer.write(0, 6) << std::endl;
-    //std::cout << writer.write(48, 6) << std::endl;
 
 
 
@@ -135,7 +108,7 @@ int main()
     for (int k = 0; k < 3; k++)
     {
         std::cout << (k == 0 ? "Y " : k == 1 ? "Cb " : "Cr ") << " Block: \n";
-        for (int n = 20; n < 25; n++)
+        for (int n = 380; n < 384; n++)
         {
             for (int i = 0; i < 8; i++)
             {
@@ -159,29 +132,38 @@ int main()
     }
     std::cout << "Source Mcus\n";
     
-    int setter = 2;
-    int coeff = setter;
-    int coeffLength = bitength(coeff > 0 ? coeff : -coeff);
-    unsigned funny = 1;//used for bitwise and operator to mask out the negative values
-    for (int two = 0; two < coeffLength; two++)
-    {
-        funny <<= 1;
-    }
-    if (funny > 65536) funny = 65536;
-    std::cout << setter << " EQUALS: " << (coeff > 0 ? (uint16_t)coeff : ((~((uint16_t)(-coeff))) & (uint16_t)(funny - 1))) << " || Funny: " << funny - 1 << " || CoeffLength: " << coeffLength << "\n";
-    std::cout << "HuffValue " << setter << ": " << mine2.yCHuffman[0].ACcode.retrieveTerm(setter) << " || Length: " << mine2.yCHuffman[0].ACcodeLength.retrieveTerm(setter) << "\n";
+
+
+    
+    //uncomment
+    char file23[] = "../../newestCreatedText.txt";
+    char file24[] = "../../Funny.jpg";
+    //comment
+    //char file23[] = "../../test.txt";
+    //char file24[] = "../../test.jpg";
+
+    //byteWritter myBits = byteWritter(file24);
+
+    //std::cout << "Hmm: " << myBits.write((uint16_t)0, 2) << "\n";
+    //std::cout << "Hmm: " << myBits.write((uint16_t)0, 2) << "\n";
+    //std::cout << "Hmm: " << myBits.write((uint16_t)2, 2) << "\n";
+    //std::cout << "Hmm: " << myBits.write((uint16_t)11, 4) << "\n";
+    //for (int i = 0; i < 4096; i++)
+    //{
+    //    myBits.write(255);
+    //}
+
     ifstream image;
-    image.open("../../Funny.jpg", ios::in | ios::binary | ios::ate);
+    image.open(file24, ios::in | ios::binary | ios::ate);
     if (!image.is_open())
     {
         cout << "Failed To Open!\n" << endl;
     }
     else
     {
-
         int imageSize = image.tellg();
         image.seekg(0, ios::beg);
-
+        std::cout << imageSize << "\n";
         int rowSize = 2;
         uint8_t* myimageArray = new uint8_t[imageSize];
         uint8_t* bufferArray = new uint8_t[rowSize];
@@ -204,7 +186,7 @@ int main()
 
         image.close();
         std::fstream outFile;
-        outFile.open("../../newestCreatedText.txt", ios::out | ios::trunc);
+        outFile.open(file23, ios::out | ios::trunc);
         if (!outFile.is_open())
         {
             cout << "Not Open" << endl;

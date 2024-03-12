@@ -158,23 +158,24 @@ const int m5 = 392;/*.383 sin(pi/8), mulltiplied by 2^10 to get 392*/
 
 
 
-int* dct_II_uint_8t_int_8x8(uint8_t *source_mcu, int previousCoefficient)
+int* dct_II_uint_8t_int_8x8(uint8_t *source_mcu)
 {
-    int* mcu = new int[64];
+    int* mcu = new int[65];
+    for (int i = 0; i < 64; i++) mcu[i] = (int)source_mcu[i];
     //row DCT
     for (int i = 0; i < 8; i++)
     {
 
         //initialization
         int f0, f1, f2, f3, f4, f5, f6, f7;
-        f0 = source_mcu[i * 8];
-        f1 = source_mcu[1 + i * 8];
-        f2 = source_mcu[2 + i * 8];
-        f3 = source_mcu[3 + i * 8];
-        f4 = source_mcu[4 + i * 8];
-        f5 = source_mcu[5 + i * 8];
-        f6 = source_mcu[6 + i * 8];
-        f7 = source_mcu[7 + i * 8];
+        f0 = mcu[i * 8];
+        f1 = mcu[1 + i * 8];
+        f2 = mcu[2 + i * 8];
+        f3 = mcu[3 + i * 8];
+        f4 = mcu[4 + i * 8];
+        f5 = mcu[5 + i * 8];
+        f6 = mcu[6 + i * 8];
+        f7 = mcu[7 + i * 8];
         
 
         //first stage
@@ -235,14 +236,14 @@ int* dct_II_uint_8t_int_8x8(uint8_t *source_mcu, int previousCoefficient)
 
         //initialization
         int f0, f1, f2, f3, f4, f5, f6, f7;
-        f0 = source_mcu[i];
-        f1 = source_mcu[8 + i];
-        f2 = source_mcu[16 + i];
-        f3 = source_mcu[24 + i];
-        f4 = source_mcu[32 + i];
-        f5 = source_mcu[40 + i];
-        f6 = source_mcu[48 + i];
-        f7 = source_mcu[56 + i];
+        f0 = mcu[i];
+        f1 = mcu[8 + i];
+        f2 = mcu[16 + i];
+        f3 = mcu[24 + i];
+        f4 = mcu[32 + i];
+        f5 = mcu[40 + i];
+        f6 = mcu[48 + i];
+        f7 = mcu[56 + i];
 
 
         //first stage
@@ -296,13 +297,12 @@ int* dct_II_uint_8t_int_8x8(uint8_t *source_mcu, int previousCoefficient)
         mcu[i + 24] = f7 >> 4;
     }
 
-    mcu[0] = mcu[0] - previousCoefficient;
     return mcu;
 }
 const int m6 = 392;//cos(3pi/8) * 2^10
 const int m7 = 946;//sin(3pi/8) * 2^10
 const int m8 = 1448;//sqrt(2) * 2^10
-int *dct_II_uint_8t_int_4x4(uint8_t* source_mcu, int previousCoefficient)
+int *dct_II_uint_8t_int_4x4(uint8_t* source_mcu)
 {
 
     int* mcu = new int[16];
@@ -385,7 +385,6 @@ int *dct_II_uint_8t_int_4x4(uint8_t* source_mcu, int previousCoefficient)
 
     }
 
-    mcu[0] = mcu[0] - previousCoefficient;
     return mcu;
 }
 //this is applied after the DCT
@@ -496,21 +495,22 @@ void dct_aan(int* input, int* output) {
     output[3] = stage5.row4 + stage5.row7;
 
 }
-int* test_8x8_int_DCT(uint8_t *source_mcu, int previousCoefficient)
+int* test_8x8_int_DCT(uint8_t *source_mcu)
 {
-    int* mcu = new int[64];
+    int* mcu = new int[65];
+    for (int i = 0; i < 64; i++) mcu[i] = (int)source_mcu[i];
 
     for(int i = 0; i < 8; i++)
     {
         int* row = new int[8];
-        row[0] = source_mcu[i * 8];
-        row[1] = source_mcu[i * 8 + 1];
-        row[2] = source_mcu[i * 8 + 2];
-        row[3] = source_mcu[i * 8 + 3];
-        row[4] = source_mcu[i * 8 + 4];
-        row[5] = source_mcu[i * 8 + 5];
-        row[6] = source_mcu[i * 8 + 6];
-        row[7] = source_mcu[i * 8 + 7];
+        row[0] = mcu[i * 8];
+        row[1] = mcu[i * 8 + 1];
+        row[2] = mcu[i * 8 + 2];
+        row[3] = mcu[i * 8 + 3];
+        row[4] = mcu[i * 8 + 4];
+        row[5] = mcu[i * 8 + 5];
+        row[6] = mcu[i * 8 + 6];
+        row[7] = mcu[i * 8 + 7];
 
         int* rowStore = new int[8];
         dct_aan(row, rowStore);
@@ -527,14 +527,14 @@ int* test_8x8_int_DCT(uint8_t *source_mcu, int previousCoefficient)
     for (int i = 0; i < 8; i++)
     {
         int* column = new int[8];
-        column[0] = source_mcu[i];
-        column[1] = source_mcu[i + 8];
-        column[2] = source_mcu[i + 16];
-        column[3] = source_mcu[i + 24];
-        column[4] = source_mcu[i + 32];
-        column[5] = source_mcu[i + 40];
-        column[6] = source_mcu[i + 48];
-        column[7] = source_mcu[i + 56];
+        column[0] = mcu[i];
+        column[1] = mcu[i + 8];
+        column[2] = mcu[i + 16];
+        column[3] = mcu[i + 24];
+        column[4] = mcu[i + 32];
+        column[5] = mcu[i + 40];
+        column[6] = mcu[i + 48];
+        column[7] = mcu[i + 56];
 
         int* rowStore = new int[8];
         dct_aan(column, rowStore);
@@ -552,23 +552,24 @@ int* test_8x8_int_DCT(uint8_t *source_mcu, int previousCoefficient)
 
     return mcu;
 }
-int* test2_dct(uint8_t* source_mcu, int previousCoefficient)
+int* test2_dct(uint8_t* source_mcu)
 {
     int* mcu = new int[65];
+    for (int i = 0; i < 64; i++) mcu[i] = (int)source_mcu[i];
     //row DCT
     for (int i = 0; i < 8; i++)
     {
 
         //initialization
         int f0, f1, f2, f3, f4, f5, f6, f7;
-        f0 = source_mcu[i * 8];
-        f1 = source_mcu[1 + i * 8];
-        f2 = source_mcu[2 + i * 8];
-        f3 = source_mcu[3 + i * 8];
-        f4 = source_mcu[4 + i * 8];
-        f5 = source_mcu[5 + i * 8];
-        f6 = source_mcu[6 + i * 8];
-        f7 = source_mcu[7 + i * 8];
+        f0 = mcu[i * 8];
+        f1 = mcu[1 + i * 8];
+        f2 = mcu[2 + i * 8];
+        f3 = mcu[3 + i * 8];
+        f4 = mcu[4 + i * 8];
+        f5 = mcu[5 + i * 8];
+        f6 = mcu[6 + i * 8];
+        f7 = mcu[7 + i * 8];
 
         //second stage
         int s0, s1, s2, s3, s4, s5, s6, s7;
@@ -666,14 +667,14 @@ int* test2_dct(uint8_t* source_mcu, int previousCoefficient)
 
         //initialization
         int f0, f1, f2, f3, f4, f5, f6, f7;
-        f0 = source_mcu[i];
-        f1 = source_mcu[i + 8];
-        f2 = source_mcu[i + 16];
-        f3 = source_mcu[i + 24];
-        f4 = source_mcu[i + 32];
-        f5 = source_mcu[i + 40];
-        f6 = source_mcu[6 + 48];
-        f7 = source_mcu[7 + 56];
+        f0 = mcu[i];
+        f1 = mcu[i + 8];
+        f2 = mcu[i + 16];
+        f3 = mcu[i + 24];
+        f4 = mcu[i + 32];
+        f5 = mcu[i + 40];
+        f6 = mcu[6 + 48];
+        f7 = mcu[7 + 56];
 
         //second stage
         int s0, s1, s2, s3, s4, s5, s6, s7;
@@ -1126,20 +1127,20 @@ void mcuHuffmanContainer::actualJpg(hInfoStruct hInfo, mcuHuffmanContainer mcuHu
         SOF_M(bW, hInfo.chromaTableType, hInfo.samplingY, hInfo.samplingC, hInfo.pixelHeight, hInfo.pixelLength);
         DHT_M(bW, 0, 0, mcuHuffman.yCHuffman[0].DCcodeLength);
         std::cout << "\nDC HUffValue: ";
-        int* keys = mcuHuffman.yCHuffman[1].DCcode.retrieveAllKeys();
-        for (int i = 0; i < mcuHuffman.yCHuffman[1].DCcode.returnCount();i++)
+        int* keys = mcuHuffman.yCHuffman[0].DCcode.retrieveAllKeys();
+        for (int i = 0; i < mcuHuffman.yCHuffman[0].DCcode.returnCount();i++)
         {
             std::cout << keys[i] << ", ";
         }
         std::cout << "\nDC code: ";
-        for (int i = 0; i < mcuHuffman.yCHuffman[1].DCcode.returnCount(); i++)
+        for (int i = 0; i < mcuHuffman.yCHuffman[0].DCcode.returnCount(); i++)
         {
-            std::cout << (int)mcuHuffman.yCHuffman[1].DCcode.retrieveTerm(keys[i]) << ", ";
+            std::cout << (int)mcuHuffman.yCHuffman[0].DCcode.retrieveTerm(keys[i]) << ", ";
         }
         std::cout << "\nDC CodeLength: ";
-        for (int i = 0; i < mcuHuffman.yCHuffman[1].DCcode.returnCount(); i++)
+        for (int i = 0; i < mcuHuffman.yCHuffman[0].DCcode.returnCount(); i++)
         {
-            std::cout << (int)mcuHuffman.yCHuffman[1].DCcodeLength.retrieveTerm(keys[i]) << ", ";
+            std::cout << (int)mcuHuffman.yCHuffman[0].DCcodeLength.retrieveTerm(keys[i]) << ", ";
         }
         DHT_M(bW, 1, 0, mcuHuffman.yCHuffman[0].ACcodeLength);
         std::cout << "\nAC HuffValue: ";
@@ -1201,15 +1202,16 @@ int* dctQuantizer(uint8_t* table,int dim, int previousDC, int num)
     //int* returnTable = (int*)malloc((dim * dim + 1) * sizeof(int));
     if (dim == 8)
     {
-        //this->Y = dct_II_uint_8t_int_8x8(uintMcu.Y);
+        //returnTable = dct_II_uint_8t_int_8x8(table);
         //testing
-        //this->Y = test_8x8_int_DCT(uintMcu.Y, previousCoefficient);
-        //returnTable = test2_dct(table, previousDC);
+        //returnTable = test_8x8_int_DCT(table);
+        //returnTable = test2_dct(table);
         returnTable = dct_II_uint_8t_int_8x8_Version3(table);
         quantizer_8x8_int(returnTable, quantTables8x8[num]);
     }
     else
     {
+        exit(0);
         //returnTable = dct_II_uint_8t_int_4x4(table, previousDC);
         returnTable = dct_II_uint_8t_int_4x4_TEST(table, previousDC);
         quantizer_4x4_int(returnTable, quantTables4x4[num]);
@@ -1568,7 +1570,10 @@ void MCU_W(byteWritter& bw, fakeDictionary<int, uint16_t>& huffmanDcValueCodes, 
                 funny <<= 1;
             }
             if (funny > 65536) funny = 65536;
-            bw.write((uint16_t)(coeff > 0 ? (uint16_t)coeff : ((~((uint16_t)(-coeff))) & (funny - 1))), coeffLength);
+            if (bw.write((uint16_t)(coeff > 0 ? (uint16_t)coeff : ((~((uint16_t)(-coeff))) & (funny - 1))), coeffLength) == -4)
+            {
+                std::cout << "Weird Occurence\n";
+            }
             zeroes = -1;
         }
         else if (i == 63)
