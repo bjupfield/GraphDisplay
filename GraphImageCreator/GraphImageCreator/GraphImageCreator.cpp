@@ -12,6 +12,14 @@
 #include "DumbFuncsNClasses.hpp"
 
 using namespace std;
+int bitength(int bits)//gives the position of the most significant bit
+{
+    unsigned bitDestroyer = bits;
+    unsigned bitLength;
+    for (bitLength = 0; bitDestroyer != 0; ++bitLength) bitDestroyer >>= 1;
+    return bitLength;
+}
+
 
 int main()
 {
@@ -127,7 +135,7 @@ int main()
     for (int k = 0; k < 3; k++)
     {
         std::cout << (k == 0 ? "Y " : k == 1 ? "Cb " : "Cr ") << " Block: \n";
-        for (int n = 23; n < 26; n++)
+        for (int n = 20; n < 25; n++)
         {
             for (int i = 0; i < 8; i++)
             {
@@ -137,7 +145,7 @@ int main()
                 }
                 std::cout << std::endl;
             }
-            std::cout << std::endl;
+            std::cout << n + 1 << ":" << std::endl;
         }
     }
     std::cout << "Source Mcus\n";
@@ -150,7 +158,18 @@ int main()
         std::cout << "\n";
     }
     std::cout << "Source Mcus\n";
-
+    
+    int setter = 2;
+    int coeff = setter;
+    int coeffLength = bitength(coeff > 0 ? coeff : -coeff);
+    unsigned funny = 1;//used for bitwise and operator to mask out the negative values
+    for (int two = 0; two < coeffLength; two++)
+    {
+        funny <<= 1;
+    }
+    if (funny > 65536) funny = 65536;
+    std::cout << setter << " EQUALS: " << (coeff > 0 ? (uint16_t)coeff : ((~((uint16_t)(-coeff))) & (uint16_t)(funny - 1))) << " || Funny: " << funny - 1 << " || CoeffLength: " << coeffLength << "\n";
+    std::cout << "HuffValue " << setter << ": " << mine2.yCHuffman[0].ACcode.retrieveTerm(setter) << " || Length: " << mine2.yCHuffman[0].ACcodeLength.retrieveTerm(setter) << "\n";
     ifstream image;
     image.open("../../Funny.jpg", ios::in | ios::binary | ios::ate);
     if (!image.is_open())

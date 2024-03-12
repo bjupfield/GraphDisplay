@@ -255,3 +255,8 @@ the reason this is happening is because we are allowing bit values of length 0, 
 comprised of 1 bits afterwards
 the task is to find a way that if the huffman table outputs a value of length 1 change that value to two and rearrange the entire table with the extra 2 value that we recieve from setting this value from 2
 we could just ignore this becaues just placing he value from 1 to 2 solves the issue, but it is not perfectly efficient
+
+okay I havent solved the problem... but I think ive identified it
+for some reason when writing a 2 after a -3 the writer messes up and writes a 3 instead
+I cant figure out why.. but I will try..
+might be something like the writter is overwriting some bits or somehting when its length 2

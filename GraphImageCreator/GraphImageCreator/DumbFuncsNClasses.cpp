@@ -300,6 +300,7 @@ int byteWritter::write(uint8_t bits)//this func writes a single byte, no matter 
 }
 int byteWritter::write(uint16_t bits, uint8_t bitLength)
 {
+	if (bitLength <= 0) return -1;
 	int check = this->write((uint8_t)(bits >> 8), ((bitLength - 8) > 0 ? (bitLength - 8) : 0));
 	/*if (bitLength == 4)
 	{

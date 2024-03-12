@@ -146,13 +146,17 @@ uint8_t* extractYCbCr(Pixel* pixel, int size) {
 	uint8_t* myYCbCrArray = new uint8_t[size * 3];
 	for(int i = 0, j = size, k = size + size; i < size; i++, k++, j++)
 	{
+		float nB;
+		float nR;
+		float nG;
+
 		float eG = .587 * pixel[i].green;
 		float eB = .114 * pixel[i].blue;
 		float eY = .299 * pixel[i].red + eG + eB;
 
 		int Y = std::min(255, std::max(0, (int)eY));
-		int Cb = std::min(255, std::max(0, (int)((pixel[i].red - eY) / 1.402)));
-		int Cr = std::min(255, std::max(0, (int)((pixel[i].blue - eY) / 1.772)));
+		int Cb = std::min(255, std::max(0, (int)(((pixel[i].red - eY) / 1.402) + 128)));
+		int Cr = std::min(255, std::max(0, (int)(((pixel[i].blue - eY) / 1.772) + 128)));
 
 		myYCbCrArray[i] = (uint8_t)Y;
 		myYCbCrArray[j] = (uint8_t)Cb;
