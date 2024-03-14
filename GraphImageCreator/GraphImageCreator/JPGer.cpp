@@ -77,7 +77,7 @@ int intReverseSorter(int a, int b);
 int customSorter(uint8_t a, uint8_t b);
 int bitLength(int bits);
 int bitsAllOne(uint16_t bits, int length);
-int* dctQuantizer(uint8_t* table, int dim, int previousDC, int num);
+int* dctQuantizer(int* table, int dim, int previousDC, int num);
 int* huffmanCodeCountArray(int *a, int arraySize);
 void huffManReferenceTable(fakeDictionary<int, int>& huffmanCodeLength, fakeDictionary<int, uint16_t>& target, bool b = false);
 void SOI_APPO_M(byteWritter& bw, int densityY, int densityX, int density);
@@ -158,7 +158,7 @@ const int m5 = 392;/*.383 sin(pi/8), mulltiplied by 2^10 to get 392*/
 
 
 
-int* dct_II_uint_8t_int_8x8(uint8_t *source_mcu)
+int* dct_II_int_8t_int_8x8(int *source_mcu)
 {
     int* mcu = new int[65];
     for (int i = 0; i < 64; i++) mcu[i] = (int)source_mcu[i];
@@ -302,7 +302,7 @@ int* dct_II_uint_8t_int_8x8(uint8_t *source_mcu)
 const int m6 = 392;//cos(3pi/8) * 2^10
 const int m7 = 946;//sin(3pi/8) * 2^10
 const int m8 = 1448;//sqrt(2) * 2^10
-int *dct_II_uint_8t_int_4x4(uint8_t* source_mcu)
+int *dct_II_int_8t_int_4x4(int* source_mcu)
 {
 
     int* mcu = new int[16];
@@ -495,7 +495,7 @@ void dct_aan(int* input, int* output) {
     output[3] = stage5.row4 + stage5.row7;
 
 }
-int* test_8x8_int_DCT(uint8_t *source_mcu)
+int* test_8x8_int_DCT(int *source_mcu)
 {
     int* mcu = new int[65];
     for (int i = 0; i < 64; i++) mcu[i] = (int)source_mcu[i];
@@ -552,7 +552,7 @@ int* test_8x8_int_DCT(uint8_t *source_mcu)
 
     return mcu;
 }
-int* test2_dct(uint8_t* source_mcu)
+int* test2_dct(int* source_mcu)
 {
     int* mcu = new int[65];
     for (int i = 0; i < 64; i++) mcu[i] = (int)source_mcu[i];
@@ -772,7 +772,7 @@ static const float mp0 = 0.7071;
 static const float mp1 = 0.9239;
 static const float mp2 = 0.3827;
 static const float mp3 = 1.4142;
-int* dct_II_uint_8t_int_8x8_Version3(uint8_t* source_mcu)
+int* dct_II_int_8t_int_8x8_Version3(int* source_mcu)
 {
     int* mcu = new int[65];
     for (int i = 0; i < 64; i++) mcu[i] = (int)source_mcu[i];
@@ -939,7 +939,179 @@ int* dct_II_uint_8t_int_8x8_Version3(uint8_t* source_mcu)
     }
     return mcu;
 }
-int* dct_II_uint_8t_int_4x4_TEST(uint8_t* source_mcu, int previousCoefficient)
+const float m00 = 2.0 * std::cos(1.0 / 16.0 * 2.0 * 3.14);
+const float m10 = 2.0 * std::cos(2.0 / 16.0 * 2.0 * 3.14);
+const float m30 = 2.0 * std::cos(2.0 / 16.0 * 2.0 * 3.14);
+const float m50 = 2.0 * std::cos(3.0 / 16.0 * 2.0 * 3.14);
+const float m20 = m00 - m50;
+const float m40 = m00 + m50;
+
+const float s0 = std::cos(0.0 / 16.0 * 3.14) / std::sqrt(8);
+const float s1 = std::cos(1.0 / 16.0 * 3.14) / 2.0;
+const float s2 = std::cos(2.0 / 16.0 * 3.14) / 2.0;
+const float s3 = std::cos(3.0 / 16.0 * 3.14) / 2.0;
+const float s4 = std::cos(4.0 / 16.0 * 3.14) / 2.0;
+const float s5 = std::cos(5.0 / 16.0 * 3.14) / 2.0;
+const float s6 = std::cos(6.0 / 16.0 * 3.14) / 2.0;
+const float s7 = std::cos(7.0 / 16.0 * 3.14) / 2.0;
+int* straightCopyDct(int* source_mcu) {
+
+    int* mcu = new int[65];
+    for (int i = 0; i < 64; i++) mcu[i] = (int)source_mcu[i];
+
+    for (uint8_t i = 0; i < 8; ++i) {
+        const float a0 = mcu[0 * 8 + i];
+        const float a1 = mcu[1 * 8 + i];
+        const float a2 = mcu[2 * 8 + i];
+        const float a3 = mcu[3 * 8 + i];
+        const float a4 = mcu[4 * 8 + i];
+        const float a5 = mcu[5 * 8 + i];
+        const float a6 = mcu[6 * 8 + i];
+        const float a7 = mcu[7 * 8 + i];
+
+        const float b0 = a0 + a7;
+        const float b1 = a1 + a6;
+        const float b2 = a2 + a5;
+        const float b3 = a3 + a4;
+        const float b4 = a3 - a4;
+        const float b5 = a2 - a5;
+        const float b6 = a1 - a6;
+        const float b7 = a0 - a7;
+
+        const float c0 = b0 + b3;
+        const float c1 = b1 + b2;
+        const float c2 = b1 - b2;
+        const float c3 = b0 - b3;
+        const float c4 = b4;
+        const float c5 = b5 - b4;
+        const float c6 = b6 - c5;
+        const float c7 = b7 - b6;
+
+        const float d0 = c0 + c1;
+        const float d1 = c0 - c1;
+        const float d2 = c2;
+        const float d3 = c3 - c2;
+        const float d4 = c4;
+        const float d5 = c5;
+        const float d6 = c6;
+        const float d7 = c5 + c7;
+        const float d8 = c4 - c6;
+
+        const float e0 = d0;
+        const float e1 = d1;
+        const float e2 = d2 * m10;
+        const float e3 = d3;
+        const float e4 = d4 * m20;
+        const float e5 = d5 * m30;
+        const float e6 = d6 * m40;
+        const float e7 = d7;
+        const float e8 = d8 * m50;
+
+        const float f0 = e0;
+        const float f1 = e1;
+        const float f2 = e2 + e3;
+        const float f3 = e3 - e2;
+        const float f4 = e4 + e8;
+        const float f5 = e5 + e7;
+        const float f6 = e6 + e8;
+        const float f7 = e7 - e5;
+
+        const float g0 = f0;
+        const float g1 = f1;
+        const float g2 = f2;
+        const float g3 = f3;
+        const float g4 = f4 + f7;
+        const float g5 = f5 + f6;
+        const float g6 = f5 - f6;
+        const float g7 = f7 - f4;
+
+        mcu[0 * 8 + i] = g0 * s0;
+        mcu[4 * 8 + i] = g1 * s4;
+        mcu[2 * 8 + i] = g2 * s2;
+        mcu[6 * 8 + i] = g3 * s6;
+        mcu[5 * 8 + i] = g4 * s5;
+        mcu[1 * 8 + i] = g5 * s1;
+        mcu[7 * 8 + i] = g6 * s7;
+        mcu[3 * 8 + i] = g7 * s3;
+    }
+    for (uint8_t i = 0; i < 8; ++i) {
+        const float a0 = mcu[i * 8 + 0];
+        const float a1 = mcu[i * 8 + 1];
+        const float a2 = mcu[i * 8 + 2];
+        const float a3 = mcu[i * 8 + 3];
+        const float a4 = mcu[i * 8 + 4];
+        const float a5 = mcu[i * 8 + 5];
+        const float a6 = mcu[i * 8 + 6];
+        const float a7 = mcu[i * 8 + 7];
+
+        const float b0 = a0 + a7;
+        const float b1 = a1 + a6;
+        const float b2 = a2 + a5;
+        const float b3 = a3 + a4;
+        const float b4 = a3 - a4;
+        const float b5 = a2 - a5;
+        const float b6 = a1 - a6;
+        const float b7 = a0 - a7;
+
+        const float c0 = b0 + b3;
+        const float c1 = b1 + b2;
+        const float c2 = b1 - b2;
+        const float c3 = b0 - b3;
+        const float c4 = b4;
+        const float c5 = b5 - b4;
+        const float c6 = b6 - c5;
+        const float c7 = b7 - b6;
+
+        const float d0 = c0 + c1;
+        const float d1 = c0 - c1;
+        const float d2 = c2;
+        const float d3 = c3 - c2;
+        const float d4 = c4;
+        const float d5 = c5;
+        const float d6 = c6;
+        const float d7 = c5 + c7;
+        const float d8 = c4 - c6;
+
+        const float e0 = d0;
+        const float e1 = d1;
+        const float e2 = d2 * m10;
+        const float e3 = d3;
+        const float e4 = d4 * m20;
+        const float e5 = d5 * m30;
+        const float e6 = d6 * m40;
+        const float e7 = d7;
+        const float e8 = d8 * m50;
+
+        const float f0 = e0;
+        const float f1 = e1;
+        const float f2 = e2 + e3;
+        const float f3 = e3 - e2;
+        const float f4 = e4 + e8;
+        const float f5 = e5 + e7;
+        const float f6 = e6 + e8;
+        const float f7 = e7 - e5;
+
+        const float g0 = f0;
+        const float g1 = f1;
+        const float g2 = f2;
+        const float g3 = f3;
+        const float g4 = f4 + f7;
+        const float g5 = f5 + f6;
+        const float g6 = f5 - f6;
+        const float g7 = f7 - f4;
+
+        mcu[i * 8 + 0] = g0 * s0;
+        mcu[i * 8 + 4] = g1 * s4;
+        mcu[i * 8 + 2] = g2 * s2;
+        mcu[i * 8 + 6] = g3 * s6;
+        mcu[i * 8 + 5] = g4 * s5;
+        mcu[i * 8 + 1] = g5 * s1;
+        mcu[i * 8 + 7] = g6 * s7;
+        mcu[i * 8 + 3] = g7 * s3;
+    }
+    return mcu;
+}
+int* dct_II_int_8t_int_4x4_TEST(int* source_mcu)
 {
     int* mcu = new int[16];
 
@@ -1050,6 +1222,17 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
                 mcus[pos].yCbCr(n) = dctQuantizer(origin.mcuList[pos].ycbcr[n], this->dim[n], ((pos == 0) ? 0 : mcus[pos - 1].yCbCr[n][(dim[n] == 8 ? 64 : 16)]), n);
                 //if (n == 0 && dim[n] == 8 && pos < 10) std::cout << "HMMM << " << mcus[pos].yCbCr[0][64] << " << " << pos << std::endl;
                 yCHuffman[n == 0 ? 0 : 1].frequency(this->dim[n], mcus[pos].yCbCr[n]);
+            }
+            if (i < 3 && j == 0) {
+                std::cout << "Cr: \n";
+                for (int n = 0; n < 8; n++)
+                {
+                    for (int b = 0; b < 8; b++)
+                    {
+                        std::cout << origin.mcuList[pos].ycbcr[2][n * 8 + b] << ", ";
+                    }
+                    std::cout << "\n";
+                }
             }
             //mcus[pos - 1].Y[0]
             //im throwing the previous mcus DC coefficient, as this is what jpg does. Jpg standard says that DC coefficient are dependent on previous DC cocefficients, where the DC Coefficient = current coefficient - previous coefficient
@@ -1195,25 +1378,26 @@ void testIntMcus(mcuHuffmanContainer mine, int num)
         std::cout << std::endl;
     }
 }
-int* dctQuantizer(uint8_t* table,int dim, int previousDC, int num) 
+int* dctQuantizer(int* table,int dim, int previousDC, int num) 
 {
     int* returnTable;
 
     //int* returnTable = (int*)malloc((dim * dim + 1) * sizeof(int));
     if (dim == 8)
     {
-        //returnTable = dct_II_uint_8t_int_8x8(table);
+        //returnTable = dct_II_int_8t_int_8x8(table);
         //testing
         //returnTable = test_8x8_int_DCT(table);
         //returnTable = test2_dct(table);
-        returnTable = dct_II_uint_8t_int_8x8_Version3(table);
+        //returnTable = dct_II_int_8t_int_8x8_Version3(table);
+        returnTable = straightCopyDct(table);
         quantizer_8x8_int(returnTable, quantTables8x8[num]);
     }
     else
     {
         exit(0);
         //returnTable = dct_II_uint_8t_int_4x4(table, previousDC);
-        returnTable = dct_II_uint_8t_int_4x4_TEST(table, previousDC);
+        returnTable = dct_II_int_8t_int_4x4_TEST(table);
         quantizer_4x4_int(returnTable, quantTables4x4[num]);
     }
     returnTable[dim * dim] = returnTable[0] + 0;

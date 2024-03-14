@@ -25,11 +25,11 @@ struct dimensions {
 };
 struct YCBCR {
 
-	uint8_t* Y;
-	uint8_t* Cb;
-	uint8_t* Cr;
+	int* Y;
+	int* Cb;
+	int* Cr;
 
-	uint8_t* operator[](int i)
+	int* operator[](int i)
 	{
 		switch (i)
 		{
@@ -50,7 +50,7 @@ public:
 	YCBCR ycbcr;
 	MCU() : ycbcr{nullptr, nullptr, nullptr} {}
 	MCU(int YDim, int CbDim, int CrDm);
-	void fillMcu(uint8_t* y, uint8_t* cb, uint8_t* cr);
+	void fillMcu(int* y, int* cb, int* cr);
 };
 class MCUS{
 private:

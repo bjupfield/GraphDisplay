@@ -4,7 +4,7 @@
 #include "GraphPresets.hpp"
 #include "DumbFuncsNClasses.hpp"
 
-uint8_t* extractYCbCr(Pixel* pixel, int size);
+int* extractYCbCr(Pixel* pixel, int size);
 
 MCUS graphPresetToMcus(graphMap Map) {
 	int *heightLength = Map.retrieveDimensions();
@@ -27,23 +27,52 @@ MCUS graphPresetToMcus(graphMap Map) {
 				}
 				
 			}
-			uint8_t* undivided = extractYCbCr(buffer, 64);
-			uint8_t* Yvalue = new uint8_t[64];
-			uint8_t* Cbvalue = new uint8_t[64];//decoder im testing with doesnt account for 4:2:0
-			uint8_t* Crvalue = new uint8_t[64];
+			int* undivided = extractYCbCr(buffer, 64);
+			int* Yvalue = new int[64];
+			int* Cbvalue = new int[64];//decoder im testing with doesnt account for 4:2:0
+			int* Crvalue = new int[64];
 
-			copyArray(undivided, Yvalue, 0, 64);
+			if (j < 3 && i == 0)
+			{
+				std::cout << "Cr: \n";
+				for (int n = 0; n < 8; n++)
+				{
+					for (int b = 0; b < 8; b++)
+					{
+						std::cout << undivided[n * 8 + b + 128] << ", ";
+					}
+					std::cout << "\n";
+				}
+			}
+
+			copyArray(undivided, Yvalue, 0, 64, 0);
 			copyArray(undivided, Cbvalue, 0, 64, 64);
 			copyArray(undivided, Crvalue, 0, 64, 128);
-			/*for(int k = 0; k < 16; k++)
+			
+			if (j < 3 && i == 0)
 			{
-				Cbvalue[k] = (uint8_t)(((int)undivided[64 + k * 4] + (int)undivided[64 + k * 4 + 1] + (int)undivided[64 + k * 4 + 16] + (int)undivided[64 + k * 4 + 16 +1]) / 4);
+				std::cout << "Cr Post Transfer: \n";
+				for (int n = 0; n < 8; n++)
+				{
+					for (int b = 0; b < 8; b++)
+					{
+						std::cout << Crvalue[n * 8 + b] << ", ";
+					}
+					std::cout << "\n";
+				}
 			}
-			for (int k = 0; k < 16; k++)
+			if (j < 3 && i == 0)
 			{
-				Crvalue[k] = (uint8_t)(((int)undivided[128 + k * 4] + (int)undivided[128 + k * 4 + 1] + (int)undivided[128 + k * 4 + 16] + (int)undivided[128 + k * 4 + 16 + 1]) / 4);
-			}*/
-
+				std::cout << "G Post Transfer: \n";
+				for (int n = 0; n < 8; n++)
+				{
+					for (int b = 0; b < 8; b++)
+					{
+						std::cout << buffer[n * 8 + b].red << ", ";
+					}
+					std::cout << "\n";
+				}
+			}
 
 			myMcus.mcuList[j * mcuLength + i].fillMcu(Yvalue, Cbvalue, Crvalue);
 			//if (j * mcuLength + i == 0)
@@ -136,40 +165,56 @@ MCU::MCU(int YDim, int CbDim, int CrDm) {
 	//this->ycbcr.Cb = new uint8_t[CbDim * CbDim];
 	//this->ycbcr.Cr = new uint8_t[CrDm * CrDm];
 }
-void MCU::fillMcu(uint8_t* y, uint8_t* cb, uint8_t* cr)
+void MCU::fillMcu(int* y, int* cb, int* cr)
 {
 	this->ycbcr.Y = y;
 	this->ycbcr.Cb = cb;
 	this->ycbcr.Cr = cr;
 }
-uint8_t* extractYCbCr(Pixel* pixel, int size) {
-	uint8_t* myYCbCrArray = new uint8_t[size * 3];
+//using conversion defined by jpg, honestly dont know where couldnt find it
+//just used the jed previously linked equation, but couldnt find the equation in any of the itu recommendations
+const float Yr = 0.299;
+const float Yg = 0.587;
+const float Yb = 0.114;
+const float Cbr = -0.169;
+const float Cbg = -0.331;
+const float Cbb = 0.500;
+const float Crr = 0.500;
+const float Crg = -0.419;
+const float Crb = -0.081;
+int* extractYCbCr(Pixel* pixel, int size) {
+	int* myYCbCrArray = new int[size * 3];
 	for(int i = 0, j = size, k = size + size; i < size; i++, k++, j++)
 	{
-		float nB = pixel[i].blue / 255;
-		float nR = pixel[i].red / 255;
-		float nG = pixel[i].green / 255;
+		//float Ey = (pixel[i].green + (Kr * (pixel[i].red - pixel[i].green)) + (Kb * (pixel[i].blue - pixel[i].green))) / 255;
+		//float Eb = (pixel[i].blue - Ey) / (largeKb);
+		//float Er = (pixel[i].red - Ey) / (largeKr);
 
-		float eG = .587 * nG;
-		float eB = .114 * nB;
-		float eY = .299 * nR + eG + eB;
 
-		//int Y = std::min(255, std::max(0, (int)(eY * 255)));
-		//int Cb = std::min(255, std::max(0, (int)((((nR - eY) * 255) / 1.402) + 128)));
-		//int Cr = std::min(255, std::max(0, (int)((((nB - eY) * 255) / 1.772) + 128)));
+		//int Y = std::min(128, std::max(-128, (int)(219 * Ey)));
+		//int Cb = std::min(128, std::max(-128, (int)(224 * Eb)));
+		//int Cr = std::min(128, std::max(-128, (int)(224 * Er)));
+
+		//int Y = (int)(219 * Ey);
+		//int Cb = (int)(224 * Eb);
+		//int Cr = (int)(224 * Er);
 
 		//int Y = std::min(255, std::max(16 + (int)(65.48 * pixel[i].red) + (int)(128.553 * pixel[i].green) + (int)(24.966 * pixel[i].blue), 0));
 		//int Cb = std::min(255, std::max(128 + (int)(-37.797 * pixel[i].red) + (int)(74.203 * pixel[i].green) + (int)(112 * pixel[i].blue), 0));
 		//int Cr = std::min(255, std::max(128 + (int)(112 * pixel[i].red) + (int)(93.786 * pixel[i].green) + (int)(18.214 * pixel[i].blue), 0));
 
-		int Cb = 0;
-		int Cr = 0;
+		//int Cb = 0;
+		//int Cr = 0;
 
-		int Y = pixel[i].green;
+		//int Y = pixel[i].green;
 
-		myYCbCrArray[i] = (uint8_t)Y;
-		myYCbCrArray[j] = (uint8_t)Cb;
-		myYCbCrArray[k] = (uint8_t)Cr;
+		int Y = (int)(pixel[i].red * Yr + pixel[i].green * Yg + pixel[i].blue * Yb) - 128;
+		int Cb = -(int)((pixel[i].red) * Cbr + (pixel[i].green) * Cbg + (pixel[i].blue) * Cbb);
+		int Cr = +(int)((pixel[i].red) * Crr + (pixel[i].green) * Crg + (pixel[i].blue) * Crb);
+
+		myYCbCrArray[i] = Y;
+		myYCbCrArray[j] = Cb;
+		myYCbCrArray[k] = Cr;
 	}
 	return myYCbCrArray;
 };
