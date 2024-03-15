@@ -88,61 +88,6 @@ void SOS_M(byteWritter& bw, int components, int firstComponentLength);
 void MCU_W(byteWritter& bw, fakeDictionary<int, uint16_t>& huffmanDcValueCodes, fakeDictionary<int, int>& huffmanDcValueLength, fakeDictionary<int, uint16_t>& huffmanAcValueCodes, fakeDictionary<int, int>& huffmanAcValueLength, int dim, int* table);
 void EOI_M(byteWritter& bw);
 
-void graphMaptoJPG(graphMap map)
-	{
-		
-        
-
-        ofstream myJpg;
-        myJpg.open("../../yahDig.jpg", ios::binary);
-
-        if (myJpg.is_open())
-        {
-            cout << "HI JPG IS OPEN" << endl;
-            //header and appo file write, standard information does not change
-            uint8_t const headerData[] = { (uint8_t)255, (uint8_t)216, (uint8_t)255, (uint8_t)224, (uint8_t)0, (uint8_t)16, (uint8_t)74, (uint8_t)70, (uint8_t)73,  (uint8_t)70, (uint8_t)0};
-            myJpg.write((const char*)headerData, sizeof(headerData));
-            //jfif version density and thumbnail data, should remain the same
-            uint8_t const versionDensityThumbData[] = { (uint8_t)1, (uint8_t)1, (uint8_t)0, (uint8_t)0, (uint8_t)1, (uint8_t)0, (uint8_t)1, (uint8_t)0, (uint8_t)0 };
-            myJpg.write((const char*)versionDensityThumbData, sizeof(versionDensityThumbData));
-            
-            
-            //quantization tables
-            uint8_t const quantHeader[] = {(uint8_t)255, (uint8_t)219, (uint8_t)0, (uint8_t)43, (uint8_t)0};
-            //lum table
-            myJpg.write((const char*)quantHeader, sizeof(quantHeader));
-            myJpg.write((const char*)lumTable, sizeof(lumTable));
-            //chroma table
-            myJpg.write((const char*)quantHeader, sizeof(quantHeader));
-            myJpg.write((const char*)chromaTable, sizeof(chromaTable));
-
-
-            //start of frame
-            uint8_t const sofoHeader[] = { (uint8_t)255, (uint8_t)192, (uint8_t)0, (uint8_t)17, (uint8_t)8 };
-            //refers to sampling amount and which quantization tables it uses
-            uint8_t const sofoComponentSampling[] = { (uint8_t)3, (uint8_t)1, (uint8_t)34, (uint8_t)0, (uint8_t)2, (uint8_t)17, (uint8_t)1, (uint8_t)3, (uint8_t)1 };
-            //pixel amount first bit of variable data
-            int pixelHeight = map.retrieveDimensions()[0];
-            int pixelLength = map.retrieveDimensions()[1];
-            //pixel data is arranged in 2 bytes per dimension, first two are devoted to height second to length
-            //thus a JPG can only be (256 * 256) * (256 * 256) pixels in dimensions
-            uint8_t pixelDimensions[] = {(uint8_t)(pixelHeight/256), (uint8_t)(pixelHeight%256),(uint8_t)(pixelLength/256),(uint8_t)(pixelLength%256)};
-            //sofo header on top
-            myJpg.write((const char*)sofoHeader, sizeof(sofoHeader));
-            //then pixel dimensions
-            myJpg.write((const char*)pixelDimensions, sizeof(pixelDimensions));
-            //then componentsampling info, we have taken the standard 4X2X0 dimensions which makes the chroma components 4x4 while the luma components are 8x8. This is standard in jpg, and it works because the human eye sucks
-            myJpg.write((const char*)sofoComponentSampling, sizeof(sofoComponentSampling));
-            
-            std::cout << "PictureDimensions: " << pixelHeight << " || " << pixelLength << endl;
-
-            myJpg.close();
-
-
-
-        }
-
-	}
 //this is a forward dct that only uses integer multiplication and addition
 //it is completely based on the two code snippets provided by
 //Emil Mikulic
@@ -673,8 +618,8 @@ int* test2_dct(int* source_mcu)
         f3 = mcu[i + 24];
         f4 = mcu[i + 32];
         f5 = mcu[i + 40];
-        f6 = mcu[6 + 48];
-        f7 = mcu[7 + 56];
+        f6 = mcu[i + 48];
+        f7 = mcu[i + 56];
 
         //second stage
         int s0, s1, s2, s3, s4, s5, s6, s7;
@@ -788,8 +733,8 @@ int* dct_II_int_8t_int_8x8_Version3(int* source_mcu)
         a3 = mcu[i + 24];
         a4 = mcu[i + 32];
         a5 = mcu[i + 40];
-        a6 = mcu[6 + 48];
-        a7 = mcu[7 + 56];
+        a6 = mcu[i + 48];
+        a7 = mcu[i + 56];
 
         int b0, b1, b2, b3, b4, b5, b6, b7;
         b0 = a0 + a7;
@@ -1111,9 +1056,333 @@ int* straightCopyDct(int* source_mcu) {
     }
     return mcu;
 }
+const float multA1 = 0.707;
+const float multA2 = 0.541;
+const float multA3 = 0.707;
+const float multA4 = 1.307;
+const float multA5 = 0.383;
+int* dct_attempt5Billion(int* source_mcu)
+{
+    int* mcu = new int[65];
+    for (int i = 0; i < 64; i++) mcu[i] = source_mcu[i];
+    
+    //row dct
+    for (int i = 0; i < 8; ++i) {
+        int f0, f1, f2, f3, f4, f5, f6, f7;
+        f0 = mcu[i];
+        f1 = mcu[8 + i];
+        f2 = mcu[16 + i];
+        f3 = mcu[24 + i];
+        f4 = mcu[32 + i];
+        f5 = mcu[40 + i];
+        f6 = mcu[48 + i];
+        f7 = mcu[56 + i];
+
+        //step one
+        int a0, a1, a2, a3, a4, a5, a6, a7;
+
+        a0 = f0 + f7;
+        a1 = f1 + f6;
+        a2 = f2 + f5;
+        a3 = f3 + f4;
+
+        a4 = f3 - f4;
+        a5 = f2 - f5;
+        a6 = f1 - f6;
+        a7 = f0 - f7;
+
+        //step two
+        int b0, b1, b2, b3, b4, b5, b6, b7;
+
+        b0 = a0 + a3;
+        b1 = a1 + a2;
+        b2 = a1 - a2;
+        b3 = a0 - a3;
+
+        b4 = -a4 - a5;
+        b5 = a5 + a6;
+        b6 = a6 + a7;
+        b7 = a7;
+
+        //step three
+        int c0, c1, c2, c3, c4, c5, c6, c7;
+
+        c0 = b0 + b1;
+        c1 = b0 - b1;
+        c2 = b2 + b3;
+        c3 = b3;
+
+        c4 = b4;
+        c5 = b5;
+        c6 = b6;
+        c7 = b7;
+
+        //step four: multiplication
+        float d0, d1, d2, d3, d4, d5, d6, d7, d8;
+
+        d0 = c0;
+        d1 = c1;
+        d2 = (float)c2 * multA1;
+        d3 = c3;
+
+        d8 = -(float)(c4 + c6) * multA5;//special term
+
+        d4 = d8 - ((float)c4 * multA2);
+        d5 = (float)c5 * multA3;
+        d6 = d8 - ((float)c6 * multA4);
+        d7 = c7;
+
+        //step five
+        float e0, e1, e2, e3, e4, e5, e6, e7;
+
+        e0 = d0;
+        e1 = d1;
+        e2 = d2 + d3;
+        e3 = d3 - d2;
+
+        e4 = d4;
+        e5 = d5 + d7;
+        e6 = d6;
+        e7 = d7 - d5;
+
+        //final step
+        int F0, F1, F2, F3, F4, F5, F6, F7;
+        
+        F0 = (int)e0 / 8;
+        F4 = (int)e1 / 16;
+        F2 = (int)e2 / 16;
+        F6 = (int)e3 / 16;
+
+        F5 = (int)(e4 + e7) / 16;
+        F1 = (int)(e5 + e6) / 16;
+        F7 = (int)(e5 - e6) / 16;
+        F3 = (int)(e7 - e4) / 16;
+
+        //insert
+        
+        mcu[i] = F0;
+        mcu[8 + i] = F1;
+        mcu[16 + i] = F2;
+        mcu[24 + i] = F3;
+        mcu[32 + i] = F4;
+        mcu[40 + i] = F5;
+        mcu[48 + i] = F6;
+        mcu[56 + i] = F7;
+    
+    }
+    
+    //column dct
+    for (int i = 0; i < 8; ++i) 
+    {
+        int f0, f1, f2, f3, f4, f5, f6, f7;
+        f0 = mcu[i * 8 ];
+        f1 = mcu[i * 8 + 1];
+        f2 = mcu[i * 8 + 2];
+        f3 = mcu[i * 8 + 3];
+        f4 = mcu[i * 8 + 4];
+        f5 = mcu[i * 8 + 5];
+        f6 = mcu[i * 8 + 6];
+        f7 = mcu[i * 8 + 7];
+
+        //step one
+        int a0, a1, a2, a3, a4, a5, a6, a7;
+
+        a0 = f0 + f7;
+        a1 = f1 + f6;
+        a2 = f2 + f5;
+        a3 = f3 + f4;
+
+        a4 = f3 - f4;
+        a5 = f2 - f5;
+        a6 = f1 - f6;
+        a7 = f0 - f7;
+
+        //step two
+        int b0, b1, b2, b3, b4, b5, b6, b7;
+
+        b0 = a0 + a3;
+        b1 = a1 + a2;
+        b2 = a1 - a2;
+        b3 = a0 - a3;
+
+        b4 = -a4 - a5;
+        b5 = a5 + a6;
+        b6 = a6 + a7;
+        b7 = a7;
+
+        //step three
+        int c0, c1, c2, c3, c4, c5, c6, c7;
+
+        c0 = b0 + b1;
+        c1 = b0 - b1;
+        c2 = b2 + b3;
+        c3 = b3;
+
+        c4 = b4;
+        c5 = b5;
+        c6 = b6;
+        c7 = b7;
+
+        //step four: multiplication
+        float d0, d1, d2, d3, d4, d5, d6, d7, d8;
+
+        d0 = c0;
+        d1 = c1;
+        d2 = (float)c2 * multA1;
+        d3 = c3;
+
+        d8 = -(float)(c4 + c6) * multA5;//special term
+
+        d4 = d8 - ((float)c4 * multA2);
+        d5 = (float)c5 * multA3;
+        d6 = d8 - ((float)c6 * multA4);
+        d7 = c7;
+
+        //step five
+        float e0, e1, e2, e3, e4, e5, e6, e7;
+
+        e0 = d0;
+        e1 = d1;
+        e2 = d2 + d3;
+        e3 = d3 - d2;
+
+        e4 = d4;
+        e5 = d5 + d7;
+        e6 = d6;
+        e7 = d7 - d5;
+
+        //final step
+        int F0, F1, F2, F3, F4, F5, F6, F7;
+
+        F0 = (int)e0 / 8;
+        F4 = (int)e1 / 16;
+        F2 = (int)e2 / 16;
+        F6 = (int)e3 / 16;
+
+        F5 = (int)(e4 + e7) / 16;
+        F1 = (int)(e5 + e6) / 16;
+        F7 = (int)(e5 - e6) / 16;
+        F3 = (int)(e7 - e4) / 16;
+
+        //insert
+
+        mcu[i * 8] = F0;
+        mcu[i * 8 + 1] = F1;
+        mcu[i * 8 + 2] = F2;
+        mcu[i * 8 + 3] = F3;
+        mcu[i * 8 + 4] = F4;
+        mcu[i * 8 + 5] = F5;
+        mcu[i * 8 + 6] = F6;
+        mcu[i * 8 + 7] = F7;
+    }
+    return mcu;
+    
+}
+int* dctATTEMPTTRILLION(int* source_mcu)
+{
+        float tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7;
+        float tmp10, tmp11, tmp12, tmp13;
+        float z1, z2, z3, z4, z5, z11, z13;
+        int* mcu = new int[65];
+        for (int i = 0; i < 64; i++) mcu[i] = source_mcu[i];
+        /* Pass 1: process rows. */
+        for (int i = 0; i < 8; i++) {
+            tmp0 = mcu[i * 8] + mcu[i * 8 + 7];
+            tmp7 = mcu[i * 8] - mcu[i * 8 + 7];
+            tmp1 = mcu[i * 8 + 1] + mcu[i * 8 + 6];
+            tmp6 = mcu[i * 8 + 1] - mcu[i * 8 + 6];
+            tmp2 = mcu[i * 8 + 2] + mcu[i * 8 + 5];
+            tmp5 = mcu[i * 8 + 2] - mcu[i * 8 + 5];
+            tmp3 = mcu[i * 8 + 3] + mcu[i * 8 + 4];
+            tmp4 = mcu[i * 8 + 3] - mcu[i * 8 + 4];
+
+            /* Even part */
+
+            tmp10 = tmp0 + tmp3;        /* phase 2 */
+            tmp13 = tmp0 - tmp3;
+            tmp11 = tmp1 + tmp2;
+            tmp12 = tmp1 - tmp2;
+
+            mcu[i * 8] = (tmp10 + tmp11) / 2; /* phase 3 */
+            mcu[i * 8 + 4] = (tmp10 - tmp11) / 4;
+
+            z1 = (tmp12 + tmp13) * ((float)0.707106781); /* c4 */
+            mcu[i * 8 + 2] = (tmp13 + z1) / 4;    /* phase 5 */
+            mcu[i * 8 + 6] = (tmp13 - z1) / 4;
+
+            /* Odd part */
+
+            tmp10 = tmp4 + tmp5;        /* phase 2 */
+            tmp11 = tmp5 + tmp6;
+            tmp12 = tmp6 + tmp7;
+
+            /* The rotator is modified from fig 4-8 to avoid extra negations. */
+            z5 = (tmp10 - tmp12) * ((float)0.382683433); /* c6 */
+            z2 = ((float)0.541196100) * tmp10 + z5; /* c2-c6 */
+            z4 = ((float)1.306562965) * tmp12 + z5; /* c2+c6 */
+            z3 = tmp11 * ((float)0.707106781); /* c4 */
+
+            z11 = tmp7 + z3;            /* phase 5 */
+            z13 = tmp7 - z3;
+
+            mcu[i * 8 + 5] = (z13 + z2) / 4;      /* phase 6 */
+            mcu[i * 8 + 3] = (z13 - z2) / 4;
+            mcu[i * 8 + 1] = (z11 + z4) / 4;
+            mcu[i * 8 + 7] = (z11 - z4) / 4;
+
+        }
+
+        /* Pass 2: process columns. */
+
+        for (int i = 0; i < 8; i++) {
+            tmp0 = mcu[i] + mcu[i + 56];
+            tmp7 = mcu[i] - mcu[i + 56];
+            tmp1 = mcu[i + 8] + mcu[i + 48];
+            tmp6 = mcu[i + 8] - mcu[i + 48];
+            tmp2 = mcu[i + 16] + mcu[i + 40];
+            tmp5 = mcu[i + 16] - mcu[i + 40];
+            tmp3 = mcu[i + 24] + mcu[i + 32];
+            tmp4 = mcu[i + 24] - mcu[i + 32];
+
+            /* Even part */
+
+            tmp10 = tmp0 + tmp3;        /* phase 2 */
+            tmp13 = tmp0 - tmp3;
+            tmp11 = tmp1 + tmp2;
+            tmp12 = tmp1 - tmp2;
+
+            mcu[i] = (tmp10 + tmp11) / 2; /* phase 3 */
+            mcu[i + 32] = (tmp10 - tmp11) / 4;
+
+            z1 = (tmp12 + tmp13) * ((float)0.707106781); /* c4 */
+            mcu[i + 16] = (tmp13 + z1) / 4; /* phase 5 */
+            mcu[i + 48] = (tmp13 - z1) / 4;
+
+            /* Odd part */
+
+            tmp10 = tmp4 + tmp5;        /* phase 2 */
+            tmp11 = tmp5 + tmp6;
+            tmp12 = tmp6 + tmp7;
+
+            /* The rotator is modified from fig 4-8 to avoid extra negations. */
+            z5 = (tmp10 - tmp12) * ((float)0.382683433); /* c6 */
+            z2 = ((float)0.541196100) * tmp10 + z5; /* c2-c6 */
+            z4 = ((float)1.306562965) * tmp12 + z5; /* c2+c6 */
+            z3 = tmp11 * ((float)0.707106781); /* c4 */
+
+            z11 = tmp7 + z3;            /* phase 5 */
+            z13 = tmp7 - z3;
+
+            mcu[i + 40] = (z13 + z2) / 4; /* phase 6 */
+            mcu[i + 24] = (z13 - z2) / 4;
+            mcu[i + 8] = (z11 + z4) / 4;
+            mcu[i + 56] = (z11 - z4) / 4;
+        }
+        return mcu;
+}
 int* dct_II_int_8t_int_4x4_TEST(int* source_mcu)
 {
-    int* mcu = new int[16];
+    int* mcu = new int[17];
 
     //row DCT
     for (int i = 0; i < 4; i++)
@@ -1218,80 +1487,15 @@ mcuHuffmanContainer::mcuHuffmanContainer(MCUS origin)
             mcus[pos] = intMcus();
             for(int n = 0; n < 3; n++)//if we ever want to make it monochrome...
             {
-                //if (n == 0 && dim[n] == 8 && pos < 10) std::cout << "HMMM\n";
                 mcus[pos].yCbCr(n) = dctQuantizer(origin.mcuList[pos].ycbcr[n], this->dim[n], ((pos == 0) ? 0 : mcus[pos - 1].yCbCr[n][(dim[n] == 8 ? 64 : 16)]), n);
-                //if (n == 0 && dim[n] == 8 && pos < 10) std::cout << "HMMM << " << mcus[pos].yCbCr[0][64] << " << " << pos << std::endl;
                 yCHuffman[n == 0 ? 0 : 1].frequency(this->dim[n], mcus[pos].yCbCr[n]);
             }
-            if (i < 3 && j == 0) {
-                std::cout << "Cr: \n";
-                for (int n = 0; n < 8; n++)
-                {
-                    for (int b = 0; b < 8; b++)
-                    {
-                        std::cout << origin.mcuList[pos].ycbcr[2][n * 8 + b] << ", ";
-                    }
-                    std::cout << "\n";
-                }
-            }
-            //mcus[pos - 1].Y[0]
-            //im throwing the previous mcus DC coefficient, as this is what jpg does. Jpg standard says that DC coefficient are dependent on previous DC cocefficients, where the DC Coefficient = current coefficient - previous coefficient
-            //https://en.wikipedia.org/wiki/JPEG under entropy coding section
+            
         }
     }
     
-    /*for (int n = 0; n < mcuHeight * mcuLength; n++)
-    {
-        for (int i = 0; i < 4; i++)
-        {
-            for (int j = 0; j < 4; j++)
-            {
-                std::cout << this->mcus[n].yCbCr[1][j + i * 4] << ", ";
-            }
-            std::cout << std::endl;
-        }
-    }*/
-
-    //int* keys = yCHuffman[0].ACcodeLength.retrieveAllKeys();
-    //std::cout << "Y AC" << std::endl;
-    //for (int i = 0; i < yCHuffman[0].ACcodeLength.returnCount(); i++)
-    //{
-    //    std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[0].ACcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[0].ACcode.retrieveTerm(keys[i]) << std::endl;
-    //}
-
-    //std::cout << "Y DC" << std::endl;
-    //keys = yCHuffman[0].DCcodeLength.retrieveAllKeys();
-    //for (int i = 0; i < yCHuffman[0].DCcodeLength.returnCount(); i++)
-    //{
-    //    std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[0].DCcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[0].DCcode.retrieveTerm(keys[i]) << std::endl;
-    //}
-
-
     yCHuffman[0].huffmanCodes();
     yCHuffman[1].huffmanCodes();
-
-
-    //std::cout << " ||||||||||||||||||| " << std::endl;
-    ////print huffman values
-
-    //std::cout << " ||| Y AC ||| " << std::endl;
-    ////print huffman values
-
-    //keys = yCHuffman[0].ACcodeLength.retrieveAllKeys();
-    //for (int i = 0; i < yCHuffman[0].ACcodeLength.returnCount(); i++)
-    //{
-    //    std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[0].ACcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[0].ACcode.retrieveTerm(keys[i]) << std::endl;
-    //}
-
-    //std::cout << " ||| Y DC ||| " << std::endl;
-
-
-    //keys = yCHuffman[0].DCcodeLength.retrieveAllKeys();
-    //for (int i = 0; i < yCHuffman[0].DCcodeLength.returnCount(); i++)
-    //{
-    //    std::cout << "HuffmanValue: " << keys[i] << " || Frequency: " << yCHuffman[0].DCcodeLength.retrieveTerm(keys[i]) << " || Code: " << (int)yCHuffman[0].DCcode.retrieveTerm(keys[i]) << std::endl;
-    //}
-
 }
 int mcuHuffmanContainer::size()
 {
@@ -1309,40 +1513,7 @@ void mcuHuffmanContainer::actualJpg(hInfoStruct hInfo, mcuHuffmanContainer mcuHu
         if (hInfo.chromaTableType != 0) DQT_M(bW, hInfo.chromaTableType == 64 ? chromaTable : chromaTable, 64, 1);//check if chromatable exist (will not if monochrome image)
         SOF_M(bW, hInfo.chromaTableType, hInfo.samplingY, hInfo.samplingC, hInfo.pixelHeight, hInfo.pixelLength);
         DHT_M(bW, 0, 0, mcuHuffman.yCHuffman[0].DCcodeLength);
-        std::cout << "\nDC HUffValue: ";
-        int* keys = mcuHuffman.yCHuffman[0].DCcode.retrieveAllKeys();
-        for (int i = 0; i < mcuHuffman.yCHuffman[0].DCcode.returnCount();i++)
-        {
-            std::cout << keys[i] << ", ";
-        }
-        std::cout << "\nDC code: ";
-        for (int i = 0; i < mcuHuffman.yCHuffman[0].DCcode.returnCount(); i++)
-        {
-            std::cout << (int)mcuHuffman.yCHuffman[0].DCcode.retrieveTerm(keys[i]) << ", ";
-        }
-        std::cout << "\nDC CodeLength: ";
-        for (int i = 0; i < mcuHuffman.yCHuffman[0].DCcode.returnCount(); i++)
-        {
-            std::cout << (int)mcuHuffman.yCHuffman[0].DCcodeLength.retrieveTerm(keys[i]) << ", ";
-        }
         DHT_M(bW, 1, 0, mcuHuffman.yCHuffman[0].ACcodeLength);
-        std::cout << "\nAC HuffValue: ";
-        keys = mcuHuffman.yCHuffman[0].ACcode.retrieveAllKeys();
-        for (int i = 0; i < mcuHuffman.yCHuffman[0].ACcode.returnCount(); i++)
-        {
-            std::cout << keys[i] << ", ";
-        }
-        std::cout << "\nAC code: ";
-        for (int i = 0; i < mcuHuffman.yCHuffman[0].ACcode.returnCount(); i++)
-        {
-            std::cout << (int)mcuHuffman.yCHuffman[0].ACcode.retrieveTerm(keys[i]) << ", ";
-        }
-        std::cout << "\nAC CodeLength: ";
-        for (int i = 0; i < mcuHuffman.yCHuffman[0].ACcode.returnCount(); i++)
-        {
-            std::cout << (int)mcuHuffman.yCHuffman[0].ACcodeLength.retrieveTerm(keys[i]) << ", ";
-        }
-        std::cout << std::endl;
         if (hInfo.chromaTableType != 0)
         {
             DHT_M(bW, 0, 1, mcuHuffman.yCHuffman[1].DCcodeLength);
@@ -1362,20 +1533,8 @@ void mcuHuffmanContainer::actualJpg(hInfoStruct hInfo, mcuHuffmanContainer mcuHu
                 MCU_W(bW, mcuHuffman.yCHuffman[1].DCcode, mcuHuffman.yCHuffman[1].DCcodeLength, mcuHuffman.yCHuffman[1].ACcode, mcuHuffman.yCHuffman[1].ACcodeLength, hInfo.chromaTableType, mcuHuffman.mcus[i].yCbCr[2]);
             }
         }
-        std::cout << "Huffman Size: " << mcuHuffman.size() << std::endl;
         bW.inScanFlip(); //decoment this after testing
         EOI_M(bW);
-    }
-}
-void testIntMcus(mcuHuffmanContainer mine, int num)
-{
-    for(int i = 0; i < mine.dim.Y; i++)
-    {
-        for(int j = 0; j < mine.dim.Y; j++)
-        {
-            std::cout << mine.mcus[num].yCbCr[0][j + i * mine.dim.Y] << " ";
-        }
-        std::cout << std::endl;
     }
 }
 int* dctQuantizer(int* table,int dim, int previousDC, int num) 
@@ -1391,7 +1550,10 @@ int* dctQuantizer(int* table,int dim, int previousDC, int num)
         //returnTable = test2_dct(table);
         //returnTable = dct_II_int_8t_int_8x8_Version3(table);
         returnTable = straightCopyDct(table);
+        //returnTable = dct_attempt5Billion(table);
+        //returnTable = dctATTEMPTTRILLION(table);
         quantizer_8x8_int(returnTable, quantTables8x8[num]);
+
     }
     else
     {
@@ -1589,7 +1751,6 @@ void huffManReferenceTable(fakeDictionary<int, int>& huffmanCodeLength, fakeDict
             code = code << (funnyPtr2[i] - codeLength);
             codeLength = funnyPtr2[i];
         }
-        //if (code == 0) std::cout << "Code == 0: " << i << "Bit addition" << funnyPtr2[i] - codeLength << std::endl;
         target.addPair(funnyPtr[i], code);
         ++code;
     }
@@ -1657,7 +1818,6 @@ void SOF_M(byteWritter& bw, int chromaExist, int ySamplingSize, int cSamplingSiz
     bw.write(ff); bw.write(192);//S0F header, start of frame header type 0
     bw.write((uint8_t)(chromaExist != 0 ? 17 : 11), 16);//length of segment, if monochrome only 11 bytes if not 17 
     bw.write(8);//jpg pixel precision, jpg only supports 8bit precision but it must be included anyway lol
-    std::cout << "Height: " << pixelHeight << "  || Width: " << pixelWidth << std::endl;
     bw.write((uint16_t)pixelHeight, 16);//jpg pixel height, stored in two bits maxinum size of 256 x 256
     bw.write((uint16_t)pixelWidth, 16);//jpg pixel length
     bw.write((chromaExist ? 3 : 1));
@@ -1675,26 +1835,19 @@ void DHT_M(byteWritter& bw, int ACDC /*1 = AC 0 = DC*/, int tableNum /*tablenum 
     bw.write((uint16_t)(19 + codeFreq.returnCount()), 16);//code length, codelength (2) + tableinfo(1) + number codeLengths(16) + symbols(variable)
     bw.write(16 * ACDC + tableNum);//table info, first 4 bits are 0 if dc 1 is ac, last 4 bits are tablenum 0 is going to be y and 1 is going to be the chrominance
     //below is the # of code lengths, which is stored instead ofthe codes as you can just reconstruct the codes...
-    //std::cout << (tableNum == 0 ? "Y" : "C") << (ACDC == 1 ? " AC" : "DC") << std::endl;
     for (int i = 1; i < 17; i++) {
-        //std::cout << codeFreq.retrieveTermCount(i) << std::endl;
         bw.write(codeFreq.retrieveTermCount(i));
     }
     //below are the symbols, our dictionary is already sorted into the proper format so we just use that
     //the way this works is the symbols below are tied to the code lengths above, the first symbol below is tied to the first code length above and so on
     int* huffValues = codeFreq.retrieveAllKeys();
-    std::cout << "HuffValues List" << ((tableNum == 0) ? " Luma " : " Chroma ") << ((ACDC == 1) ? " AC: " : " DC: ") << codeFreq.returnCount() << std::endl;
     for (int i = 0; i < codeFreq.returnCount(); i++)
     {
-        std::cout << (int)((uint8_t)huffValues[i]) << ", ";
         bw.write((uint8_t)huffValues[i]);
     }
-    std::cout << std::endl;
-
 }
 void SOS_M(byteWritter& bw, int components, int firstComponentLength)
 {
-    //EOI_M(bw);
     bw.write(ff); bw.write(218);//SOS marker, start of scan marker
     bw.write((uint16_t)(components * 2 + 6), 16);//length of marker, variable
     bw.write(components);
@@ -1711,10 +1864,8 @@ void SOS_M(byteWritter& bw, int components, int firstComponentLength)
 void MCU_W(byteWritter& bw, fakeDictionary<int, uint16_t>& huffmanDcValueCodes, fakeDictionary<int, int>& huffmanDcValueLength, fakeDictionary<int, uint16_t>& huffmanAcValueCodes, fakeDictionary<int, int>& huffmanAcValueLength, int dim, int* table)
 {
     //write dc
-    if(testVar) std::cout << "IN 24: " << table[0] << "\n";
     int coeffLength = bitLength(table[0] > 0 ? table[0] : -table[0]);
     bw.write(huffmanDcValueCodes.retrieveTerm(coeffLength), huffmanDcValueLength.retrieveTerm(coeffLength));//write dchuffman value
-    //bw.write(huffmanDcValueCodes.retrieveTerm(coeffLength), 4);//write dchuffman value
 
     unsigned funny = 1;
     for (int two = 0; two < coeffLength; two++)

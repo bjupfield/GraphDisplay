@@ -237,7 +237,6 @@ int byteWritter::write(uint8_t bits, uint8_t bitLength)
 	//adjust leading zero to account for hanging bits
 	if (leadingZeroBits > nonHangingBits) {
 		leadingZeroBits = nonHangingBits;
-		//if (inScan) std::cout << "HMMMM\n";
 	}
 
 	//write bits to byte
@@ -288,7 +287,6 @@ int byteWritter::write(uint8_t bits)//this func writes a single byte, no matter 
 	{
 		this->byte <<= (currentBit);
 		buffer = this->byte;
-		std::cout << "Current Bit: " << currentBit << " || Weird Buffer: " << (int)this->byte << "\n";
 		this->outFile.write(&buffer, 1);
 		this->byte = 0;
 		this->currentBit = 8;

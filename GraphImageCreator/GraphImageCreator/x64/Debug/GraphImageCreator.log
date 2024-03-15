@@ -1,12 +1,4 @@
-﻿  Mcuer.cpp
+﻿  GraphImageCreator.cpp
 C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(35,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
-  (compiling source file 'Mcuer.cpp')
+  (compiling source file 'GraphImageCreator.cpp')
   
-C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\Mcuer.cpp(175,18): warning C4305: 'initializing': truncation from 'double' to 'float'
-C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\Mcuer.cpp(176,18): warning C4305: 'initializing': truncation from 'double' to 'float'
-C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\Mcuer.cpp(177,18): warning C4305: 'initializing': truncation from 'double' to 'float'
-C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\Mcuer.cpp(178,20): warning C4305: 'initializing': truncation from 'double' to 'float'
-C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\Mcuer.cpp(179,20): warning C4305: 'initializing': truncation from 'double' to 'float'
-C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\Mcuer.cpp(182,20): warning C4305: 'initializing': truncation from 'double' to 'float'
-C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\Mcuer.cpp(183,20): warning C4305: 'initializing': truncation from 'double' to 'float'
-  GraphImageCreator.vcxproj -> C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\x64\Debug\GraphImageCreator.exe

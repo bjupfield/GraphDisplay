@@ -131,9 +131,7 @@
     <ClCompile Include="GraphPresets.cpp" />
     <ClCompile Include="JPGer.cpp" />
     <ClCompile Include="Mcuer.cpp" />
-    <ClCompile Include="RGBtoYCrCb.hpp" />
     <ClCompile Include="GraphImageCreator.cpp" />
-    <ClCompile Include="RGBtoYCrCb.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DumbFuncsNClasses.hpp" />
