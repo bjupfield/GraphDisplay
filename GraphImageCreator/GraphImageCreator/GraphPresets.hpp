@@ -13,11 +13,13 @@ private:
 	int imageLength;
 	int imageHeight;
 	Pixel* image;
+	bool exists;
 public:
 	graphPresets(int fileAmount, char** fileNames);
 	int retrieveHeight();
 	int retrieveLength();
 	Pixel retrievePixel(int pos);
+	bool exist();
 };
 static class accessImage {
 private:

@@ -1,0 +1,162 @@
+﻿  DumbFuncsNClasses.cpp
+  GraphPresets.cpp
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(35,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
+  (compiling source file 'GraphPresets.cpp')
+  
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphPresets.cpp(20,19): warning C4244: 'initializing': conversion from 'std::streamoff' to 'int', possible loss of data
+  JPGer.cpp
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(35,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
+  (compiling source file 'JPGer.cpp')
+  
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(364,9): warning C4101: 'iter': unreferenced local variable
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(716,26): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(717,26): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(718,26): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(719,26): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(762,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(763,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(765,14): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(770,14): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(843,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(844,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(846,14): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(851,14): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(887,23): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(887,17): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(888,23): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(888,17): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(889,23): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(889,17): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(890,23): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(890,17): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(894,46): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(894,16): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(895,46): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(895,16): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(896,46): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(896,16): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(897,46): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(897,16): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(898,46): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(898,16): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(899,46): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(899,16): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(900,46): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(900,16): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(901,46): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(901,16): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(908,39): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(908,24): warning C4244: 'initializing': conversion from 'int' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(909,39): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(909,24): warning C4244: 'initializing': conversion from 'int' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(910,39): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(910,24): warning C4244: 'initializing': conversion from 'int' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(911,39): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(911,24): warning C4244: 'initializing': conversion from 'int' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(912,39): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(912,24): warning C4244: 'initializing': conversion from 'int' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(913,39): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(913,24): warning C4244: 'initializing': conversion from 'int' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(914,39): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(914,24): warning C4244: 'initializing': conversion from 'int' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(915,39): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(915,24): warning C4244: 'initializing': conversion from 'int' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(973,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(974,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(975,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(976,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(977,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(978,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(979,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(980,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(983,39): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(983,24): warning C4244: 'initializing': conversion from 'int' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(984,39): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(984,24): warning C4244: 'initializing': conversion from 'int' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(985,39): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(985,24): warning C4244: 'initializing': conversion from 'int' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(986,39): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(986,24): warning C4244: 'initializing': conversion from 'int' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(987,39): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(987,24): warning C4244: 'initializing': conversion from 'int' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(988,39): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(988,24): warning C4244: 'initializing': conversion from 'int' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(989,39): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(989,24): warning C4244: 'initializing': conversion from 'int' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(990,39): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(990,24): warning C4244: 'initializing': conversion from 'int' to 'const float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1048,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1049,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1050,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1051,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1052,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1053,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1054,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1055,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1059,22): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1060,22): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1061,22): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1062,22): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1063,22): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1123,14): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1124,14): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1126,14): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1133,14): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1229,14): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1230,14): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1232,14): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1239,14): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1290,31): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1291,31): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1292,35): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1293,35): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1294,35): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1295,35): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1296,35): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1297,35): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1306,42): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1307,46): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1310,43): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1311,43): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1328,41): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1329,41): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1330,41): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1331,41): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1338,27): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1339,27): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1340,31): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1341,31): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1342,32): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1343,32): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1344,32): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1345,32): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1354,38): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1355,43): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1358,40): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1359,40): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1376,38): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1377,38): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1378,37): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\JPGer.cpp(1379,38): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+  Mcuer.cpp
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(35,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
+  (compiling source file 'Mcuer.cpp')
+  
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\Mcuer.cpp(92,18): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\Mcuer.cpp(93,18): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\Mcuer.cpp(94,18): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\Mcuer.cpp(95,20): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\Mcuer.cpp(96,20): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\Mcuer.cpp(99,20): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\Mcuer.cpp(100,20): warning C4305: 'initializing': truncation from 'double' to 'float'
+  GraphImageCreator.cpp
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(35,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
+  (compiling source file 'GraphImageCreator.cpp')
+  
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\DumbFuncsNClasses.cpp(282): warning C4715: 'byteWritter::write': not all control paths return a value
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphPresets.cpp(155): warning C4715: 'accessImage::recieveOrCreate': not all control paths return a value
+  All 275 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  GraphImageCreator.vcxproj -> C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\x64\Release\GraphImageCreator.exe

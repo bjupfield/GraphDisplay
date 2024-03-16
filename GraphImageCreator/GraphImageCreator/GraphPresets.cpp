@@ -2,12 +2,13 @@
 #include <fstream>
 #include "GraphPresets.hpp"
 
-
 graphPresets::graphPresets(int fileAmount, char** fileNames) {
 
 	//this function creats and saves a graphpreset for future use
 	//Im just saving it in a static class so for memory,
 	//i dont know it seems like what I should do
+
+	this->exists = true;
 
 	std::ifstream openFile;
 	char* buffer = new char[20];
@@ -16,6 +17,7 @@ graphPresets::graphPresets(int fileAmount, char** fileNames) {
 		openFile.open(fileNames[i]);
 		if (openFile.is_open())
 		{
+
 			openFile.seekg(0, openFile.end);
 			int fileLength = openFile.tellg();
 			openFile.seekg(0, openFile.beg);
@@ -100,10 +102,15 @@ graphPresets::graphPresets(int fileAmount, char** fileNames) {
 		}
 		else
 		{
+			this->exists = false;
 			std::cout << "DID NOT OPEN: " << std::endl;
 		}
 		openFile.close();
 	}
+}
+bool graphPresets::exist()
+{
+	return this->exists;
 }
 int graphPresets::retrieveHeight()
 {
@@ -151,6 +158,7 @@ graphPresets accessImage::recieveOrCreate(char* fileName) {
 		images[0] = graphPresets(1, new char* [1] {fileName});
 		pathNamesSize = 1;
 		imagesSize = 1;
+		return images[0];
 	}
 }
 Pixel graphPresets::retrievePixel(int pos)
@@ -185,7 +193,8 @@ int accessImage::retrieveLabel(char* fileName)
 	}
 	else
 	{
-		accessImage::recieveOrCreate(fileName);
+		graphPresets b = accessImage::recieveOrCreate(fileName);
+		if (b.exist() == false) return -1;
 		return accessImage::retrieveLabel(fileName);
 	}
 }

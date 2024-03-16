@@ -96,5 +96,4 @@ void newCopyArray(T* source, T* destination, int sourceStartIndex = 0, int desti
 
 }
 
-
 #endif

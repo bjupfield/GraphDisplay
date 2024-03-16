@@ -1,4 +1,5 @@
 ﻿  GraphImageCreator.cpp
-C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(35,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
+C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\GraphImageCreator\GraphPresets.hpp(37,2): warning C4091: 'static ': ignored on left of 'accessImage' when no variable is declared
   (compiling source file 'GraphImageCreator.cpp')
   
+  GraphImageCreator.vcxproj -> C:\Users\bjupf\Desktop\GraphDisplayHtml\GraphImageCreator\x64\Debug\GraphImageCreator.exe
